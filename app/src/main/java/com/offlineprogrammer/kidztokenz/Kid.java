@@ -1,5 +1,7 @@
 package com.offlineprogrammer.kidztokenz;
 
+import androidx.annotation.NonNull;
+
 public class Kid {
     private String kidName;
 
@@ -9,7 +11,7 @@ public class Kid {
 
     @NonNull
     public String getKidName() {
-        return simpleText;
+        return kidName;
     }
 
     public void setKidName(@NonNull final String kidName) {
