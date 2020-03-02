@@ -10,6 +10,7 @@ public class KidViewHolder extends RecyclerView.ViewHolder {
     private TextView kidNameTextView;
     public KidViewHolder(@NonNull View itemView) {
         super(itemView);
+        kidNameTextView = (TextView) itemView.findViewById(R.id.kid_name);
     }
 
     public void bindData(final Kid viewModel) {

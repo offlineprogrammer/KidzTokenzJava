@@ -11,12 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class KidAdapter extends RecyclerView.Adapter {
-    private List<Kid> models;
+    private ArrayList<Kid> models = new ArrayList<>();
 
-    public KidAdapter(final List<Kid> viewModels) {
-        if (viewModels != null) {
-            this.models.addAll(viewModels);
-        }
+    public KidAdapter(@NonNull final ArrayList<Kid> viewModels) {
+        this.models.addAll(viewModels);
     }
 
     @NonNull

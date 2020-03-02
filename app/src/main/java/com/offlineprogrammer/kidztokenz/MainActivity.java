@@ -29,8 +29,8 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private List<Kid> generateKidList() {
-        List<Kid> kidzList = new ArrayList<>();
+    private ArrayList<Kid> generateKidList() {
+        ArrayList<Kid> kidzList = new ArrayList<>();
 
         for (int i = 0; i < 100; i++)
             kidzList.add(new Kid(String.format(Locale.US, "This is item %d", i)));
