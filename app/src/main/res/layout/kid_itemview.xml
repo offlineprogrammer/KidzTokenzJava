@@ -1,20 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="8dp">
 
+    <ImageView
+        android:id="@+id/kid_monster_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerVertical="true"
+        android:padding="10dp"
+        android:adjustViewBounds="true"
+        android:contentDescription="TODO" />
     <TextView
         android:id="@+id/kid_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="This is some temp text" />
+        tools:text="This is some temp text"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/kid_monster_name"
+        android:textSize="30sp" />
 
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/m1" />
-</FrameLayout>
+</RelativeLayout>

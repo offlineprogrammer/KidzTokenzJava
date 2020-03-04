@@ -20,11 +20,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         KidAdapter adapter = new KidAdapter(generateKidList());
-       // kidzList = findViewById(R.id.kidz_list);
+
 
         RecyclerView recyclerView = findViewById(R.id.kidz_recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setHasFixedSize(true);
+       // recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
 
     }
@@ -32,8 +32,11 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Kid> generateKidList() {
         ArrayList<Kid> kidzList = new ArrayList<>();
 
-        for (int i = 0; i < 100; i++)
-            kidzList.add(new Kid(String.format(Locale.US, "This is item %d", i)));
+        for (int i = 0; i < 10; i++)
+            kidzList.add(new Kid(String.format(Locale.US, " item %d", i),R.drawable.m2));
+
+
+
 
         return kidzList;
     }
