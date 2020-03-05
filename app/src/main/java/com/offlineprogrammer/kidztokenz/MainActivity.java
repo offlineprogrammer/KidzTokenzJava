@@ -33,7 +33,8 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<Kid> kidzList = new ArrayList<>();
 
         for (int i = 0; i < 10; i++)
-            kidzList.add(new Kid(String.format(Locale.US, " item %d", i),R.drawable.m2));
+
+            kidzList.add(new Kid(String.format(Locale.US, " item %d", i),R.drawable.m1));
 
 
 

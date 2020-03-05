@@ -8,13 +8,16 @@
 
     <ImageView
         android:id="@+id/kid_monster_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_centerVertical="true"
         android:padding="10dp"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:scaleType="fitCenter"
         android:adjustViewBounds="true"
+
         android:contentDescription="TODO" />
     <TextView
         android:id="@+id/kid_name"
