@@ -35,6 +35,17 @@ public class KidAdapter extends RecyclerView.Adapter {
         return models.size();
     }
 
+    public void delete(int position) {
+        models.remove(position);
+        notifyItemRemoved(position);
+    }
+
+    public void add(Kid item, int position){
+        models.add(position, item);
+        notifyItemInserted(position);
+        notifyItemRangeChanged(0, getItemCount());
+    }
+
     @Override
     public int getItemViewType(final int position) {
         return R.layout.kid_itemview;
