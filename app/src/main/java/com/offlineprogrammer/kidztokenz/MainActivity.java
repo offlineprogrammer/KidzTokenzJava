@@ -37,12 +37,14 @@ private KidAdapter mAdapter;
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
 
+
         FloatingActionButton fab = findViewById(R.id.fab_add_kid);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                mAdapter.add(new Kid("MM",R.drawable.m6),0);
+                recyclerView.scrollToPosition(0);
 
                 Snackbar.make(view, "Here's a Snackbar", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();

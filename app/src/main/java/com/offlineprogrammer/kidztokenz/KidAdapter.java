@@ -43,7 +43,8 @@ public class KidAdapter extends RecyclerView.Adapter {
     public void add(Kid item, int position){
         models.add(position, item);
         notifyItemInserted(position);
-        notifyItemRangeChanged(0, getItemCount());
+        //notifyDataSetChanged();
+       //notifyItemRangeChanged(0, getItemCount());
     }
 
     @Override
