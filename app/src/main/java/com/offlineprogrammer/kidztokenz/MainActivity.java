@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -48,14 +49,7 @@ private KidAdapter mAdapter;
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 showAddKidDialog(MainActivity.this);
-
-              // mAdapter.add(new Kid("MM",R.drawable.m6),0);
-              //  recyclerView.scrollToPosition(0);
-
-                Snackbar.make(view, "Here's a Snackbar", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
             }
         });
 
@@ -86,6 +80,19 @@ private KidAdapter mAdapter;
                 .setNegativeButton("Cancel", null)
                 .create();
         dialog.show();
+        taskEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                taskEditText.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        InputMethodManager inputMethodManager= (InputMethodManager) MainActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
+                        inputMethodManager.showSoftInput(taskEditText, InputMethodManager.SHOW_IMPLICIT);
+                    }
+                });
+            }
+        });
+        taskEditText.requestFocus();
     }
 
     private void generateKidList() {
