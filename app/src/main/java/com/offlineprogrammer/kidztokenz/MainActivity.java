@@ -1,12 +1,16 @@
 package com.offlineprogrammer.kidztokenz;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -43,14 +47,35 @@ private KidAdapter mAdapter;
             @Override
             public void onClick(View view) {
 
-               mAdapter.add(new Kid("MM",R.drawable.m6),0);
-                recyclerView.scrollToPosition(0);
+                showAddKidDialog(MainActivity.this);
+
+              // mAdapter.add(new Kid("MM",R.drawable.m6),0);
+              //  recyclerView.scrollToPosition(0);
 
                 Snackbar.make(view, "Here's a Snackbar", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
 
+    }
+
+    private void showAddKidDialog(Context c) {
+        final EditText taskEditText = new EditText(c);
+        AlertDialog dialog = new AlertDialog.Builder(c)
+                .setTitle("Add a new kid")
+                .setMessage("Enter the kid name")
+                .setView(taskEditText)
+                .setPositiveButton("Add", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String kidName = String.valueOf(taskEditText.getText());
+                        mAdapter.add(new Kid(kidName,R.drawable.m6),0);
+                        recyclerView.scrollToPosition(0);
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .create();
+        dialog.show();
     }
 
     private void generateKidList() {
