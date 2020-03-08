@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -19,6 +20,7 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -59,6 +61,14 @@ private KidAdapter mAdapter;
 
     }
 
+    private int pickMonster(){
+        final TypedArray imgs;
+        imgs = getResources().obtainTypedArray(R.array.kidzMonsters);
+        final Random rand = new Random();
+        final int rndInt = rand.nextInt(imgs.length());
+        return imgs.getResourceId(rndInt, 0);
+    }
+
     private void showAddKidDialog(Context c) {
         final EditText taskEditText = new EditText(c);
         AlertDialog dialog = new AlertDialog.Builder(c)
@@ -69,7 +79,7 @@ private KidAdapter mAdapter;
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String kidName = String.valueOf(taskEditText.getText());
-                        mAdapter.add(new Kid(kidName,R.drawable.m6),0);
+                        mAdapter.add(new Kid(kidName,pickMonster()),0);
                         recyclerView.scrollToPosition(0);
                     }
                 })
