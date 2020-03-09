@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -33,11 +34,11 @@ private KidAdapter mAdapter;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        generateKidList();
+        //generateKidList();
         mAdapter = new KidAdapter(kidzList);
 
 
-         recyclerView = findViewById(R.id.kidz_recyclerview);
+        recyclerView = findViewById(R.id.kidz_recyclerview);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(mAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -92,6 +93,9 @@ private KidAdapter mAdapter;
                 });
             }
         });
+        taskEditText.setMaxLines(1);
+        taskEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL );
+        taskEditText.setHint("Kid Name");
         taskEditText.requestFocus();
     }
 
