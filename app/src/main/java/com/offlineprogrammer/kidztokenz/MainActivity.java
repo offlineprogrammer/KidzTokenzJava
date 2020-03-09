@@ -1,5 +1,6 @@
 package com.offlineprogrammer.kidztokenz;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -11,17 +12,26 @@ import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
@@ -35,6 +45,7 @@ private KidAdapter mAdapter;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //generateKidList();
+        getDeviceToken();
         mAdapter = new KidAdapter(kidzList);
 
 
@@ -97,6 +108,44 @@ private KidAdapter mAdapter;
         taskEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL );
         taskEditText.setHint("Kid Name");
         taskEditText.requestFocus();
+    }
+
+    private void getDeviceToken(){
+        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
+            @Override
+            public void onSuccess(InstanceIdResult instanceIdResult) {
+
+                String deviceToken = instanceIdResult.getToken();
+                // Do whatever you want with your token now
+                // i.e. store it on SharedPreferences or DB
+                // or directly send it to server
+
+                // Access a Cloud Firestore instance from your Activity
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                // Create a new user with a first and last name
+                Map<String, Object> user = new HashMap<>();
+                user.put("deviceToken", deviceToken);
+               // user.put("last", "Lovelace");
+               // user.put("born", 1815);
+
+// Add a new document with a generated ID
+                db.collection("users")
+                        .add(user)
+                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                            @Override
+                            public void onSuccess(DocumentReference documentReference) {
+                                Log.d("SavingData", "DocumentSnapshot added with ID: " + documentReference.getId());
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w("SavingData", "Error adding document", e);
+                            }
+                        });
+            }
+        });
     }
 
     private void generateKidList() {
