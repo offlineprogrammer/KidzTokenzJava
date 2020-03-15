@@ -2,7 +2,12 @@ package com.offlineprogrammer.kidztokenz;
 
 import androidx.annotation.NonNull;
 
-public class Kid {
+import com.google.firebase.database.Exclude;
+
+import java.util.HashMap;
+import java.util.Map;
+
+class Kid {
     private String kidName;
     private int monsterImage;
 
@@ -27,4 +32,14 @@ public class Kid {
     public void setMonsterImage(int monsterImage) {
         this.monsterImage = monsterImage;
     }
+
+    @Exclude
+    public Map<String, Object> toMap() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("kidName", this.kidName);
+        result.put("monsterImage", this.monsterImage);
+
+        return result;
+    }
+
 }

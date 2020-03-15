@@ -22,8 +22,11 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 
@@ -34,28 +37,30 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
+
 public class MainActivity extends AppCompatActivity {
 
 private RecyclerView recyclerView;
 private KidAdapter mAdapter;
+    private DatabaseReference mDatabase;
+
     private ArrayList<Kid> kidzList = new ArrayList<>();
+    private  User m_User;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //generateKidList();
         getDeviceToken();
+
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
         mAdapter = new KidAdapter(kidzList);
-
-
         recyclerView = findViewById(R.id.kidz_recyclerview);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(mAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-
-
 
         FloatingActionButton fab = findViewById(R.id.fab_add_kid);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -76,38 +81,41 @@ private KidAdapter mAdapter;
     }
 
     private void showAddKidDialog(Context c) {
-        final EditText taskEditText = new EditText(c);
+        final EditText kidNameText = new EditText(c);
         AlertDialog dialog = new AlertDialog.Builder(c)
                 .setTitle("Add a new kid")
                 .setMessage("Enter the kid name")
-                .setView(taskEditText)
+                .setView(kidNameText)
                 .setPositiveButton("Add", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String kidName = String.valueOf(taskEditText.getText());
-                        mAdapter.add(new Kid(kidName,pickMonster()),0);
+                        String kidName = String.valueOf(kidNameText.getText());
+                        Kid newKid = new Kid(kidName,pickMonster());
+                        mAdapter.add(newKid,0);
+                        saveKid(newKid);
+
                         recyclerView.scrollToPosition(0);
                     }
                 })
                 .setNegativeButton("Cancel", null)
                 .create();
         dialog.show();
-        taskEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        kidNameText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                taskEditText.post(new Runnable() {
+                kidNameText.post(new Runnable() {
                     @Override
                     public void run() {
                         InputMethodManager inputMethodManager= (InputMethodManager) MainActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
-                        inputMethodManager.showSoftInput(taskEditText, InputMethodManager.SHOW_IMPLICIT);
+                        inputMethodManager.showSoftInput(kidNameText, InputMethodManager.SHOW_IMPLICIT);
                     }
                 });
             }
         });
-        taskEditText.setMaxLines(1);
-        taskEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL );
-        taskEditText.setHint("Kid Name");
-        taskEditText.requestFocus();
+        kidNameText.setMaxLines(1);
+        kidNameText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL );
+        kidNameText.setHint("Kid Name");
+        kidNameText.requestFocus();
     }
 
     private void getDeviceToken(){
@@ -116,18 +124,19 @@ private KidAdapter mAdapter;
             public void onSuccess(InstanceIdResult instanceIdResult) {
 
                 String deviceToken = instanceIdResult.getToken();
-                // Do whatever you want with your token now
-                // i.e. store it on SharedPreferences or DB
-                // or directly send it to server
+                m_User = new User(deviceToken);
+
 
                 // Access a Cloud Firestore instance from your Activity
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-                // Create a new user with a first and last name
+                // Create a new user
                 Map<String, Object> user = new HashMap<>();
-                user.put("deviceToken", deviceToken);
-               // user.put("last", "Lovelace");
-               // user.put("born", 1815);
+                user.put("deviceToken", m_User.getDeviceToken());
+                user.put("userId", "guest");
+                //user.put("kidz", "");
+
+
 
 // Add a new document with a generated ID
                 db.collection("users")
@@ -135,6 +144,7 @@ private KidAdapter mAdapter;
                         .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                             @Override
                             public void onSuccess(DocumentReference documentReference) {
+                                m_User.setFirebaseId(documentReference.getId());
                                 Log.d("SavingData", "DocumentSnapshot added with ID: " + documentReference.getId());
                             }
                         })
@@ -148,16 +158,34 @@ private KidAdapter mAdapter;
         });
     }
 
-    private void generateKidList() {
+    private void saveKid(Kid newKid){
 
+        Map<String, Object> kidValues = newKid.toMap();
+        Map<String, Object> childUpdates = new HashMap<>();
+      //  String key = mDatabase.child("\"/users/\" + m_User.getFirebaseId() + \"/kidz/\"").push().getKey();
+        String sKUserUlr = "/users/" + m_User.getFirebaseId() + "/";//+ "kidz";
 
-        for (int i = 0; i < 10; i++)
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference newKidRef = db.collection("users").document(m_User.getFirebaseId()).collection("kidz").document();
 
-            kidzList.add(new Kid(String.format(Locale.US, " item %d", i),R.drawable.m1));
+        newKidRef.set(kidValues, SetOptions.merge())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("Add Kid", "DocumentSnapshot successfully written!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("Add Kid", "Error writing document", e);
+                    }
+                });
 
 
 
 
 
     }
+
 }
