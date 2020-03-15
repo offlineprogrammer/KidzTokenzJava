@@ -1,9 +1,12 @@
 package com.offlineprogrammer.kidztokenz;
 
+import java.util.ArrayList;
+
 class User {
     private String deviceToken;
     private String firebaseId;
     private String userId;
+    private ArrayList<Kid> kidz;
 
     User(String deviceToken) {
         this.deviceToken = deviceToken;
@@ -31,5 +34,13 @@ class User {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public ArrayList<Kid> getKidz() {
+        return kidz;
+    }
+
+    public void setKidz(ArrayList<Kid> kidz) {
+        this.kidz = kidz;
     }
 }
