@@ -3,9 +3,14 @@ package com.offlineprogrammer.kidztokenz;
 class User {
     private String deviceToken;
     private String firebaseId;
+    private String userId;
 
     User(String deviceToken) {
         this.deviceToken = deviceToken;
+    }
+
+    User() {
+
     }
 
     public String getFirebaseId() {
@@ -18,5 +23,13 @@ class User {
 
     public String getDeviceToken() {
         return deviceToken;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

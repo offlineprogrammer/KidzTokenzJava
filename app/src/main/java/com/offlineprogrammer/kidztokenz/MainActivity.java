@@ -18,14 +18,18 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
@@ -42,34 +46,27 @@ public class MainActivity extends AppCompatActivity {
 
 private RecyclerView recyclerView;
 private KidAdapter mAdapter;
-    private DatabaseReference mDatabase;
+
 
     private ArrayList<Kid> kidzList = new ArrayList<>();
     private  User m_User;
+    private Boolean bFoundData = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setupRecyclerView();
         getDeviceToken();
+    }
 
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-
+    private void setupRecyclerView() {
         mAdapter = new KidAdapter(kidzList);
         recyclerView = findViewById(R.id.kidz_recyclerview);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(mAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-
-        FloatingActionButton fab = findViewById(R.id.fab_add_kid);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showAddKidDialog(MainActivity.this);
-            }
-        });
-
     }
 
     private int pickMonster(){
@@ -93,7 +90,6 @@ private KidAdapter mAdapter;
                         Kid newKid = new Kid(kidName,pickMonster());
                         mAdapter.add(newKid,0);
                         saveKid(newKid);
-
                         recyclerView.scrollToPosition(0);
                     }
                 })
@@ -122,38 +118,45 @@ private KidAdapter mAdapter;
         FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
             @Override
             public void onSuccess(InstanceIdResult instanceIdResult) {
-
                 String deviceToken = instanceIdResult.getToken();
                 m_User = new User(deviceToken);
+                getKidzData(m_User.getDeviceToken());
 
+            }
+        });
+    }
 
-                // Access a Cloud Firestore instance from your Activity
-                FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private void saveUser() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-                // Create a new user
-                Map<String, Object> user = new HashMap<>();
-                user.put("deviceToken", m_User.getDeviceToken());
-                user.put("userId", "guest");
-                //user.put("kidz", "");
-
-
-
+        // Create a new user
+        Map<String, Object> user = new HashMap<>();
+        user.put("deviceToken", m_User.getDeviceToken());
+        user.put("userId", "guest");
 // Add a new document with a generated ID
-                db.collection("users")
-                        .add(user)
-                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                            @Override
-                            public void onSuccess(DocumentReference documentReference) {
-                                m_User.setFirebaseId(documentReference.getId());
-                                Log.d("SavingData", "DocumentSnapshot added with ID: " + documentReference.getId());
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.w("SavingData", "Error adding document", e);
-                            }
-                        });
+        db.collection("users")
+                .add(user)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        m_User.setFirebaseId(documentReference.getId());
+                        Log.d("SavingData", "DocumentSnapshot added with ID: " + documentReference.getId());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("SavingData", "Error adding document", e);
+                    }
+                });
+    }
+
+    private void configActionButton() {
+        FloatingActionButton fab = findViewById(R.id.fab_add_kid);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showAddKidDialog(MainActivity.this);
             }
         });
     }
@@ -181,10 +184,31 @@ private KidAdapter mAdapter;
                         Log.w("Add Kid", "Error writing document", e);
                     }
                 });
+    }
 
+    private void getKidzData(String deviceToken) {
+       // final Boolean bFoundData ;
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("users")
+                .whereEqualTo("deviceToken", deviceToken)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
 
-
-
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.d("Got Data", document.getId() + " => " + document.getData());
+                                m_User=document.toObject(User.class);
+                                m_User.setFirebaseId(document.getId());
+                            }
+                            configActionButton();
+                        } else {
+                            saveUser();
+                            Log.d("Got Date", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
 
     }
 
