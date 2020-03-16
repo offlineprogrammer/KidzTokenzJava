@@ -114,7 +114,7 @@ private KidAdapter mAdapter;
             public void onSuccess(InstanceIdResult instanceIdResult) {
                 String deviceToken = instanceIdResult.getToken();
                 m_User = new User(deviceToken);
-                getKidzData(m_User.getDeviceToken());
+                getUserData(m_User.getDeviceToken());
 
             }
         });
@@ -180,9 +180,10 @@ private KidAdapter mAdapter;
                 });
     }
 
-    private void getKidzData(String deviceToken) {
+    private void getUserData(String deviceToken) {
        // final Boolean bFoundData ;
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+
         db.collection("users")
                 .whereEqualTo("deviceToken", deviceToken)
                 .get()
@@ -190,16 +191,15 @@ private KidAdapter mAdapter;
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 if (document.exists()) {
                                 Log.d("Got Data", document.getId() + " => " + document.getData());
+                                    ArrayList<Kid> list = (ArrayList<Kid>) document.get("kidz");
+
                                 m_User=document.toObject(User.class);
                                 m_User.setFirebaseId(document.getId());
-                                Log.i("Got Kidz", m_User.toString());
-                               // mAdapter..add(m_User.getKidz(),0);
 
-                                recyclerView.scrollToPosition(0);
+                                    getKidzData(m_User.getFirebaseId());
                                 } else {
                                     saveUser();
                                 }
@@ -209,6 +209,39 @@ private KidAdapter mAdapter;
                             configActionButton();
                         } else {
                             saveUser();
+                            Log.d("Got Date", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+
+    }
+
+
+    private void getKidzData(String UserFiebaseId) {
+        // final Boolean bFoundData ;
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("users").document(UserFiebaseId).collection("kidz")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                if (document.exists()) {
+                                    Log.d("Got Data", document.getId() + " => " + document.getData());
+                                    Kid myKid = document.toObject(Kid.class);
+                                    mAdapter.add(myKid,0);
+                                    recyclerView.scrollToPosition(0);
+                                } else {
+                                   // saveUser();
+                                }
+                            }
+
+
+                           // configActionButton();
+                        } else {
+                          //  saveUser();
                             Log.d("Got Date", "Error getting documents: ", task.getException());
                         }
                     }

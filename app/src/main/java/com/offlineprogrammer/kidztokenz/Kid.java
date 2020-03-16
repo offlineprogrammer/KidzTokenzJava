@@ -16,6 +16,10 @@ class Kid {
         this.monsterImage=monsterImage;
     }
 
+    public Kid() {
+
+    }
+
     @NonNull
     public String getKidName() {
         return kidName;
