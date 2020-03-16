@@ -24,6 +24,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
@@ -31,6 +32,8 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -81,7 +84,8 @@ private KidAdapter mAdapter;
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String kidName = String.valueOf(kidNameText.getText());
-                        Kid newKid = new Kid(kidName,pickMonster());
+                        Date currentTime = Calendar.getInstance().getTime();
+                        Kid newKid = new Kid(kidName,pickMonster(),currentTime);
                         mAdapter.add(newKid,0);
                         saveKid(newKid);
                         recyclerView.scrollToPosition(0);
@@ -222,6 +226,7 @@ private KidAdapter mAdapter;
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         db.collection("users").document(UserFiebaseId).collection("kidz")
+                .orderBy("createdDate", Query.Direction.ASCENDING)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
