@@ -2,6 +2,7 @@ package com.offlineprogrammer.kidztokenz;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.text.InputType;
@@ -39,7 +40,7 @@ import java.util.Map;
 import java.util.Random;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnKidListener {
 
 private RecyclerView recyclerView;
 private KidAdapter mAdapter;
@@ -48,6 +49,8 @@ private KidAdapter mAdapter;
     private ArrayList<Kid> kidzList = new ArrayList<>();
     private  User m_User;
     private Boolean bFoundData = false;
+
+    private static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +61,7 @@ private KidAdapter mAdapter;
     }
 
     private void setupRecyclerView() {
-        mAdapter = new KidAdapter(kidzList);
+        mAdapter = new KidAdapter(kidzList,this);
         recyclerView = findViewById(R.id.kidz_recyclerview);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(mAdapter);
@@ -161,6 +164,8 @@ private KidAdapter mAdapter;
 
     private void saveKid(Kid newKid){
 
+        kidzList.add(newKid);
+
         Map<String, Object> kidValues = newKid.toMap();
         Map<String, Object> childUpdates = new HashMap<>();
       //  String key = mDatabase.child("\"/users/\" + m_User.getFirebaseId() + \"/kidz/\"").push().getKey();
@@ -236,6 +241,7 @@ private KidAdapter mAdapter;
                                 if (document.exists()) {
                                     Log.d("Got Data", document.getId() + " => " + document.getData());
                                     Kid myKid = document.toObject(Kid.class);
+                                    kidzList.add(myKid);
                                     mAdapter.add(myKid,0);
                                     recyclerView.scrollToPosition(0);
                                 } else {
@@ -254,4 +260,18 @@ private KidAdapter mAdapter;
 
     }
 
+    @Override
+    public void onKidClick(int position) {
+      //  kidzList.get(position);
+
+        kidzList = mAdapter.getAllItems();
+
+        Log.i(TAG, "Clicked " + position);
+        Intent intent = new Intent(this, KidActivity.class);
+        intent.putExtra("selected_kid",kidzList.get(position));
+        startActivity(intent);
+
+
+
+    }
 }

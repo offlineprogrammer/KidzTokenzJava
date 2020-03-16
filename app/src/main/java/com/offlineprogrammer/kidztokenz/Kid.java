@@ -1,5 +1,8 @@
 package com.offlineprogrammer.kidztokenz;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.annotation.NonNull;
 
 import com.google.firebase.database.Exclude;
@@ -8,7 +11,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-class Kid {
+class Kid  implements Parcelable {
     private String kidName;
     private int monsterImage;
     private Date createdDate;
@@ -22,6 +25,23 @@ class Kid {
     public Kid() {
 
     }
+
+    protected Kid(Parcel in) {
+        kidName = in.readString();
+        monsterImage = in.readInt();
+    }
+
+    public static final Creator<Kid> CREATOR = new Creator<Kid>() {
+        @Override
+        public Kid createFromParcel(Parcel in) {
+            return new Kid(in);
+        }
+
+        @Override
+        public Kid[] newArray(int size) {
+            return new Kid[size];
+        }
+    };
 
     @NonNull
     public String getKidName() {
@@ -56,5 +76,16 @@ class Kid {
 
     public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(kidName);
+        dest.writeInt(monsterImage);
     }
 }

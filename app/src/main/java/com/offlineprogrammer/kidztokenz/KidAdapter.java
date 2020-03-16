@@ -12,16 +12,18 @@ import java.util.List;
 
 public class KidAdapter extends RecyclerView.Adapter {
     private ArrayList<Kid> models = new ArrayList<>();
+    private OnKidListener mOnKidListener;
 
-    public KidAdapter(@NonNull final ArrayList<Kid> viewModels) {
+    public KidAdapter(@NonNull final ArrayList<Kid> viewModels, OnKidListener onKidListener) {
         this.models.addAll(viewModels);
+        this.mOnKidListener=onKidListener;
     }
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         final View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
-        return new KidViewHolder(view);
+        return new KidViewHolder(view, mOnKidListener);
     }
 
     @Override
@@ -33,6 +35,10 @@ public class KidAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemCount() {
         return models.size();
+    }
+
+    public ArrayList<Kid> getAllItems() {
+        return models;
     }
 
     public void delete(int position) {
