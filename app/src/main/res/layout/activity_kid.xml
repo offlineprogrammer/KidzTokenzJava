@@ -2,12 +2,16 @@
 <androidx.cardview.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="250dp"
     xmlns:tools="http://schemas.android.com/tools"
     card_view:cardBackgroundColor="#E6E6E6"
     android:id="@+id/kidCard"
     card_view:cardCornerRadius="8dp"
     card_view:cardElevation="8dp"
+    card_view:contentPadding="10dp"
+    card_view:contentPaddingBottom="0dp"
+    card_view:cardPreventCornerOverlap="true"
+    card_view:cardUseCompatPadding="true"
     tools:context=".KidActivity">
 
     <!-- Main Content View -->
@@ -18,7 +22,7 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="180dp"
-            android:scaleType="centerCrop"
+            android:scaleType="fitCenter"
             android:id="@+id/kidMonsterImage"
             android:contentDescription="CardImageViewDesc" />
 
