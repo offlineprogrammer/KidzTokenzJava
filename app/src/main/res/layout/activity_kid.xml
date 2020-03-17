@@ -1,9 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.cardview.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    card_view:cardBackgroundColor="#E6E6E6"
+    android:id="@+id/kidCard"
+    card_view:cardCornerRadius="8dp"
+    card_view:cardElevation="8dp"
     tools:context=".KidActivity">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- Main Content View -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:scaleType="centerCrop"
+            android:id="@+id/kidMonsterImage"
+            android:contentDescription="CardImageViewDesc" />
+
+        <TextView
+            android:id="@+id/myAwesomeTextView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/kidMonsterImage"
+            android:layout_marginStart="5dp"
+            android:layout_marginLeft="5dp"
+            android:fontFamily="sans-serif"
+            android:gravity="center_vertical"
+            android:text="kid"
+            android:textSize="18sp" />
+
+
+
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>
