@@ -77,6 +77,14 @@ private KidAdapter mAdapter;
         return imgs.getResourceId(rndInt, 0);
     }
 
+    private int pickTokenType(){
+        final TypedArray imgs;
+        imgs = getResources().obtainTypedArray(R.array.kidzTokenTypes);
+        final Random rand = new Random();
+        final int rndInt = rand.nextInt(imgs.length());
+        return imgs.getResourceId(rndInt, 0);
+    }
+
     private void showAddKidDialog(Context c) {
         final EditText kidNameText = new EditText(c);
         AlertDialog dialog = new AlertDialog.Builder(c)
