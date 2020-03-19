@@ -15,11 +15,16 @@ class Kid  implements Parcelable {
     private String kidName;
     private int monsterImage;
     private Date createdDate;
+    private int tokenImage;
 
-    public Kid(String kidName, int monsterImage, Date createdDate) {
+    public Kid(String kidName,
+               int monsterImage,
+               Date createdDate,
+               int tokenImage) {
         this.kidName = kidName;
         this.monsterImage=monsterImage;
         this.createdDate=createdDate;
+        this.tokenImage=tokenImage;
     }
 
     public Kid() {
@@ -66,6 +71,7 @@ class Kid  implements Parcelable {
         result.put("kidName", this.kidName);
         result.put("monsterImage", this.monsterImage);
         result.put("createdDate", this.createdDate);
+        result.put("tokenImage", this.tokenImage);
 
         return result;
     }
@@ -87,5 +93,14 @@ class Kid  implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(kidName);
         dest.writeInt(monsterImage);
+        dest.writeInt(tokenImage);
+    }
+
+    public int getTokenImage() {
+        return tokenImage;
+    }
+
+    public void setTokenImage(int tokenImage) {
+        this.tokenImage = tokenImage;
     }
 }

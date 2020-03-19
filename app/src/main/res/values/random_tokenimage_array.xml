@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <array name="kidzTokenTypes">
+    <array name="kidzTokenImages">
         <item>@drawable/bunny</item>
         <item>@drawable/elephant</item>
         <item>@drawable/face</item>
@@ -9,7 +9,7 @@
         <item>@drawable/leopard</item>
         <item>@drawable/monkey</item>
         <item>@drawable/rocket</item>
-        <item>@drawable/Sheep</item>
+        <item>@drawable/sheep</item>
         <item>@drawable/star</item>
         <item>@drawable/teddybear</item>
         <item>@drawable/train</item>

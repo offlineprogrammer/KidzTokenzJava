@@ -77,9 +77,9 @@ private KidAdapter mAdapter;
         return imgs.getResourceId(rndInt, 0);
     }
 
-    private int pickTokenType(){
+    private int pickTokenImage(){
         final TypedArray imgs;
-        imgs = getResources().obtainTypedArray(R.array.kidzTokenTypes);
+        imgs = getResources().obtainTypedArray(R.array.kidzTokenImages);
         final Random rand = new Random();
         final int rndInt = rand.nextInt(imgs.length());
         return imgs.getResourceId(rndInt, 0);
@@ -96,7 +96,7 @@ private KidAdapter mAdapter;
                     public void onClick(DialogInterface dialog, int which) {
                         String kidName = String.valueOf(kidNameText.getText());
                         Date currentTime = Calendar.getInstance().getTime();
-                        Kid newKid = new Kid(kidName,pickMonster(),currentTime);
+                        Kid newKid = new Kid(kidName,pickMonster(),currentTime, pickTokenImage());
                         mAdapter.add(newKid,0);
                         saveKid(newKid);
                         recyclerView.scrollToPosition(0);
