@@ -34,6 +34,7 @@ class Kid  implements Parcelable {
     protected Kid(Parcel in) {
         kidName = in.readString();
         monsterImage = in.readInt();
+        tokenImage=in.readInt();
     }
 
     public static final Creator<Kid> CREATOR = new Creator<Kid>() {

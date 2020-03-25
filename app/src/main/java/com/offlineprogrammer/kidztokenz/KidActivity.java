@@ -15,6 +15,7 @@ public class KidActivity extends AppCompatActivity {
     private static final String TAG = "KidActivity";
     ImageView kidImageView;
     TextView kidNameTextView;
+    ImageView tokenImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,13 +23,18 @@ public class KidActivity extends AppCompatActivity {
         setContentView(R.layout.activity_kid);
 
         kidImageView = findViewById(R.id.kidMonsterImage);
-       kidNameTextView = findViewById(R.id.myAwesomeTextView);
+        tokenImageView = findViewById(R.id.tokenImageView);
+        kidNameTextView = findViewById(R.id.myAwesomeTextView);
 
-        if(getIntent().hasExtra("selected_kid")){
+        if (getIntent().hasExtra("selected_kid")) {
             Kid kid = getIntent().getParcelableExtra("selected_kid");
-            Log.i(TAG, "onCreate: " + kid.getKidName());
+            Log.i(TAG, "onCreate: " + kid.toMap().toString());
+            Log.i(TAG, "onCreate: " + kid.getTokenImage());
             kidImageView.setImageResource(kid.getMonsterImage());
-           kidNameTextView.setText(kid.getKidName());
+            kidNameTextView.setText(kid.getKidName());
+            tokenImageView.setImageResource(kid.getTokenImage());
+
+
 
         /*    CardView cardView = findViewById(R.id.kidCard);
             cardView.setUseCompatPadding(true);
