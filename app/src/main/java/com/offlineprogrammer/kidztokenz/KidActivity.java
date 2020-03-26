@@ -48,15 +48,6 @@ public class KidActivity extends AppCompatActivity {
 
 
 
-        /*    CardView cardView = findViewById(R.id.kidCard);
-            cardView.setUseCompatPadding(true);
-            cardView.setContentPadding(30, 30, 30, 0);
-            cardView.setPreventCornerOverlap(true);
-            cardView.setCardBackgroundColor(Color.WHITE);
-            cardView.setCardElevation(2.1f);
-            cardView.setRadius(0);
-            cardView.setMaxCardElevation(3f);*/
-
         }
     }
 }

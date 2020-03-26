@@ -32,10 +32,18 @@ public class TokenAdapter extends RecyclerView.Adapter<TokenViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull TokenViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final TokenViewHolder holder, int position) {
 
         holder.mImage.setImageResource(mTokenList.get(position).getTokenImage());
         holder.mTitle.setText(mTokenList.get(position).getTokenName());
+        holder.mCardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent mIntent = new Intent(mContext, KidActivity.class);
+                mIntent.putExtra("Image", mTokenList.get(holder.getAdapterPosition()).getTokenImage());
+                mContext.startActivity(mIntent);
+            }
+        });
 
     }
 
@@ -49,13 +57,13 @@ public class TokenAdapter extends RecyclerView.Adapter<TokenViewHolder> {
 class TokenViewHolder extends RecyclerView.ViewHolder {
     ImageView mImage;
     TextView mTitle;
-   // CardView mCardView;
+    CardView mCardView;
 
     TokenViewHolder(View itemView) {
         super(itemView);
          mImage = itemView.findViewById(R.id.ivImage);
          mTitle = itemView.findViewById(R.id.tvTitle);
-      //   mCardView = itemView.findViewById(R.id.tokenCardView);
+         mCardView = itemView.findViewById(R.id.tokenCardView);
 
 
     }
