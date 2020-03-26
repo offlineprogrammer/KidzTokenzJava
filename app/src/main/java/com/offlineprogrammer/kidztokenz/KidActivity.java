@@ -3,6 +3,7 @@ package com.offlineprogrammer.kidztokenz;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -34,7 +35,8 @@ public class KidActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent mIntent = new Intent(KidActivity.this, TokenzActivity.class);
-                startActivity(mIntent);
+                startActivityForResult(mIntent, 2);
+
             }
         });
 
@@ -45,9 +47,21 @@ public class KidActivity extends AppCompatActivity {
             kidImageView.setImageResource(kid.getMonsterImage());
             kidNameTextView.setText(kid.getKidName());
             tokenImageView.setImageResource(kid.getTokenImage());
-
-
-
         }
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 2) {
+            if(resultCode == Activity.RESULT_OK){
+                int result=data.getIntExtra("Image",0);
+                tokenImageView.setImageResource(result);
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                //Write your code if there's no result
+            }
+        }
+    }//onActivityResult
 }

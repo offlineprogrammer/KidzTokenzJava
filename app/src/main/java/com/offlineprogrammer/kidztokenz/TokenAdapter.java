@@ -1,5 +1,6 @@
 package com.offlineprogrammer.kidztokenz;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -41,6 +42,8 @@ public class TokenAdapter extends RecyclerView.Adapter<TokenViewHolder> {
             public void onClick(View view) {
                 Intent mIntent = new Intent(mContext, KidActivity.class);
                 mIntent.putExtra("Image", mTokenList.get(holder.getAdapterPosition()).getTokenImage());
+                ((Activity)mContext).setResult(Activity.RESULT_OK,mIntent);
+                ((Activity)mContext).finish();
                 mContext.startActivity(mIntent);
             }
         });
