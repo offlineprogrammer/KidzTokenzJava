@@ -16,15 +16,15 @@ class User {
 
     }
 
-    public String getFirebaseId() {
+    String getFirebaseId() {
         return firebaseId;
     }
 
-    public void setFirebaseId(String firebaseId) {
+    void setFirebaseId(String firebaseId) {
         this.firebaseId = firebaseId;
     }
 
-    public String getDeviceToken() {
+    String getDeviceToken() {
         return deviceToken;
     }
 

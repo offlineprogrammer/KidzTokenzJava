@@ -16,6 +16,8 @@ class Kid  implements Parcelable {
     private int monsterImage;
     private Date createdDate;
     private int tokenImage;
+    private String firestoreId;
+    private String userFirestoreId;
 
     public Kid(String kidName,
                int monsterImage,
@@ -77,6 +79,17 @@ class Kid  implements Parcelable {
         return result;
     }
 
+    @Override
+    public String toString() {
+        return "Kid{" +
+                "firestoreId='" + firestoreId + '\'' +
+                ", userFirestoreId='" + userFirestoreId + '\'' +
+                ", kidName='" + kidName + '\'' +
+                ", monsterImage='" + monsterImage + '\'' +
+                ", tokenImage='" + tokenImage + '\'' +
+                '}';
+    }
+
     public Date getCreatedDate() {
         return createdDate;
     }
@@ -95,6 +108,8 @@ class Kid  implements Parcelable {
         dest.writeString(kidName);
         dest.writeInt(monsterImage);
         dest.writeInt(tokenImage);
+        dest.writeString(firestoreId);
+        dest.writeString(userFirestoreId);
     }
 
     public int getTokenImage() {
@@ -103,5 +118,21 @@ class Kid  implements Parcelable {
 
     public void setTokenImage(int tokenImage) {
         this.tokenImage = tokenImage;
+    }
+
+    public String getFirestoreId() {
+        return firestoreId;
+    }
+
+    public void setFirestoreId(String firestoreId) {
+        this.firestoreId = firestoreId;
+    }
+
+    public String getUserFirestoreId() {
+        return userFirestoreId;
+    }
+
+    public void setUserFirestoreId(String userFirestoreId) {
+        this.userFirestoreId = userFirestoreId;
     }
 }

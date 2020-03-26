@@ -41,9 +41,14 @@ public class KidActivity extends AppCompatActivity {
         });
 
         if (getIntent().hasExtra("selected_kid")) {
-            Kid kid = getIntent().getParcelableExtra("selected_kid");
+            Bundle data = getIntent().getExtras();
+            Kid kid = (Kid) data.getParcelable("selected_kid");
+           // Kid kid = getIntent().getParcelableExtra("selected_kid");
             Log.i(TAG, "onCreate: " + kid.toMap().toString());
             Log.i(TAG, "onCreate: " + kid.getTokenImage());
+            Log.i(TAG, "onCreate: " + kid.getFirestoreId());
+            Log.i(TAG, "onCreate: " + kid.getUserFirestoreId());
+            Log.i(TAG, "onCreate STRING: " + kid.toString());
             kidImageView.setImageResource(kid.getMonsterImage());
             kidNameTextView.setText(kid.getKidName());
             tokenImageView.setImageResource(kid.getTokenImage());

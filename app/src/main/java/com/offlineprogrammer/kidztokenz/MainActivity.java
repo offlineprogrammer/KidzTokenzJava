@@ -97,8 +97,10 @@ private KidAdapter mAdapter;
                         String kidName = String.valueOf(kidNameText.getText());
                         Date currentTime = Calendar.getInstance().getTime();
                         Kid newKid = new Kid(kidName,pickMonster(),currentTime, pickTokenImage());
+                        newKid = saveKid(newKid);
+                        Log.i(TAG, "onClick UserFireStore : " + newKid.getUserFirestoreId());
+                        Log.i(TAG, "onClick KidFireStore : " + newKid.getFirestoreId());
                         mAdapter.add(newKid,0);
-                        saveKid(newKid);
                         recyclerView.scrollToPosition(0);
                     }
                 })
@@ -170,17 +172,15 @@ private KidAdapter mAdapter;
         });
     }
 
-    private void saveKid(Kid newKid){
+    private Kid saveKid(Kid newKid){
 
         kidzList.add(newKid);
 
         Map<String, Object> kidValues = newKid.toMap();
-        Map<String, Object> childUpdates = new HashMap<>();
-      //  String key = mDatabase.child("\"/users/\" + m_User.getFirebaseId() + \"/kidz/\"").push().getKey();
-        String sKUserUlr = "/users/" + m_User.getFirebaseId() + "/";//+ "kidz";
-
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference newKidRef = db.collection("users").document(m_User.getFirebaseId()).collection("kidz").document();
+        newKid.setFirestoreId(newKidRef.getId());
+        newKid.setUserFirestoreId(m_User.getFirebaseId());
 
         newKidRef.set(kidValues, SetOptions.merge())
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -195,6 +195,8 @@ private KidAdapter mAdapter;
                         Log.w("Add Kid", "Error writing document", e);
                     }
                 });
+
+        return newKid;
     }
 
     private void getUserData(String deviceToken) {
