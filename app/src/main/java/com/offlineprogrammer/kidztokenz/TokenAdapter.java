@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-public class TokenAdapter extends RecyclerView.Adapter<TokenNumberViewHolder> {
+public class TokenAdapter extends RecyclerView.Adapter<TokenViewHolder> {
 
     private Context mContext;
     private List<TokenData> mTokenList;
@@ -27,13 +27,13 @@ public class TokenAdapter extends RecyclerView.Adapter<TokenNumberViewHolder> {
 
     @NonNull
     @Override
-    public TokenNumberViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public TokenViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View mView = LayoutInflater.from(parent.getContext()).inflate(R.layout.token_itemview, parent, false);
-        return new TokenNumberViewHolder(mView);
+        return new TokenViewHolder(mView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final TokenNumberViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final TokenViewHolder holder, int position) {
 
         holder.mImage.setImageResource(mTokenList.get(position).getTokenImage());
         holder.mTitle.setText(mTokenList.get(position).getTokenName());

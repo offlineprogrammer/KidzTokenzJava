@@ -21,7 +21,7 @@ public class TokenNumberActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_token_number);
-        mRecyclerView = findViewById(R.id.tokenz_recyclerview);
+        mRecyclerView = findViewById(R.id.token_number_recyclerview);
         GridLayoutManager mGridLayoutManager = new GridLayoutManager(TokenNumberActivity.this, 2);
         mRecyclerView.setLayoutManager(mGridLayoutManager);
 

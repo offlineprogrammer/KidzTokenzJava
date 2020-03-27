@@ -64,9 +64,9 @@ class TokenNumberViewHolder extends RecyclerView.ViewHolder {
 
     TokenNumberViewHolder(View itemView) {
         super(itemView);
-         mImage = itemView.findViewById(R.id.ivImage);
-         mTitle = itemView.findViewById(R.id.tvTitle);
-         mCardView = itemView.findViewById(R.id.tokenCardView);
+         mImage = itemView.findViewById(R.id.tKNImageView);
+         mTitle = itemView.findViewById(R.id.tKNTitle);
+         mCardView = itemView.findViewById(R.id.tokenNumberCardView);
 
 
     }
