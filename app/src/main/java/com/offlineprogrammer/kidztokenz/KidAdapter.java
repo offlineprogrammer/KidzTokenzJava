@@ -1,5 +1,6 @@
 package com.offlineprogrammer.kidztokenz;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import java.util.List;
 public class KidAdapter extends RecyclerView.Adapter {
     private ArrayList<Kid> models = new ArrayList<>();
     private OnKidListener mOnKidListener;
+    private static final String TAG = "KidAdapter";
 
     public KidAdapter(@NonNull final ArrayList<Kid> viewModels, OnKidListener onKidListener) {
         this.models.addAll(viewModels);
@@ -48,6 +50,7 @@ public class KidAdapter extends RecyclerView.Adapter {
 
     public void add(Kid item, int position){
         models.add(position, item);
+        Log.i(TAG, "add: " + item.toString());
         notifyItemInserted(position);
         //notifyDataSetChanged();
        //notifyItemRangeChanged(0, getItemCount());

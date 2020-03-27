@@ -37,6 +37,9 @@ class Kid  implements Parcelable {
         kidName = in.readString();
         monsterImage = in.readInt();
         tokenImage=in.readInt();
+        firestoreId = in.readString();
+        userFirestoreId = in.readString();
+
     }
 
     public static final Creator<Kid> CREATOR = new Creator<Kid>() {
@@ -75,6 +78,8 @@ class Kid  implements Parcelable {
         result.put("monsterImage", this.monsterImage);
         result.put("createdDate", this.createdDate);
         result.put("tokenImage", this.tokenImage);
+        result.put("firestoreId", this.firestoreId);
+        result.put("userFirestoreId", this.userFirestoreId);
 
         return result;
     }

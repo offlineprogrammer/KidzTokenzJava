@@ -44,7 +44,7 @@ public class KidActivity extends AppCompatActivity {
             Bundle data = getIntent().getExtras();
             Kid kid = (Kid) data.getParcelable("selected_kid");
            // Kid kid = getIntent().getParcelableExtra("selected_kid");
-            Log.i(TAG, "onCreate: " + kid.toMap().toString());
+            Log.i(TAG, "onCreate: " + kid.toString());
             Log.i(TAG, "onCreate: " + kid.getTokenImage());
             Log.i(TAG, "onCreate: " + kid.getFirestoreId());
             Log.i(TAG, "onCreate: " + kid.getUserFirestoreId());

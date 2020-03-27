@@ -176,11 +176,12 @@ private KidAdapter mAdapter;
 
         kidzList.add(newKid);
 
-        Map<String, Object> kidValues = newKid.toMap();
+
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference newKidRef = db.collection("users").document(m_User.getFirebaseId()).collection("kidz").document();
         newKid.setFirestoreId(newKidRef.getId());
         newKid.setUserFirestoreId(m_User.getFirebaseId());
+        Map<String, Object> kidValues = newKid.toMap();
 
         newKidRef.set(kidValues, SetOptions.merge())
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -278,6 +279,7 @@ private KidAdapter mAdapter;
 
         Log.i(TAG, "Clicked " + position);
         Intent intent = new Intent(this, KidActivity.class);
+        Log.i(TAG, "onKidClick: " + kidzList.get(position).toString());
         intent.putExtra("selected_kid",kidzList.get(position));
         startActivity(intent);
 
