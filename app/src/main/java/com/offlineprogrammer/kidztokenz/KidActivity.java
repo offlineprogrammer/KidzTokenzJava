@@ -26,6 +26,7 @@ public class KidActivity extends AppCompatActivity {
     TextView kidNameTextView;
     ImageView tokenImageView;
     CardView tokenImageCard;
+    CardView tokenNumberCard;
     ImageView tokenNumberImageView;
     Kid selectedKid;
 
@@ -38,12 +39,22 @@ public class KidActivity extends AppCompatActivity {
         tokenImageView = findViewById(R.id.tokenImageView);
         kidNameTextView = findViewById(R.id.myAwesomeTextView);
         tokenImageCard = findViewById(R.id.tokenImageCard);
+        tokenNumberCard = findViewById(R.id.tokenNumberCard);
         tokenNumberImageView = findViewById(R.id.tokenNumberImageView);
 
         tokenImageCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent mIntent = new Intent(KidActivity.this, TokenzActivity.class);
+                startActivityForResult(mIntent, 2);
+
+            }
+        });
+
+        tokenNumberCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent mIntent = new Intent(KidActivity.this, TokenNumberActivity.class);
                 startActivityForResult(mIntent, 2);
 
             }

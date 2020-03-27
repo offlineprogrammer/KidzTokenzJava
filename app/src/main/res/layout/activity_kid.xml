@@ -113,7 +113,7 @@
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/numberOfTokenzCard"
+        android:id="@+id/tokenNumberCard"
         android:layout_width="fill_parent"
         android:layout_height="100dp"
         android:layout_below="@id/tokenImageCard"
