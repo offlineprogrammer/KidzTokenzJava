@@ -14,7 +14,7 @@ public class TokenzActivity extends AppCompatActivity {
     RecyclerView mRecyclerView;
     List< TokenData > mTokenList;
     TokenData mTokenData;
-    TokenNumberAdapter myAdapter;
+    TokenAdapter myAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +62,7 @@ public class TokenzActivity extends AppCompatActivity {
                 R.drawable.triceratops);
         mTokenList.add(mTokenData);
 
-         myAdapter = new TokenNumberAdapter(TokenzActivity.this, mTokenList);
+         myAdapter = new TokenAdapter(TokenzActivity.this, mTokenList);
         mRecyclerView.setAdapter(myAdapter);
 
     }
