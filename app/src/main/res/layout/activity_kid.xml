@@ -5,109 +5,171 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".KidActivity">
-<androidx.cardview.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="250dp"
-    xmlns:tools="http://schemas.android.com/tools"
-    card_view:cardBackgroundColor="#E6E6E6"
-    android:id="@+id/kidCard"
-    card_view:cardCornerRadius="8dp"
-    card_view:cardElevation="8dp"
-    card_view:contentPadding="10dp"
-    card_view:contentPaddingBottom="0dp"
-    card_view:cardPreventCornerOverlap="true"
-    card_view:cardUseCompatPadding="true"
-    tools:context=".KidActivity">
 
-    <!-- Main Content View -->
-    <RelativeLayout
+    <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/kidCard"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="250dp"
+        card_view:cardBackgroundColor="#E6E6E6"
+        card_view:cardCornerRadius="8dp"
+        card_view:cardElevation="8dp"
+        card_view:cardPreventCornerOverlap="true"
+        card_view:cardUseCompatPadding="true"
+        card_view:contentPadding="10dp"
+        card_view:contentPaddingBottom="0dp"
+        tools:context=".KidActivity">
 
-        <ImageView
+        <!-- Main Content View -->
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="180dp"
-            android:scaleType="fitCenter"
-            android:id="@+id/kidMonsterImage"
-            android:contentDescription="CardImageViewDesc" />
+            android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/myAwesomeTextView"
+            <ImageView
+                android:id="@+id/kidMonsterImage"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:contentDescription="CardImageViewDesc"
+                android:scaleType="fitCenter" />
+
+            <TextView
+                android:id="@+id/myAwesomeTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/kidMonsterImage"
+                android:layout_marginStart="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginBottom="8dp"
+                android:fontFamily="sans-serif"
+                android:gravity="center"
+                android:text="kid"
+                android:textColor="#000"
+                android:textSize="18sp" />
+
+
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/tokenImageCard"
+        android:layout_width="fill_parent"
+        android:layout_height="100dp"
+        android:layout_below="@id/kidCard"
+        android:layout_gravity="center"
+        card_view:cardBackgroundColor="#E6E6E6"
+        card_view:cardCornerRadius="10dp"
+        card_view:cardElevation="5dp"
+        card_view:cardUseCompatPadding="true"
+        tools:context=".KidActivity">
+
+        <!-- Main Content View -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/kidMonsterImage"
-            android:layout_marginStart="5dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginBottom="8dp"
-            android:fontFamily="sans-serif"
-            android:gravity="center"
-            android:text="kid"
-            android:textColor="#000"
-            android:textSize="18sp" />
+            android:orientation="horizontal">
 
+            <ImageView
+                android:id="@+id/tokenImageView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:src="@drawable/sheep"
+                android:tag="image_tag" />
 
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:orientation="horizontal">
 
-    </RelativeLayout>
-</androidx.cardview.widget.CardView>
-<androidx.cardview.widget.CardView
-    android:layout_width="fill_parent"
-    android:layout_height="100dp"
-    android:layout_gravity="center"
-    card_view:cardBackgroundColor="#E6E6E6"
-android:id="@+id/tokenImageCard"
-    android:layout_below="@id/kidCard"
-card_view:cardCornerRadius="10dp"
-card_view:cardElevation="5dp"
-card_view:cardUseCompatPadding="true"
-tools:context=".KidActivity">
+                <TextView
+                    android:id="@+id/textViewName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
 
-<!-- Main Content View -->
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal">
+                    android:layout_weight="1"
+                    android:text="Token Image"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <ImageView
-        android:id="@+id/tokenImageView"
-        android:tag="image_tag"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:layout_weight="1"
-        android:src="@drawable/sheep"/>
+                <ImageButton
 
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:layout_weight="2"
-        android:gravity="center"
-        android:orientation="horizontal">
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:adjustViewBounds="true"
+                    android:background="@null"
+                    android:contentDescription="TODO"
+                    android:gravity="center"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_action_config" />
 
-        <TextView
-            android:id="@+id/textViewName"
-            android:layout_width="wrap_content"
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/numberOfTokenzCard"
+        android:layout_width="fill_parent"
+        android:layout_height="100dp"
+        android:layout_below="@id/tokenImageCard"
+        android:layout_gravity="center"
+        card_view:cardBackgroundColor="#E6E6E6"
+        card_view:cardCornerRadius="10dp"
+        card_view:cardElevation="5dp"
+        card_view:cardUseCompatPadding="true"
+        tools:context=".KidActivity">
+
+        <!-- Main Content View -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:orientation="horizontal">
 
-            android:text="Token Image"
-            android:layout_weight="1"
-            android:textAppearance="?android:attr/textAppearanceMedium"/>
+            <ImageView
+                android:id="@+id/noOftokenzImageView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:src="@drawable/sheep"
+                android:tag="image_tag" />
 
-        <ImageButton
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:orientation="horizontal">
 
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:adjustViewBounds="true"
-            android:contentDescription="TODO"
-            android:scaleType="fitCenter"
-            android:background="@null"
-            android:src="@drawable/ic_action_config"
-            android:gravity="center"/>
+                <TextView
+                    android:id="@+id/noOfTokenztextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
 
-    </LinearLayout>
-</LinearLayout>
-</androidx.cardview.widget.CardView>
+                    android:layout_weight="1"
+                    android:text="Number Of Tokenz"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <ImageButton
+
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:adjustViewBounds="true"
+                    android:background="@null"
+                    android:contentDescription="TODO"
+                    android:gravity="center"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_action_config" />
+
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 </RelativeLayout>

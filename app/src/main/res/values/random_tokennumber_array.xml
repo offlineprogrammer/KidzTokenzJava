@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <array name="kidzTokenNumbers">
+        <item>@drawable/tn1</item>
+        <item>@drawable/tn2</item>
+        <item>@drawable/tn3</item>
+        <item>@drawable/tn4</item>
+        <item>@drawable/tn5</item>
+        <item>@drawable/tn6</item>
+        <item>@drawable/tn7</item>
+        <item>@drawable/tn8</item>
+        <item>@drawable/tn9</item>
+        <item>@drawable/tn10</item>
+    </array>
+
+</resources>
