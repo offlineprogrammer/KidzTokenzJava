@@ -15,14 +15,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-public class TokenAdapter extends RecyclerView.Adapter<TokenNumberViewHolder> {
+public class TokenNumberAdapter extends RecyclerView.Adapter<TokenNumberViewHolder> {
 
     private Context mContext;
-    private List<TokenData> mTokenList;
+    private List<TokenNumberData> mTokenNumberList;
 
-    public TokenAdapter(Context mContext, List< TokenData > mTokenList) {
+    public TokenNumberAdapter(Context mContext, List< TokenNumberData > mTokenNumberList) {
         this.mContext = mContext;
-        this.mTokenList = mTokenList;
+        this.mTokenNumberList = mTokenNumberList;
     }
 
     @NonNull
@@ -35,13 +35,13 @@ public class TokenAdapter extends RecyclerView.Adapter<TokenNumberViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull final TokenNumberViewHolder holder, int position) {
 
-        holder.mImage.setImageResource(mTokenList.get(position).getTokenImage());
-        holder.mTitle.setText(mTokenList.get(position).getTokenName());
+        holder.mImage.setImageResource(mTokenNumberList.get(position).getTokenNumberImage());
+        holder.mTitle.setText(mTokenNumberList.get(position).getTokenNumberName());
         holder.mCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent mIntent = new Intent(mContext, KidActivity.class);
-                mIntent.putExtra("Image", mTokenList.get(holder.getAdapterPosition()).getTokenImage());
+                mIntent.putExtra("Image", mTokenNumberList.get(holder.getAdapterPosition()).getTokenNumberImage());
                 ((Activity)mContext).setResult(Activity.RESULT_OK,mIntent);
                 ((Activity)mContext).finish();
                 mContext.startActivity(mIntent);
@@ -53,16 +53,16 @@ public class TokenAdapter extends RecyclerView.Adapter<TokenNumberViewHolder> {
 
     @Override
     public int getItemCount() {
-        return mTokenList.size();
+        return mTokenNumberList.size();
     }
 }
 
-class TokenViewHolder extends RecyclerView.ViewHolder {
+class TokenNumberViewHolder extends RecyclerView.ViewHolder {
     ImageView mImage;
     TextView mTitle;
     CardView mCardView;
 
-    TokenViewHolder(View itemView) {
+    TokenNumberViewHolder(View itemView) {
         super(itemView);
          mImage = itemView.findViewById(R.id.ivImage);
          mTitle = itemView.findViewById(R.id.tvTitle);
