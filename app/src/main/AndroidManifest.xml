@@ -9,12 +9,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".TokenNumberActivity"></activity>
         <activity
             android:name=".TokenzActivity"
-            android:parentActivityName=".KidActivity"
+            android:autoRemoveFromRecents="true"
             android:launchMode="singleTop"
-            android:autoRemoveFromRecents="true"/>
-        <activity android:name=".KidActivity" android:parentActivityName=".MainActivity" android:launchMode="singleTop" />
+            android:parentActivityName=".KidActivity" />
+        <activity
+            android:name=".KidActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".MainActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
