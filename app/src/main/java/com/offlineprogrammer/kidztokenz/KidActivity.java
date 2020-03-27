@@ -26,6 +26,7 @@ public class KidActivity extends AppCompatActivity {
     TextView kidNameTextView;
     ImageView tokenImageView;
     CardView tokenImageCard;
+    ImageView tokenNumberImageView;
     Kid selectedKid;
 
     @Override
@@ -37,6 +38,7 @@ public class KidActivity extends AppCompatActivity {
         tokenImageView = findViewById(R.id.tokenImageView);
         kidNameTextView = findViewById(R.id.myAwesomeTextView);
         tokenImageCard = findViewById(R.id.tokenImageCard);
+        tokenNumberImageView = findViewById(R.id.tokenNumberImageView);
 
         tokenImageCard.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,6 +61,7 @@ public class KidActivity extends AppCompatActivity {
             kidImageView.setImageResource(selectedKid.getMonsterImage());
             kidNameTextView.setText(selectedKid.getKidName());
             tokenImageView.setImageResource(selectedKid.getTokenImage());
+            tokenNumberImageView.setImageResource(selectedKid.getTokenNumber());
         }
     }
 

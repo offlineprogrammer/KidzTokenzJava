@@ -131,7 +131,7 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:id="@+id/noOftokenzImageView"
+                android:id="@+id/tokenNumberImageView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
@@ -148,7 +148,7 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/noOfTokenztextView"
+                    android:id="@+id/tokenNumbertextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
