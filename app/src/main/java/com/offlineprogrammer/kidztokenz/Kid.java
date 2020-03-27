@@ -16,17 +16,20 @@ class Kid  implements Parcelable {
     private int monsterImage;
     private Date createdDate;
     private int tokenImage;
+    private int tokenNumber;
     private String firestoreId;
     private String userFirestoreId;
 
     public Kid(String kidName,
                int monsterImage,
                Date createdDate,
-               int tokenImage) {
+               int tokenImage,
+               int tokenNumber) {
         this.kidName = kidName;
         this.monsterImage=monsterImage;
         this.createdDate=createdDate;
         this.tokenImage=tokenImage;
+        this.tokenNumber=tokenNumber;
     }
 
     public Kid() {
@@ -39,6 +42,7 @@ class Kid  implements Parcelable {
         tokenImage=in.readInt();
         firestoreId = in.readString();
         userFirestoreId = in.readString();
+        tokenNumber=in.readInt();
 
     }
 
@@ -80,6 +84,7 @@ class Kid  implements Parcelable {
         result.put("tokenImage", this.tokenImage);
         result.put("firestoreId", this.firestoreId);
         result.put("userFirestoreId", this.userFirestoreId);
+        result.put("tokenNumber", this.tokenNumber);
 
         return result;
     }
@@ -92,6 +97,7 @@ class Kid  implements Parcelable {
                 ", kidName='" + kidName + '\'' +
                 ", monsterImage='" + monsterImage + '\'' +
                 ", tokenImage='" + tokenImage + '\'' +
+                ", tokenNumber='" + tokenNumber + '\'' +
                 '}';
     }
 
@@ -115,6 +121,7 @@ class Kid  implements Parcelable {
         dest.writeInt(tokenImage);
         dest.writeString(firestoreId);
         dest.writeString(userFirestoreId);
+        dest.writeInt(tokenNumber);
     }
 
     public int getTokenImage() {
@@ -139,5 +146,13 @@ class Kid  implements Parcelable {
 
     public void setUserFirestoreId(String userFirestoreId) {
         this.userFirestoreId = userFirestoreId;
+    }
+
+    public int getTokenNumber() {
+        return tokenNumber;
+    }
+
+    public void setTokenNumber(int tokenNumber) {
+        this.tokenNumber = tokenNumber;
     }
 }
