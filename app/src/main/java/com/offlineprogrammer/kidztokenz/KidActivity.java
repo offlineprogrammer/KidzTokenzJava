@@ -55,7 +55,7 @@ public class KidActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent mIntent = new Intent(KidActivity.this, TokenNumberActivity.class);
-                startActivityForResult(mIntent, 2);
+                startActivityForResult(mIntent, 3);
 
             }
         });
@@ -89,6 +89,15 @@ public class KidActivity extends AppCompatActivity {
             if (resultCode == Activity.RESULT_CANCELED) {
                 //Write your code if there's no result
             }
+        } else if (requestCode == 3) {
+            if(resultCode == Activity.RESULT_OK){
+                int result=data.getIntExtra("Image",0);
+                tokenNumberImageView.setImageResource(result);
+                updateKidTokenNumberImage(result);
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                //Write your code if there's no result
+            }
         }
     }//onActivityResult
 
@@ -100,6 +109,29 @@ public class KidActivity extends AppCompatActivity {
 // Set the "isCapital" field of the city 'DC'
         selectedKidRef
                 .update("tokenImage", newTokenImage)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully updated!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error updating document", e);
+                    }
+                });
+
+    }
+
+    private void updateKidTokenNumberImage(int newTokenNumberImage) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        DocumentReference selectedKidRef = db.collection("users").document(selectedKid.getUserFirestoreId()).collection("kidz").document(selectedKid.getFirestoreId());
+
+// Set the "isCapital" field of the city 'DC'
+        selectedKidRef
+                .update("tokenNumber", newTokenNumberImage)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
