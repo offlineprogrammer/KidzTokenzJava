@@ -28,7 +28,7 @@ public class TokenNumberAdapter extends RecyclerView.Adapter<TokenNumberViewHold
     @NonNull
     @Override
     public TokenNumberViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View mView = LayoutInflater.from(parent.getContext()).inflate(R.layout.token_itemview, parent, false);
+        View mView = LayoutInflater.from(parent.getContext()).inflate(R.layout.token_number_itemview, parent, false);
         return new TokenNumberViewHolder(mView);
     }
 
