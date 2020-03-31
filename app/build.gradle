@@ -35,4 +35,5 @@ dependencies {
     // https://firebase.google.com/docs/android/setup#available-libraries
     implementation 'com.google.firebase:firebase-firestore:21.4.1'
     implementation 'com.google.firebase:firebase-database:19.2.1'
+    api 'com.google.android.material:material:1.2.0-alpha05'
 }
