@@ -3,5 +3,5 @@
     <string name="shr_hint_kidname">Kidname</string>
     <string name="kidname_button_save">Save</string>
     <string name="kidname_button_cancel">Cancel</string>
-    <string name="kid_error_name">Please enter a name</string>
+    <string name="kid_error_name">Please enter a name (min 2 chars)</string>
 </resources>

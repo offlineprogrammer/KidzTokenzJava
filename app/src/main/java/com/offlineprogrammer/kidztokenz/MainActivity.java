@@ -7,6 +7,7 @@ import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -120,8 +121,7 @@ private KidAdapter mAdapter;
                 if (!isKidNameValid(kidName)) {
                     kidNameText.setError(getString(R.string.kid_error_name));
                 } else {
-
-
+                    kidNameText.setError(null);
                     Date currentTime = Calendar.getInstance().getTime();
                     Kid newKid = new Kid(kidName, pickMonster(), currentTime, pickTokenImage(), pickTokenNumber());
                     newKid = saveKid(newKid);
@@ -133,6 +133,17 @@ private KidAdapter mAdapter;
                 }
 
 
+            }
+        });
+
+        kidNameText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+                String kidName = String.valueOf(kidNameText.getEditText().getText());
+                if (isKidNameValid(kidName)) {
+                    kidNameText.setError(null); //Clear the error
+                }
+                return false;
             }
         });
         cancelBtn.setOnClickListener(new View.OnClickListener() {
@@ -154,7 +165,7 @@ private KidAdapter mAdapter;
     }
 
     private boolean isKidNameValid(String kidName) {
-         return kidName != null && kidName.length() >= 8;
+         return kidName != null && kidName.length() >= 2;
     }
 
     private void getDeviceToken(){
