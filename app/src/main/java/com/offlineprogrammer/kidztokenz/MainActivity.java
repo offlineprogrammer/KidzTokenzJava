@@ -7,8 +7,11 @@ import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
@@ -23,6 +26,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -37,7 +41,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
+import java.util.zip.Inflater;
 
 
 public class MainActivity extends AppCompatActivity implements OnKidListener {
@@ -94,43 +100,51 @@ private KidAdapter mAdapter;
     }
 
     private void showAddKidDialog(Context c) {
-        final EditText kidNameText = new EditText(c);
-        AlertDialog dialog = new AlertDialog.Builder(c)
-                .setTitle("Add a new kid")
-                .setMessage("Enter the kid name")
-                .setView(kidNameText)
-                .setPositiveButton("Add", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String kidName = String.valueOf(kidNameText.getText());
-                        Date currentTime = Calendar.getInstance().getTime();
-                        Kid newKid = new Kid(kidName,pickMonster(),currentTime, pickTokenImage(),pickTokenNumber());
-                        newKid = saveKid(newKid);
-                        Log.i(TAG, "onClick UserFireStore : " + newKid.getUserFirestoreId());
-                        Log.i(TAG, "onClick KidFireStore : " + newKid.getFirestoreId());
-                        mAdapter.add(newKid,0);
-                        recyclerView.scrollToPosition(0);
-                    }
-                })
-                .setNegativeButton("Cancel", null)
-                .create();
-        dialog.show();
-        kidNameText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                kidNameText.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        InputMethodManager inputMethodManager= (InputMethodManager) MainActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
-                        inputMethodManager.showSoftInput(kidNameText, InputMethodManager.SHOW_IMPLICIT);
-                    }
-                });
+
+
+        //View dialogLayout = Inflater.class.inflate(R.layout.alert_dialog_add_kid, null);
+        final AlertDialog builder = new AlertDialog.Builder(c).create();
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.alert_dialog_add_kid, null);
+        final TextInputLayout kidNameText = (TextInputLayout) dialogView.findViewById(R.id.kidname_text_input);
+
+
+        kidNameText.requestFocus();
+
+        Button okBtn= (Button) dialogView.findViewById(R.id.kidname_save_button);
+        Button cancelBtn = (Button) dialogView.findViewById(R.id.kidname_cancel_button);
+        okBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                String kidName = String.valueOf(kidNameText.getEditText().getText());
+                Date currentTime = Calendar.getInstance().getTime();
+                Kid newKid = new Kid(kidName,pickMonster(),currentTime, pickTokenImage(),pickTokenNumber());
+                newKid = saveKid(newKid);
+                Log.i(TAG, "onClick UserFireStore : " + newKid.getUserFirestoreId());
+                Log.i(TAG, "onClick KidFireStore : " + newKid.getFirestoreId());
+                mAdapter.add(newKid,0);
+                recyclerView.scrollToPosition(0);
+                builder.dismiss();
+
+
             }
         });
-        kidNameText.setMaxLines(1);
-        kidNameText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL );
-        kidNameText.setHint("Kid Name");
-        kidNameText.requestFocus();
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                builder.dismiss();
+
+                // btnAdd1 has been clicked
+
+            }
+        });
+        builder.setView(dialogView);
+        builder.show();
+        builder.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+
+     //   kidNameText.setMaxLines(1);
+     //   kidNameText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL );
+     //   kidNameText.setHint("Kid Name");
+     //   kidNameText.requestFocus();
     }
 
     private void getDeviceToken(){
