@@ -112,20 +112,25 @@ private KidAdapter mAdapter;
 
         kidNameText.requestFocus();
 
-        Button okBtn= (Button) dialogView.findViewById(R.id.kidname_save_button);
-        Button cancelBtn = (Button) dialogView.findViewById(R.id.kidname_cancel_button);
+        Button okBtn= dialogView.findViewById(R.id.kidname_save_button);
+        Button cancelBtn = dialogView.findViewById(R.id.kidname_cancel_button);
         okBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
                 String kidName = String.valueOf(kidNameText.getEditText().getText());
-                Date currentTime = Calendar.getInstance().getTime();
-                Kid newKid = new Kid(kidName,pickMonster(),currentTime, pickTokenImage(),pickTokenNumber());
-                newKid = saveKid(newKid);
-                Log.i(TAG, "onClick UserFireStore : " + newKid.getUserFirestoreId());
-                Log.i(TAG, "onClick KidFireStore : " + newKid.getFirestoreId());
-                mAdapter.add(newKid,0);
-                recyclerView.scrollToPosition(0);
-                builder.dismiss();
+                if (!isKidNameValid(kidName)) {
+                    kidNameText.setError(getString(R.string.kid_error_name));
+                } else {
+
+
+                    Date currentTime = Calendar.getInstance().getTime();
+                    Kid newKid = new Kid(kidName, pickMonster(), currentTime, pickTokenImage(), pickTokenNumber());
+                    newKid = saveKid(newKid);
+                    Log.i(TAG, "onClick UserFireStore : " + newKid.getUserFirestoreId());
+                    Log.i(TAG, "onClick KidFireStore : " + newKid.getFirestoreId());
+                    mAdapter.add(newKid, 0);
+                    recyclerView.scrollToPosition(0);
+                    builder.dismiss();
+                }
 
 
             }
@@ -146,6 +151,10 @@ private KidAdapter mAdapter;
      //   kidNameText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL );
      //   kidNameText.setHint("Kid Name");
      //   kidNameText.requestFocus();
+    }
+
+    private boolean isKidNameValid(String kidName) {
+         return kidName != null && kidName.length() >= 8;
     }
 
     private void getDeviceToken(){
