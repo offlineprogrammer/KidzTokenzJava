@@ -92,11 +92,12 @@ private KidAdapter mAdapter;
     }
 
     private int pickTokenNumber(){
-        final TypedArray imgs;
+        /*final TypedArray imgs;
         imgs = getResources().obtainTypedArray(R.array.kidzTokenNumbers);
         final Random rand = new Random();
         final int rndInt = rand.nextInt(imgs.length());
-        return imgs.getResourceId(rndInt, 0);
+        return imgs.getResourceId(rndInt, 0);*/
+        return R.drawable.tn5;
     }
 
     private void showAddKidDialog(Context c) {
