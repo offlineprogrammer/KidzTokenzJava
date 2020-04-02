@@ -24,6 +24,9 @@ public class TokenNumberActivity extends AppCompatActivity {
         mRecyclerView = findViewById(R.id.token_number_recyclerview);
         GridLayoutManager mGridLayoutManager = new GridLayoutManager(TokenNumberActivity.this, 2);
         mRecyclerView.setLayoutManager(mGridLayoutManager);
+        int largePadding = getResources().getDimensionPixelSize(R.dimen.ktz_kidz_grid_spacing);
+        int smallPadding = getResources().getDimensionPixelSize(R.dimen.ktz_kidz_grid_spacing_small);
+        mRecyclerView.addItemDecoration(new KidGridItemDecoration(largePadding, smallPadding));
 
         mTokenNumberList = new ArrayList<>();
 

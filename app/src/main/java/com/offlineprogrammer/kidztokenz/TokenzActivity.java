@@ -23,6 +23,10 @@ public class TokenzActivity extends AppCompatActivity {
          mRecyclerView = findViewById(R.id.tokenz_recyclerview);
         GridLayoutManager mGridLayoutManager = new GridLayoutManager(TokenzActivity.this, 2);
         mRecyclerView.setLayoutManager(mGridLayoutManager);
+        int largePadding = getResources().getDimensionPixelSize(R.dimen.ktz_kidz_grid_spacing);
+        int smallPadding = getResources().getDimensionPixelSize(R.dimen.ktz_kidz_grid_spacing_small);
+        mRecyclerView.addItemDecoration(new KidGridItemDecoration(largePadding, smallPadding));
+
 
         mTokenList = new ArrayList<>();
         mTokenData = new TokenData("bunny",
