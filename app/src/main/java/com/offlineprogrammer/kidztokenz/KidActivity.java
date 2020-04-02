@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -41,6 +42,8 @@ public class KidActivity extends AppCompatActivity {
         tokenImageCard = findViewById(R.id.tokenImageCard);
         tokenNumberCard = findViewById(R.id.tokenNumberCard);
         tokenNumberImageView = findViewById(R.id.tokenNumberImageView);
+
+        configActionButton();
 
         tokenImageCard.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,6 +77,19 @@ public class KidActivity extends AppCompatActivity {
             tokenImageView.setImageResource(selectedKid.getTokenImage());
             tokenNumberImageView.setImageResource(selectedKid.getTokenNumber());
         }
+    }
+
+    private void configActionButton() {
+        FloatingActionButton fab = findViewById(R.id.fab_add_task);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showAddTaskDialog(KidActivity.this);
+            }
+        });
+    }
+
+    private void showAddTaskDialog(KidActivity kidActivity) {
     }
 
     @Override
