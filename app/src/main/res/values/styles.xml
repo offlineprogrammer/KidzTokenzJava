@@ -1,11 +1,19 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight">
+    <style name="Theme.KidzTokenz" parent="Theme.MaterialComponents.DayNight">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="Theme.KidzTokenz.Autumn" parent="Theme.KidzTokenz">
+        <item name="colorPrimary">#FFCF44</item>
+        <item name="colorPrimaryDark">#FD9725</item>
+        <item name="colorAccent">#FD9725</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorError">#FD9725</item>
     </style>
 
 </resources>
