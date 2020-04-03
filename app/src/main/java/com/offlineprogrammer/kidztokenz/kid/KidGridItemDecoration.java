@@ -1,4 +1,4 @@
-package com.offlineprogrammer.kidztokenz;
+package com.offlineprogrammer.kidztokenz.kid;
 
 import android.graphics.Rect;
 import android.view.View;

@@ -6,6 +6,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 
+import com.offlineprogrammer.kidztokenz.kid.KidGridItemDecoration;
+
 import java.util.ArrayList;
 import java.util.List;
 

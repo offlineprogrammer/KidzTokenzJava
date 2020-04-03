@@ -28,6 +28,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
+import com.offlineprogrammer.kidztokenz.kid.Kid;
 import com.offlineprogrammer.kidztokenz.task.OnTaskListener;
 import com.offlineprogrammer.kidztokenz.task.Task;
 import com.offlineprogrammer.kidztokenz.task.TaskAdapter;

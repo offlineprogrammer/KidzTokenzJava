@@ -1,4 +1,4 @@
-package com.offlineprogrammer.kidztokenz;
+package com.offlineprogrammer.kidztokenz.kid;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -11,7 +11,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-class Kid  implements Parcelable {
+public class Kid  implements Parcelable {
     private String kidName;
     private int monsterImage;
     private Date createdDate;

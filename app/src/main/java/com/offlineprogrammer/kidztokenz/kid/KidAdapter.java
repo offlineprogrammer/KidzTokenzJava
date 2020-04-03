@@ -1,4 +1,4 @@
-package com.offlineprogrammer.kidztokenz;
+package com.offlineprogrammer.kidztokenz.kid;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,8 +8,10 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.offlineprogrammer.kidztokenz.OnKidListener;
+import com.offlineprogrammer.kidztokenz.R;
+
 import java.util.ArrayList;
-import java.util.List;
 
 public class KidAdapter extends RecyclerView.Adapter {
     private ArrayList<Kid> models = new ArrayList<>();

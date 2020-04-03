@@ -1,4 +1,4 @@
-package com.offlineprogrammer.kidztokenz;
+package com.offlineprogrammer.kidztokenz.kid;
 
 import android.view.View;
 import android.widget.ImageView;
@@ -6,6 +6,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.offlineprogrammer.kidztokenz.OnKidListener;
+import com.offlineprogrammer.kidztokenz.R;
 
 public class KidViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
     private TextView kidNameTextView;

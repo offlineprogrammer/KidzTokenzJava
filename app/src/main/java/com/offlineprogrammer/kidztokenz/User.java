@@ -1,5 +1,7 @@
 package com.offlineprogrammer.kidztokenz;
 
+import com.offlineprogrammer.kidztokenz.kid.Kid;
+
 import java.util.ArrayList;
 
 class User {
