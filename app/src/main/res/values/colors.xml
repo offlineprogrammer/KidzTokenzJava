@@ -5,5 +5,6 @@
     <color name="colorPrimaryDark">#DADCE0</color>
     <color name="colorAccent">#E0E0E0</color>
     <color name="toolbarIconColor">#FFFFFF</color>
+    <color name="taskGridBackgroundColor">#FFFFFF</color>
 
 </resources>
