@@ -79,7 +79,6 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
             public void onClick(View view) {
                 Intent mIntent = new Intent(KidActivity.this, TokenzActivity.class);
                 startActivityForResult(mIntent, 2);
-
             }
         });
 
@@ -88,23 +87,18 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
             public void onClick(View view) {
                 Intent mIntent = new Intent(KidActivity.this, TokenNumberActivity.class);
                 startActivityForResult(mIntent, 3);
-
             }
         });
 
         if (getIntent().hasExtra("selected_kid")) {
             Bundle data = getIntent().getExtras();
-            selectedKid = (Kid) data.getParcelable("selected_kid");
-           // Kid kid = getIntent().getParcelableExtra("selected_kid");
-
-
+            selectedKid = data.getParcelable("selected_kid");
             kidImageView.setImageResource(selectedKid.getMonsterImage());
             kidNameTextView.setText(selectedKid.getKidName());
             tokenImageView.setImageResource(selectedKid.getTokenImage());
             tokenNumberImageView.setImageResource(selectedKid.getTokenNumber());
             getkidTaskz(selectedKid.getFirestoreId());
         }
-
     }
 
     private void configActionButton() {
@@ -118,11 +112,10 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
     }
 
     private void setupRecyclerView() {
-        taskAdapter = new TaskAdapter(taskzList,this);
+        taskAdapter = new TaskAdapter(taskzList, this);
         taskRecyclerView = findViewById(R.id.taskz_recyclerview);
         taskRecyclerView.setHasFixedSize(true);
         taskRecyclerView.setAdapter(taskAdapter);
-        //recyclerView.setLayoutManager(new LinearLayoutManager(this));
         taskRecyclerView.setLayoutManager(new GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false));
         taskRecyclerView.setItemAnimator(new DefaultItemAnimator());
         int largePadding = getResources().getDimensionPixelSize(R.dimen.ktz_taskz_grid_spacing);
@@ -133,11 +126,9 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
 
 
     private void getkidTaskz(String kidId) {
-        // final Boolean bFoundData ;
+
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-
         DocumentReference selectedKidRef = db.collection("users").document(selectedKid.getUserFirestoreId()).collection("kidz").document(selectedKid.getFirestoreId());
-
         selectedKidRef.collection("taskz").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -148,14 +139,12 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
                                     Log.d("Got Task Data", document.getId() + " => " + document.getData());
                                     KidTask myTask = document.toObject(KidTask.class);
                                     taskzList.add(myTask);
-                                    taskAdapter.add(myTask,0);
+                                    taskAdapter.add(myTask, 0);
                                     taskRecyclerView.scrollToPosition(0);
                                 } else {
                                     // saveUser();
                                 }
                             }
-
-
                             // configActionButton();
                         } else {
                             //  saveUser();
@@ -163,11 +152,9 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
                         }
                     }
                 });
-
     }
 
     private void showAddTaskDialog(Context c) {
-
 
 
         final AlertDialog builder = new AlertDialog.Builder(c).create();
@@ -178,7 +165,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
 
         taskNameText.requestFocus();
 
-        Button okBtn= dialogView.findViewById(R.id.task_save_button);
+        Button okBtn = dialogView.findViewById(R.id.task_save_button);
         Button cancelBtn = dialogView.findViewById(R.id.task_cancel_button);
         okBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -257,8 +244,8 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == 2) {
-            if(resultCode == Activity.RESULT_OK){
-                int result=data.getIntExtra("Image",0);
+            if (resultCode == Activity.RESULT_OK) {
+                int result = data.getIntExtra("Image", 0);
                 tokenImageView.setImageResource(result);
                 updateKidTokenImage(result);
             }
@@ -266,8 +253,8 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
                 //Write your code if there's no result
             }
         } else if (requestCode == 3) {
-            if(resultCode == Activity.RESULT_OK){
-                int result=data.getIntExtra("Image",0);
+            if (resultCode == Activity.RESULT_OK) {
+                int result = data.getIntExtra("Image", 0);
                 tokenNumberImageView.setImageResource(result);
                 updateKidTokenNumberImage(result);
             }
