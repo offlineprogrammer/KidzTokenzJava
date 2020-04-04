@@ -21,7 +21,7 @@ public class TaskViewHolder extends RecyclerView.ViewHolder implements View.OnCl
         itemView.setOnClickListener(this);
     }
 
-    public void bindData(final Task viewModel) {
+    public void bindData(final KidTask viewModel) {
         taskNameTextView.setText(viewModel.getTaskName());
         taskImageView.setImageResource(viewModel.getTaskImage());
     }

@@ -21,16 +21,21 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.offlineprogrammer.kidztokenz.kid.Kid;
 import com.offlineprogrammer.kidztokenz.task.OnTaskListener;
-import com.offlineprogrammer.kidztokenz.task.Task;
+import com.offlineprogrammer.kidztokenz.task.KidTask;
 import com.offlineprogrammer.kidztokenz.task.TaskAdapter;
 import com.offlineprogrammer.kidztokenz.task.TaskGridItemDecoration;
 
@@ -49,7 +54,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
     CardView tokenNumberCard;
     ImageView tokenNumberImageView;
     Kid selectedKid;
-    private ArrayList<Task> taskzList = new ArrayList<>();
+    private ArrayList<KidTask> taskzList = new ArrayList<>();
 
     private RecyclerView taskRecyclerView;
     private TaskAdapter taskAdapter;
@@ -91,16 +96,15 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
             Bundle data = getIntent().getExtras();
             selectedKid = (Kid) data.getParcelable("selected_kid");
            // Kid kid = getIntent().getParcelableExtra("selected_kid");
-            Log.i(TAG, "onCreate: " + selectedKid.toString());
-            Log.i(TAG, "onCreate: " + selectedKid.getTokenImage());
-            Log.i(TAG, "onCreate: " + selectedKid.getFirestoreId());
-            Log.i(TAG, "onCreate: " + selectedKid.getUserFirestoreId());
-            Log.i(TAG, "onCreate STRING: " + selectedKid.toString());
+
+
             kidImageView.setImageResource(selectedKid.getMonsterImage());
             kidNameTextView.setText(selectedKid.getKidName());
             tokenImageView.setImageResource(selectedKid.getTokenImage());
             tokenNumberImageView.setImageResource(selectedKid.getTokenNumber());
+            getkidTaskz(selectedKid.getFirestoreId());
         }
+
     }
 
     private void configActionButton() {
@@ -127,6 +131,41 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
 
     }
 
+
+    private void getkidTaskz(String kidId) {
+        // final Boolean bFoundData ;
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        DocumentReference selectedKidRef = db.collection("users").document(selectedKid.getUserFirestoreId()).collection("kidz").document(selectedKid.getFirestoreId());
+
+        selectedKidRef.collection("taskz").get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                if (document.exists()) {
+                                    Log.d("Got Task Data", document.getId() + " => " + document.getData());
+                                    KidTask myTask = document.toObject(KidTask.class);
+                                    taskzList.add(myTask);
+                                    taskAdapter.add(myTask,0);
+                                    taskRecyclerView.scrollToPosition(0);
+                                } else {
+                                    // saveUser();
+                                }
+                            }
+
+
+                            // configActionButton();
+                        } else {
+                            //  saveUser();
+                            Log.d("Got Date", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+
+    }
+
     private void showAddTaskDialog(Context c) {
 
 
@@ -149,7 +188,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
                 } else {
                     taskNameText.setError(null);
                     Date currentTime = Calendar.getInstance().getTime();
-                    Task newTask = new Task(taskName, R.drawable.badface, currentTime);
+                    KidTask newTask = new KidTask(taskName, R.drawable.badface, currentTime);
                     newTask = saveTask(newTask);
                     taskAdapter.add(newTask, 0);
                     taskRecyclerView.scrollToPosition(0);
@@ -181,7 +220,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
 
     }
 
-    private Task saveTask(Task newTask) {
+    private KidTask saveTask(KidTask newTask) {
 
         taskzList.add(newTask);
         FirebaseFirestore db = FirebaseFirestore.getInstance();

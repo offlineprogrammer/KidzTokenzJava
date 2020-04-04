@@ -11,27 +11,27 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Task implements Parcelable {
+public class KidTask implements Parcelable {
     private String taskName;
     private int taskImage;
     private Date createdDate;
     private String firestoreId;
     private String kidFirestoreId;
 
-    public Task(String kidName,
-                int taskImage,
-                Date createdDate) {
-        this.taskName = kidName;
+    public KidTask(String taskName,
+                   int taskImage,
+                   Date createdDate) {
+        this.taskName = taskName;
         this.taskImage =taskImage;
         this.createdDate=createdDate;
 
     }
 
-    public Task() {
+    public KidTask() {
 
     }
 
-    protected Task(Parcel in) {
+    protected KidTask(Parcel in) {
         taskName = in.readString();
         taskImage = in.readInt();
         firestoreId = in.readString();
@@ -39,15 +39,15 @@ public class Task implements Parcelable {
 
     }
 
-    public static final Creator<Task> CREATOR = new Creator<Task>() {
+    public static final Creator<KidTask> CREATOR = new Creator<KidTask>() {
         @Override
-        public Task createFromParcel(Parcel in) {
-            return new Task(in);
+        public KidTask createFromParcel(Parcel in) {
+            return new KidTask(in);
         }
 
         @Override
-        public Task[] newArray(int size) {
-            return new Task[size];
+        public KidTask[] newArray(int size) {
+            return new KidTask[size];
         }
     };
 
@@ -71,7 +71,7 @@ public class Task implements Parcelable {
     @Exclude
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
-        result.put("kidName", this.taskName);
+        result.put("taskName", this.taskName);
         result.put("taskImage", this.taskImage);
         result.put("createdDate", this.createdDate);
         result.put("firestoreId", this.firestoreId);
@@ -84,7 +84,7 @@ public class Task implements Parcelable {
         return "Kid{" +
                 "firestoreId='" + firestoreId + '\'' +
                 ", kidFirestoreId='" + kidFirestoreId + '\'' +
-                ", kidName='" + taskName + '\'' +
+                ", taskName='" + taskName + '\'' +
                 ", taskImage='" + taskImage + '\'' +
                 '}';
     }

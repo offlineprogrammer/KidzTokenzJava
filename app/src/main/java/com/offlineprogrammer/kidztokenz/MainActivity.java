@@ -35,6 +35,7 @@ import com.google.firebase.iid.InstanceIdResult;
 import com.offlineprogrammer.kidztokenz.kid.Kid;
 import com.offlineprogrammer.kidztokenz.kid.KidAdapter;
 import com.offlineprogrammer.kidztokenz.kid.KidGridItemDecoration;
+import com.offlineprogrammer.kidztokenz.task.KidTask;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -226,6 +227,7 @@ private KidAdapter mAdapter;
         DocumentReference newKidRef = db.collection("users").document(m_User.getFirebaseId()).collection("kidz").document();
         newKid.setFirestoreId(newKidRef.getId());
         newKid.setUserFirestoreId(m_User.getFirebaseId());
+        //newKid.setTaskzList(new ArrayList<KidTask>());
         Map<String, Object> kidValues = newKid.toMap();
 
         newKidRef.set(kidValues, SetOptions.merge())

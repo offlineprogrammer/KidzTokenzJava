@@ -13,11 +13,11 @@ import com.offlineprogrammer.kidztokenz.R;
 import java.util.ArrayList;
 
 public class TaskAdapter extends RecyclerView.Adapter {
-    private ArrayList<Task> models = new ArrayList<>();
+    private ArrayList<KidTask> models = new ArrayList<>();
     private OnTaskListener onTaskListener;
     private static final String TAG = "TaskAdapter";
 
-    public TaskAdapter(@NonNull final ArrayList<Task> viewModels, OnTaskListener OnTaskListener) {
+    public TaskAdapter(@NonNull final ArrayList<KidTask> viewModels, OnTaskListener OnTaskListener) {
         this.models.addAll(viewModels);
         this.onTaskListener =OnTaskListener;
     }
@@ -40,7 +40,7 @@ public class TaskAdapter extends RecyclerView.Adapter {
         return models.size();
     }
 
-    public ArrayList<Task> getAllItems() {
+    public ArrayList<KidTask> getAllItems() {
         return models;
     }
 
@@ -49,7 +49,7 @@ public class TaskAdapter extends RecyclerView.Adapter {
         notifyItemRemoved(position);
     }
 
-    public void add(Task item, int position){
+    public void add(KidTask item, int position){
         models.add(position, item);
         Log.i(TAG, "add: " + item.toString());
         notifyItemInserted(position);
