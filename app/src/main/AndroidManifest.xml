@@ -9,7 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.KidzTokenz.Autumn">
-        <activity android:name=".TaskActivity"></activity>
+        <activity android:name=".TaskActivity"
+            android:autoRemoveFromRecents="true"
+            android:launchMode="singleTop"
+            android:parentActivityName=".KidActivity" />
         <activity
             android:name=".TokenNumberActivity"
             android:autoRemoveFromRecents="true"
