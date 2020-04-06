@@ -32,7 +32,7 @@ public class TaskActivity extends AppCompatActivity {
             selectedTask = data.getParcelable("selected_task");
             Log.i(TAG, "onCreate: " + selectedTask.toString());
             Log.i(TAG, "onCreate: " + selectedTask.getTaskName());
-
+            taskImageView.setImageResource(selectedTask.getTaskImage());
             taskNameTextView.setText(selectedTask.getTaskName());
         }
     }
