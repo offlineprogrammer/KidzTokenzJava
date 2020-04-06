@@ -9,9 +9,17 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Parcelable;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -39,12 +47,20 @@ import com.offlineprogrammer.kidztokenz.task.KidTask;
 import com.offlineprogrammer.kidztokenz.task.TaskAdapter;
 import com.offlineprogrammer.kidztokenz.task.TaskGridItemDecoration;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
+import io.opencensus.internal.Utils;
+
 public class KidActivity extends AppCompatActivity implements OnTaskListener {
+
+    private Uri mImageUri = null;
+    ImageView taskSelectedImageView;
+    private Uri outputFileUri;
 
     private static final String TAG = "KidActivity";
     ImageView kidImageView;
@@ -70,6 +86,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
         tokenImageCard = findViewById(R.id.tokenImageCard);
         tokenNumberCard = findViewById(R.id.tokenNumberCard);
         tokenNumberImageView = findViewById(R.id.tokenNumberImageView);
+        taskSelectedImageView = findViewById(R.id.task_selected_image);
 
         configActionButton();
         setupRecyclerView();
@@ -165,6 +182,8 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
 
         taskNameText.requestFocus();
 
+        Button takePicBtn = dialogView.findViewById(R.id.capture_photo);
+        Button selectPicBtn = dialogView.findViewById(R.id.select_photo);
         Button okBtn = dialogView.findViewById(R.id.task_save_button);
         Button cancelBtn = dialogView.findViewById(R.id.task_cancel_button);
         okBtn.setOnClickListener(new View.OnClickListener() {
@@ -183,6 +202,55 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
                 }
 
 
+            }
+        });
+
+        takePicBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "MyDir" + File.separator);
+                root.mkdirs();
+                final String fname = "img_"+ System.currentTimeMillis() + ".jpg";
+                final File sdImageMainDirectory = new File(root, fname);
+                outputFileUri = Uri.fromFile(sdImageMainDirectory);
+
+                // Camera.
+                final List<Intent> cameraIntents = new ArrayList<Intent>();
+                final Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                final PackageManager packageManager = getPackageManager();
+                final List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
+                for(ResolveInfo res : listCam) {
+                    final String packageName = res.activityInfo.packageName;
+                    final Intent intent = new Intent(captureIntent);
+                    intent.setComponent(new ComponentName(packageName, res.activityInfo.name));
+                    intent.setPackage(packageName);
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+                    cameraIntents.add(intent);
+                }
+
+                // Filesystem.
+                final Intent galleryIntent = new Intent();
+                galleryIntent.setType("image/*");
+                galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+
+                // Chooser of filesystem options.
+                final Intent chooserIntent = Intent.createChooser(galleryIntent, "Select Source");
+
+                // Add the camera options.
+                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[cameraIntents.size()]));
+
+
+
+                Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(chooserIntent, 4);//zero can be replaced with any action code (called requestCode)
+            }
+        });
+
+        selectPicBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent pickPhoto = new Intent(Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(pickPhoto , 5);//one can be replaced with any action code
             }
         });
 
@@ -260,6 +328,38 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
             }
             if (resultCode == Activity.RESULT_CANCELED) {
                 //Write your code if there's no result
+            }
+        } else if (requestCode == 4) {
+
+            final boolean isCamera;
+            if (data == null) {
+                isCamera = true;
+            } else {
+                final String action = data.getAction();
+                if (action == null) {
+                    isCamera = false;
+                } else {
+                    isCamera = action.equals(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                }
+            }
+
+            Uri selectedImageUri;
+            if (isCamera) {
+                selectedImageUri = outputFileUri;
+            } else {
+                selectedImageUri = data == null ? null : data.getData();
+            }
+
+            taskSelectedImageView.setImageURI(selectedImageUri);
+
+         //   Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
+         //   taskSelectedImageView.setImageBitmap(thumbnail);
+
+        } else if (requestCode == 5) {
+            if (data != null) {
+                mImageUri = data.getData();
+                Log.i(TAG, "onActivityResult: " + mImageUri.toString());
+                taskSelectedImageView.setImageURI(mImageUri);
             }
         }
     }//onActivityResult
