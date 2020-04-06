@@ -34,6 +34,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -70,6 +71,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
     CardView tokenNumberCard;
     ImageView tokenNumberImageView;
     Kid selectedKid;
+
     private ArrayList<KidTask> taskzList = new ArrayList<>();
 
     private RecyclerView taskRecyclerView;
@@ -86,7 +88,8 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
         tokenImageCard = findViewById(R.id.tokenImageCard);
         tokenNumberCard = findViewById(R.id.tokenNumberCard);
         tokenNumberImageView = findViewById(R.id.tokenNumberImageView);
-        taskSelectedImageView = findViewById(R.id.task_selected_image);
+
+
 
         configActionButton();
         setupRecyclerView();
@@ -182,10 +185,11 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
 
         taskNameText.requestFocus();
 
-        Button takePicBtn = dialogView.findViewById(R.id.capture_photo);
-        Button selectPicBtn = dialogView.findViewById(R.id.select_photo);
+
+
         Button okBtn = dialogView.findViewById(R.id.task_save_button);
         Button cancelBtn = dialogView.findViewById(R.id.task_cancel_button);
+        final SwitchMaterial negativeReInfSwitch =dialogView.findViewById(R.id.switch_negative_ReIn);
         okBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 String taskName = String.valueOf(taskNameText.getEditText().getText());
@@ -194,7 +198,8 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
                 } else {
                     taskNameText.setError(null);
                     Date currentTime = Calendar.getInstance().getTime();
-                    KidTask newTask = new KidTask(taskName, R.drawable.badface, currentTime);
+                    Boolean isNegativeReTask = negativeReInfSwitch.isChecked();
+                    KidTask newTask = new KidTask(taskName, R.drawable.badface, currentTime,isNegativeReTask);
                     newTask = saveTask(newTask);
                     taskAdapter.add(newTask, 0);
                     taskRecyclerView.scrollToPosition(0);
@@ -205,7 +210,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
             }
         });
 
-        takePicBtn.setOnClickListener(new View.OnClickListener() {
+     /*   takePicBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
                 final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "MyDir" + File.separator);
@@ -252,7 +257,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(pickPhoto , 5);//one can be replaced with any action code
             }
-        });
+        }); */
 
         taskNameText.setOnKeyListener(new View.OnKeyListener() {
             @Override

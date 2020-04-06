@@ -1,5 +1,6 @@
 package com.offlineprogrammer.kidztokenz.task;
 
+import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -17,13 +18,16 @@ public class KidTask implements Parcelable {
     private Date createdDate;
     private String firestoreId;
     private String kidFirestoreId;
+    private Boolean isNegativeReTask;
 
     public KidTask(String taskName,
                    int taskImage,
-                   Date createdDate) {
+                   Date createdDate,
+                   Boolean isNegativeReTask) {
         this.taskName = taskName;
         this.taskImage =taskImage;
         this.createdDate=createdDate;
+        this.isNegativeReTask = isNegativeReTask;
 
     }
 
@@ -36,6 +40,9 @@ public class KidTask implements Parcelable {
         taskImage = in.readInt();
         firestoreId = in.readString();
         kidFirestoreId = in.readString();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            isNegativeReTask = in.readBoolean();
+        }
 
     }
 
@@ -76,6 +83,7 @@ public class KidTask implements Parcelable {
         result.put("createdDate", this.createdDate);
         result.put("firestoreId", this.firestoreId);
         result.put("kidFirestoreId", this.kidFirestoreId);
+        result.put("isNegativeReTask", this.isNegativeReTask);
         return result;
     }
 
@@ -126,4 +134,11 @@ public class KidTask implements Parcelable {
         this.kidFirestoreId = kidFirestoreId;
     }
 
+    public Boolean getNegativeReTask() {
+        return isNegativeReTask;
+    }
+
+    public void setNegativeReTask(Boolean negativeReTask) {
+        isNegativeReTask = negativeReTask;
+    }
 }

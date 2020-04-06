@@ -21,30 +21,17 @@
             />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <ImageView
-        android:id="@+id/task_selected_image"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/ktz_kidz_card_image_height"
-        android:background="?attr/colorPrimaryDark"
-        android:scaleType="fitCenter"
-        android:adjustViewBounds="true" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="5dp" >
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/select_photo"
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/switch_negative_ReIn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Select Photo" />
+            android:text="Negative Reinforcement" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/capture_photo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Capture Photo" />
 
 
     </LinearLayout>
