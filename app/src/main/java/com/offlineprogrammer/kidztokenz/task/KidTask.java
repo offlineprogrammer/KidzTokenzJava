@@ -89,7 +89,7 @@ public class KidTask implements Parcelable {
 
     @Override
     public String toString() {
-        return "Kid{" +
+        return "KidTask{" +
                 "firestoreId='" + firestoreId + '\'' +
                 ", kidFirestoreId='" + kidFirestoreId + '\'' +
                 ", taskName='" + taskName + '\'' +

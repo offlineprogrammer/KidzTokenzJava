@@ -203,6 +203,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
                     newTask = saveTask(newTask);
                     taskAdapter.add(newTask, 0);
                     taskRecyclerView.scrollToPosition(0);
+                    onTaskClick(0);
                     builder.dismiss();
                 }
 
@@ -417,6 +418,14 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
 
     @Override
     public void onTaskClick(int position) {
+
+        taskzList = taskAdapter.getAllItems();
+
+        Log.i(TAG, "Clicked " + position);
+        Intent intent = new Intent(this, TaskActivity.class);
+        Log.i(TAG, "onTaskClick: " + taskzList.get(position).toString());
+        intent.putExtra("selected_task",taskzList.get(position));
+        startActivity(intent);
 
     }
 }

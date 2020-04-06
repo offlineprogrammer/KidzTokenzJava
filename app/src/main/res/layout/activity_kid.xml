@@ -41,11 +41,9 @@
                 android:layout_marginStart="5dp"
                 android:layout_marginLeft="5dp"
                 android:layout_marginBottom="8dp"
-                android:fontFamily="sans-serif"
                 android:gravity="center"
-                android:text="kid"
-                android:textColor="#000"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:textStyle="italic|bold" />
 
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
