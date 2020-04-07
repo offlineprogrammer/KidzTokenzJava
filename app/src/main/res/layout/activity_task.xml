@@ -9,14 +9,12 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/taskCard"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:layout_height="wrap_content"
         card_view:cardBackgroundColor="@android:color/white"
         card_view:cardCornerRadius="8dp"
         card_view:cardElevation="8dp"
         card_view:cardPreventCornerOverlap="true"
-        card_view:cardUseCompatPadding="true"
-        card_view:contentPadding="10dp"
-        card_view:contentPaddingBottom="0dp">
+        card_view:cardUseCompatPadding="true">
 
         <!-- Main Content View -->
         <RelativeLayout
@@ -43,6 +41,32 @@
                 android:gravity="center"
                 android:textSize="18sp"
                 android:textStyle="italic|bold" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_below="@id/taskName"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/select_photo"
+                    android:layout_width="wrap_content"
+
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:text="Select Photo" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/capture_photo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text="Capture Photo" />
+
+
+            </RelativeLayout>
 
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
