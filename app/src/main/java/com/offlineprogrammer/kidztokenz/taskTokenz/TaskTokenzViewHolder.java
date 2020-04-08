@@ -1,5 +1,7 @@
 package com.offlineprogrammer.kidztokenz.taskTokenz;
 
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -20,11 +22,25 @@ public class TaskTokenzViewHolder extends RecyclerView.ViewHolder implements Vie
     }
 
     public void bindData(final TaskTokenz viewModel) {
+        final ColorMatrix grayscaleMatrix = new ColorMatrix();
+        grayscaleMatrix.setSaturation(0);
         taskTokenzImageView.setImageResource(viewModel.getTaskTokenzImage());
+        if(!viewModel.getIsRewarded()) {
+            taskTokenzImageView.setColorFilter(new ColorMatrixColorFilter(grayscaleMatrix));
+        }
     }
 
     @Override
     public void onClick(View v) {
+        if (taskTokenzImageView.getColorFilter() == null){
+            final ColorMatrix grayscaleMatrix = new ColorMatrix();
+            grayscaleMatrix.setSaturation(0);
+            taskTokenzImageView.setColorFilter(new ColorMatrixColorFilter(grayscaleMatrix));
+
+        } else {
+            taskTokenzImageView.setColorFilter(null);
+        }
+
         onTaskTokenzListener.onTaskTokenzClick(getAdapterPosition());
 
     }

@@ -18,7 +18,7 @@ public class KidTask implements Parcelable {
     private Date createdDate;
     private String firestoreId;
     private String kidFirestoreId;
-    private Boolean isNegativeReTask;
+    private Boolean isNegativeReTask = false;
 
     public KidTask(String taskName,
                    int taskImage,
@@ -94,6 +94,7 @@ public class KidTask implements Parcelable {
                 ", kidFirestoreId='" + kidFirestoreId + '\'' +
                 ", taskName='" + taskName + '\'' +
                 ", taskImage='" + taskImage + '\'' +
+        //        ", isNegativeReTask='" + isNegativeReTask.toString() + '\'' +
                 '}';
     }
 
@@ -116,6 +117,9 @@ public class KidTask implements Parcelable {
         dest.writeInt(taskImage);
         dest.writeString(firestoreId);
         dest.writeString(kidFirestoreId);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            dest.writeBoolean(isNegativeReTask);
+        }
     }
 
     public String getFirestoreId() {

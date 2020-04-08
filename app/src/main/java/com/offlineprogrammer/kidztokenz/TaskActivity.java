@@ -35,6 +35,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
 
     private ArrayList<TaskTokenz> taskTokenzList = new ArrayList<>();
 
+
     private RecyclerView taskTokenzRecyclerView;
     private TaskTokenzAdapter taskTokenzAdapter;
 
@@ -63,11 +64,26 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         }
 
         setupRecyclerView();
+
     }
 
     private void setupRecyclerView() {
+        int taskTokenzImage;
+
+        if (selectedTask.getNegativeReTask()) {
+            taskTokenzImage = R.drawable.bunny;
+        } else {
+            taskTokenzImage = R.drawable.badbunny;
+        }
+
+        for (int i = 0; i<9; i++){
+
+            taskTokenzList.add(new TaskTokenz(taskTokenzImage,false));
+
+        }
+
         taskTokenzAdapter = new TaskTokenzAdapter(taskTokenzList, this);
-        taskTokenzRecyclerView = findViewById(R.id.taskz_recyclerview);
+        taskTokenzRecyclerView = findViewById(R.id.taskTokenzz_recyclerview);
         taskTokenzRecyclerView.setHasFixedSize(true);
         taskTokenzRecyclerView.setAdapter(taskTokenzAdapter);
         taskTokenzRecyclerView.setLayoutManager(new GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false));
@@ -75,11 +91,32 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         int largePadding = getResources().getDimensionPixelSize(R.dimen.ktz_taskz_grid_spacing);
         int smallPadding = getResources().getDimensionPixelSize(R.dimen.ktz_taskz_grid_spacing_small);
         taskTokenzRecyclerView.addItemDecoration(new TaskTokenzGridItemDecoration(largePadding, smallPadding));
+      //  loadTaskTokenzData();
+
+    }
+
+    private void loadTaskTokenzData() {
+
+        int taskTokenzImage;
+
+        if (selectedTask.getNegativeReTask()) {
+            taskTokenzImage = R.drawable.bunny;
+        } else {
+            taskTokenzImage = R.drawable.badbunny;
+        }
+
+        for (int i = 0; i<10; i++){
+
+            taskTokenzList.add(new TaskTokenz(taskTokenzImage,false));
+
+        }
 
     }
 
     @Override
     public void onTaskTokenzClick(int position) {
+
+
 
     }
 }
