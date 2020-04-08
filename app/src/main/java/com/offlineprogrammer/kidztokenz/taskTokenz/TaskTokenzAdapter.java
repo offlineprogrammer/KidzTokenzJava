@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class TaskTokenzAdapter extends RecyclerView.Adapter {
     private ArrayList<TaskTokenz> models = new ArrayList<>();
     private OnTaskTokenzListener onTaskTokenzListener;
-    private static final String TAG = "TaskAdapter";
+    private static final String TAG = "TaskTokenzAdapter";
 
     public TaskTokenzAdapter(@NonNull final ArrayList<TaskTokenz> viewModels, OnTaskTokenzListener OnTaskTokenzListener) {
         this.models.addAll(viewModels);
@@ -57,6 +57,6 @@ public class TaskTokenzAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemViewType(final int position) {
-        return R.layout.task_itemview;
+        return R.layout.tasktokenz_itemview;
     }
 }

@@ -13,21 +13,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TaskTokenz implements Parcelable {
-    private String taskName;
-    private int taskImage;
-    private Date createdDate;
-    private String firestoreId;
-    private String kidFirestoreId;
-    private Boolean isNegativeReTask;
+    private int taskTokenzImage;
+    private Boolean isRewarded;
 
-    public TaskTokenz(String taskName,
-                   int taskImage,
-                   Date createdDate,
-                   Boolean isNegativeReTask) {
-        this.taskName = taskName;
-        this.taskImage =taskImage;
-        this.createdDate=createdDate;
-        this.isNegativeReTask = isNegativeReTask;
+    public TaskTokenz(int taskTokenzImage,
+                   Boolean isRewarded) {
+        this.taskTokenzImage =taskTokenzImage;
+        this.isRewarded = isRewarded;
 
     }
 
@@ -36,12 +28,9 @@ public class TaskTokenz implements Parcelable {
     }
 
     protected TaskTokenz(Parcel in) {
-        taskName = in.readString();
-        taskImage = in.readInt();
-        firestoreId = in.readString();
-        kidFirestoreId = in.readString();
+        taskTokenzImage = in.readInt();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            isNegativeReTask = in.readBoolean();
+            isRewarded = in.readBoolean();
         }
 
     }
@@ -58,52 +47,29 @@ public class TaskTokenz implements Parcelable {
         }
     };
 
-    @NonNull
-    public String getTaskName() {
-        return taskName;
+    public int getTaskTokenzImage() {
+        return taskTokenzImage;
     }
 
-    public void setTaskName(@NonNull final String taskName) {
-        this.taskName = taskName;
-    }
-
-    public int getTaskImage() {
-        return taskImage;
-    }
-
-    public void setTaskImage(int taskImage) {
-        this.taskImage = taskImage;
+    public void setTaskTokenzImage(int taskTokenzImage) {
+        this.taskTokenzImage = taskTokenzImage;
     }
 
     @Exclude
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
-        result.put("taskName", this.taskName);
-        result.put("taskImage", this.taskImage);
-        result.put("createdDate", this.createdDate);
-        result.put("firestoreId", this.firestoreId);
-        result.put("kidFirestoreId", this.kidFirestoreId);
-        result.put("isNegativeReTask", this.isNegativeReTask);
+        result.put("taskTokenzImage", this.taskTokenzImage);
+        result.put("isRewarded", this.isRewarded);
         return result;
     }
 
     @Override
     public String toString() {
-        return "KidTask{" +
-                "firestoreId='" + firestoreId + '\'' +
-                ", kidFirestoreId='" + kidFirestoreId + '\'' +
-                ", taskName='" + taskName + '\'' +
-                ", taskImage='" + taskImage + '\'' +
+        return "TaskTokenz{" +
+                ", taskTokenzImage='" + taskTokenzImage + '\'' +
                 '}';
     }
 
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
 
     @Override
     public int describeContents() {
@@ -112,33 +78,21 @@ public class TaskTokenz implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(taskName);
-        dest.writeInt(taskImage);
-        dest.writeString(firestoreId);
-        dest.writeString(kidFirestoreId);
+        dest.writeInt(taskTokenzImage);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            dest.writeBoolean(isRewarded);
+        }
     }
 
-    public String getFirestoreId() {
-        return firestoreId;
+
+
+
+
+    public Boolean getIsRewarded() {
+        return isRewarded;
     }
 
-    public void setFirestoreId(String firestoreId) {
-        this.firestoreId = firestoreId;
-    }
-
-    public String getKidFirestoreId() {
-        return kidFirestoreId;
-    }
-
-    public void setKidFirestoreId(String kidFirestoreId) {
-        this.kidFirestoreId = kidFirestoreId;
-    }
-
-    public Boolean getNegativeReTask() {
-        return isNegativeReTask;
-    }
-
-    public void setNegativeReTask(Boolean negativeReTask) {
-        isNegativeReTask = negativeReTask;
+    public void setIsRewarded(Boolean negativeReTask) {
+        isRewarded = negativeReTask;
     }
 }

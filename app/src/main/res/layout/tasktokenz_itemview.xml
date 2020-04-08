@@ -21,14 +21,6 @@
             android:adjustViewBounds="true"
             android:src="@drawable/bunny" />
 
-        <TextView
-            android:id="@+id/taskTokenzName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="TextView"
-            android:textSize="18sp"
-            android:textStyle="italic|bold" />
 
     </LinearLayout>
 

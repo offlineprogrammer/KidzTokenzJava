@@ -71,5 +71,21 @@
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
 
+    <androidx.core.widget.NestedScrollView
+        android:layout_below="@+id/taskCard"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp"
+        android:background="@color/taskGridBackgroundColor"
+        android:paddingStart="@dimen/ktz_task_grid_spacing"
+        android:paddingEnd="@dimen/ktz_task_grid_spacing">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/taskTokenzz_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </androidx.core.widget.NestedScrollView>
+
 </RelativeLayout>
 

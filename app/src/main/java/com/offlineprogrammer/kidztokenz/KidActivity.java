@@ -425,6 +425,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
         Intent intent = new Intent(this, TaskActivity.class);
         Log.i(TAG, "onTaskClick: " + taskzList.get(position).toString());
         intent.putExtra("selected_task",taskzList.get(position));
+        intent.putExtra("selected_kid",selectedKid);
         startActivity(intent);
 
     }
