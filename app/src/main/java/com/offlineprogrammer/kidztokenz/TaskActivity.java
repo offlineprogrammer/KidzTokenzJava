@@ -11,6 +11,11 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.flexbox.AlignItems;
+import com.google.android.flexbox.FlexDirection;
+import com.google.android.flexbox.FlexWrap;
+import com.google.android.flexbox.FlexboxLayoutManager;
+import com.google.android.flexbox.JustifyContent;
 import com.offlineprogrammer.kidztokenz.kid.Kid;
 import com.offlineprogrammer.kidztokenz.task.KidTask;
 import com.offlineprogrammer.kidztokenz.task.TaskAdapter;
@@ -86,7 +91,13 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         taskTokenzRecyclerView = findViewById(R.id.taskTokenzz_recyclerview);
         taskTokenzRecyclerView.setHasFixedSize(true);
         taskTokenzRecyclerView.setAdapter(taskTokenzAdapter);
-        taskTokenzRecyclerView.setLayoutManager(new GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false));
+        FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(this);
+        layoutManager.setFlexDirection(FlexDirection.ROW);
+        layoutManager.setJustifyContent(JustifyContent.CENTER);
+        layoutManager.setAlignItems(AlignItems.STRETCH);
+        layoutManager.setFlexWrap(FlexWrap.WRAP);
+        taskTokenzRecyclerView.setLayoutManager(layoutManager);
+       // taskTokenzRecyclerView.setLayoutManager(new GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false));
         taskTokenzRecyclerView.setItemAnimator(new DefaultItemAnimator());
         int largePadding = getResources().getDimensionPixelSize(R.dimen.ktz_taskz_grid_spacing);
         int smallPadding = getResources().getDimensionPixelSize(R.dimen.ktz_taskz_grid_spacing_small);
