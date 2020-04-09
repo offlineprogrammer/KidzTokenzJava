@@ -9,17 +9,10 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Parcelable;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -38,7 +31,6 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
@@ -48,14 +40,10 @@ import com.offlineprogrammer.kidztokenz.task.KidTask;
 import com.offlineprogrammer.kidztokenz.task.TaskAdapter;
 import com.offlineprogrammer.kidztokenz.task.TaskGridItemDecoration;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
-
-import io.opencensus.internal.Utils;
 
 public class KidActivity extends AppCompatActivity implements OnTaskListener {
 
@@ -116,7 +104,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
             kidImageView.setImageResource(selectedKid.getMonsterImage());
             kidNameTextView.setText(selectedKid.getKidName());
             tokenImageView.setImageResource(selectedKid.getTokenImage());
-            tokenNumberImageView.setImageResource(selectedKid.getTokenNumber());
+            tokenNumberImageView.setImageResource(selectedKid.getTokenNumberImage());
             getkidTaskz(selectedKid.getFirestoreId());
         }
     }

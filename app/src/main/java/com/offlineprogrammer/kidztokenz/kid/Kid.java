@@ -16,7 +16,7 @@ public class Kid  implements Parcelable {
     private int monsterImage;
     private Date createdDate;
     private int tokenImage;
-    private int tokenNumber;
+    private int tokenNumberImage;
     private String firestoreId;
     private String userFirestoreId;
 
@@ -29,7 +29,7 @@ public class Kid  implements Parcelable {
         this.monsterImage=monsterImage;
         this.createdDate=createdDate;
         this.tokenImage=tokenImage;
-        this.tokenNumber=tokenNumber;
+        this.tokenNumberImage =tokenNumber;
     }
 
     public Kid() {
@@ -42,7 +42,7 @@ public class Kid  implements Parcelable {
         tokenImage=in.readInt();
         firestoreId = in.readString();
         userFirestoreId = in.readString();
-        tokenNumber=in.readInt();
+        tokenNumberImage =in.readInt();
 
     }
 
@@ -84,7 +84,7 @@ public class Kid  implements Parcelable {
         result.put("tokenImage", this.tokenImage);
         result.put("firestoreId", this.firestoreId);
         result.put("userFirestoreId", this.userFirestoreId);
-        result.put("tokenNumber", this.tokenNumber);
+        result.put("tokenNumberImage", this.tokenNumberImage);
 
         return result;
     }
@@ -97,7 +97,7 @@ public class Kid  implements Parcelable {
                 ", kidName='" + kidName + '\'' +
                 ", monsterImage='" + monsterImage + '\'' +
                 ", tokenImage='" + tokenImage + '\'' +
-                ", tokenNumber='" + tokenNumber + '\'' +
+                ", tokenNumberImage='" + tokenNumberImage + '\'' +
                 '}';
     }
 
@@ -121,7 +121,7 @@ public class Kid  implements Parcelable {
         dest.writeInt(tokenImage);
         dest.writeString(firestoreId);
         dest.writeString(userFirestoreId);
-        dest.writeInt(tokenNumber);
+        dest.writeInt(tokenNumberImage);
     }
 
     public int getTokenImage() {
@@ -148,11 +148,11 @@ public class Kid  implements Parcelable {
         this.userFirestoreId = userFirestoreId;
     }
 
-    public int getTokenNumber() {
-        return tokenNumber;
+    public int getTokenNumberImage() {
+        return tokenNumberImage;
     }
 
-    public void setTokenNumber(int tokenNumber) {
-        this.tokenNumber = tokenNumber;
+    public void setTokenNumberImage(int tokenNumberImage) {
+        this.tokenNumberImage = tokenNumberImage;
     }
 }
