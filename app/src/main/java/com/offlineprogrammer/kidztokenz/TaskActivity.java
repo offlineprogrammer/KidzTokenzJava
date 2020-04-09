@@ -88,7 +88,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
             taskTokenzImage = R.drawable.badbunny;
         }
 
-        for (int i = 0; i<9; i++){
+        for (int i = 0; i<selectedKid.getTokenNumber(); i++){
 
             taskTokenzList.add(new TaskTokenz(taskTokenzImage,false));
             taskTokenzScore.add(0);
@@ -149,7 +149,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
             taskTokenzImage = R.drawable.badbunny;
         }
 
-        for (int i = 0; i<10; i++){
+        for (int i = 0; i<selectedKid.getTokenNumber(); i++){
 
             taskTokenzList.add(new TaskTokenz(taskTokenzImage,false));
 
