@@ -372,10 +372,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
 
     private void updateKidTokenImage(int newTokenImage) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-
         DocumentReference selectedKidRef = db.collection("users").document(selectedKid.getUserFirestoreId()).collection("kidz").document(selectedKid.getFirestoreId());
-
-// Set the "isCapital" field of the city 'DC'
         selectedKidRef
                 .update("tokenImage", newTokenImage)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -390,7 +387,6 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
                         Log.w(TAG, "Error updating document", e);
                     }
                 });
-
     }
 
     private void updateKidTokenNumberImage(int newTokenNumberImage) {

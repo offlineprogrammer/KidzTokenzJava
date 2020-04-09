@@ -1,5 +1,6 @@
 package com.offlineprogrammer.kidztokenz;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -16,6 +17,10 @@ import com.google.android.flexbox.FlexDirection;
 import com.google.android.flexbox.FlexWrap;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.flexbox.JustifyContent;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.offlineprogrammer.kidztokenz.kid.Kid;
 import com.offlineprogrammer.kidztokenz.task.KidTask;
 import com.offlineprogrammer.kidztokenz.task.TaskAdapter;
@@ -39,6 +44,8 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     private static final String TAG = "TaskActivity";
 
     private ArrayList<TaskTokenz> taskTokenzList = new ArrayList<>();
+
+    private ArrayList<Integer>   taskTokenzScore = new ArrayList<>();
 
 
     private RecyclerView taskTokenzRecyclerView;
@@ -84,6 +91,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         for (int i = 0; i<9; i++){
 
             taskTokenzList.add(new TaskTokenz(taskTokenzImage,false));
+            taskTokenzScore.add(0);
 
         }
 
@@ -104,6 +112,31 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         taskTokenzRecyclerView.addItemDecoration(new TaskTokenzGridItemDecoration(largePadding, smallPadding));
       //  loadTaskTokenzData();
 
+        updateTaskTokenzScore();
+
+    }
+
+
+    private void updateTaskTokenzScore() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference selectedTaskRef = db.collection("users").
+                document(selectedKid.getUserFirestoreId()).collection("kidz").document(selectedKid.getFirestoreId()).
+                collection("taskz").document(selectedTask.getFirestoreId());
+
+        selectedTaskRef
+                .update("taskTokenzScore", taskTokenzScore)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully updated!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error updating document", e);
+                    }
+                });
     }
 
     private void loadTaskTokenzData() {
@@ -127,7 +160,12 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     @Override
     public void onTaskTokenzClick(int position) {
 
+        if (taskTokenzScore.get(position) == 1){
+            taskTokenzScore.set(position,0);
+        } else {
+            taskTokenzScore.set(position,1);
+        }
 
-
+        updateTaskTokenzScore();
     }
 }
