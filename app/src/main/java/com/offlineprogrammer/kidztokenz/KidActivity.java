@@ -307,18 +307,24 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
 
         if (requestCode == 2) {
             if (resultCode == Activity.RESULT_OK) {
+
                 int result = data.getIntExtra("Image", 0);
                 tokenImageView.setImageResource(result);
                 updateKidTokenImage(result);
+
+
             }
             if (resultCode == Activity.RESULT_CANCELED) {
                 //Write your code if there's no result
             }
         } else if (requestCode == 3) {
             if (resultCode == Activity.RESULT_OK) {
-                int result = data.getIntExtra("Image", 0);
-                tokenNumberImageView.setImageResource(result);
-                updateKidTokenNumberImage(result);
+
+                int selectedImage = data.getIntExtra("Image", 0);
+                tokenNumberImageView.setImageResource(selectedImage);
+                int selectedTokenNumber = data.getIntExtra("TokenNumber", 0);
+                Log.i(TAG, "onActivityResult: " + String.valueOf(selectedTokenNumber));
+                updateKidTokenNumberImage(selectedImage, selectedTokenNumber);
             }
             if (resultCode == Activity.RESULT_CANCELED) {
                 //Write your code if there's no result
@@ -358,11 +364,11 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
         }
     }//onActivityResult
 
-    private void updateKidTokenImage(int newTokenImage) {
+    private void updateKidTokenImage(int selectedImage) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference selectedKidRef = db.collection("users").document(selectedKid.getUserFirestoreId()).collection("kidz").document(selectedKid.getFirestoreId());
         selectedKidRef
-                .update("tokenImage", newTokenImage)
+                .update("tokenImage", selectedImage)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -377,14 +383,14 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
                 });
     }
 
-    private void updateKidTokenNumberImage(int newTokenNumberImage) {
+    private void updateKidTokenNumberImage(int newTokenNumberImage,int selectedTokenNumber) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         DocumentReference selectedKidRef = db.collection("users").document(selectedKid.getUserFirestoreId()).collection("kidz").document(selectedKid.getFirestoreId());
 
 // Set the "isCapital" field of the city 'DC'
         selectedKidRef
-                .update("tokenNumber", newTokenNumberImage)
+                .update("tokenNumberImage", newTokenNumberImage, "tokenNumber", selectedTokenNumber)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {

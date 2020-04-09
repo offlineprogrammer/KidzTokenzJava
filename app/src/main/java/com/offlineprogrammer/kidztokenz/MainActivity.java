@@ -126,7 +126,7 @@ private KidAdapter mAdapter;
                 } else {
                     kidNameText.setError(null);
                     Date currentTime = Calendar.getInstance().getTime();
-                    Kid newKid = new Kid(kidName, pickMonster(), currentTime, pickTokenImage(), pickTokenNumber());
+                    Kid newKid = new Kid(kidName, pickMonster(), currentTime, pickTokenImage(), pickTokenNumber(),5);
                     newKid = saveKid(newKid);
                     Log.i(TAG, "onClick UserFireStore : " + newKid.getUserFirestoreId());
                     Log.i(TAG, "onClick KidFireStore : " + newKid.getFirestoreId());

@@ -19,17 +19,20 @@ public class Kid  implements Parcelable {
     private int tokenNumberImage;
     private String firestoreId;
     private String userFirestoreId;
+    private int tokenNumber;
 
     public Kid(String kidName,
                int monsterImage,
                Date createdDate,
                int tokenImage,
+               int tokenNumberImage,
                int tokenNumber) {
         this.kidName = kidName;
         this.monsterImage=monsterImage;
         this.createdDate=createdDate;
         this.tokenImage=tokenImage;
-        this.tokenNumberImage =tokenNumber;
+        this.tokenNumberImage =tokenNumberImage;
+        this.tokenNumber =tokenNumber;
     }
 
     public Kid() {
@@ -43,6 +46,7 @@ public class Kid  implements Parcelable {
         firestoreId = in.readString();
         userFirestoreId = in.readString();
         tokenNumberImage =in.readInt();
+        tokenNumber =in.readInt();
 
     }
 
@@ -85,6 +89,7 @@ public class Kid  implements Parcelable {
         result.put("firestoreId", this.firestoreId);
         result.put("userFirestoreId", this.userFirestoreId);
         result.put("tokenNumberImage", this.tokenNumberImage);
+        result.put("tokenNumber", this.tokenNumber);
 
         return result;
     }
@@ -98,6 +103,7 @@ public class Kid  implements Parcelable {
                 ", monsterImage='" + monsterImage + '\'' +
                 ", tokenImage='" + tokenImage + '\'' +
                 ", tokenNumberImage='" + tokenNumberImage + '\'' +
+                ", tokenNumber='" + tokenNumber + '\'' +
                 '}';
     }
 
@@ -122,6 +128,7 @@ public class Kid  implements Parcelable {
         dest.writeString(firestoreId);
         dest.writeString(userFirestoreId);
         dest.writeInt(tokenNumberImage);
+        dest.writeInt(tokenNumber);
     }
 
     public int getTokenImage() {
@@ -154,5 +161,13 @@ public class Kid  implements Parcelable {
 
     public void setTokenNumberImage(int tokenNumberImage) {
         this.tokenNumberImage = tokenNumberImage;
+    }
+
+    public int getTokenNumber() {
+        return tokenNumber;
+    }
+
+    public void setTokenNumber(int tokenNumber) {
+        this.tokenNumber = tokenNumber;
     }
 }

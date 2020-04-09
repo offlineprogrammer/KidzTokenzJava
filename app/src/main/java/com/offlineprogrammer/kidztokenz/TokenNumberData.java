@@ -4,10 +4,12 @@ public class TokenNumberData {
 
     private String tokenNumberName;
     private int tokenNumberImage;
+    private int tokenNumber;
 
-    public TokenNumberData(String tokenNumberName, int tokenNumberImage) {
+    public TokenNumberData(String tokenNumberName, int tokenNumberImage, int tokenNumber) {
         this.tokenNumberName = tokenNumberName;
         this.tokenNumberImage = tokenNumberImage;
+        this.tokenNumber = tokenNumber;
     }
 
 
@@ -25,5 +27,13 @@ public class TokenNumberData {
 
     public void setTokenNumberImage(int tokenNumberImage) {
         this.tokenNumberImage = tokenNumberImage;
+    }
+
+    public int getTokenNumber() {
+        return tokenNumber;
+    }
+
+    public void setTokenNumber(int tokenNumber) {
+        this.tokenNumber = tokenNumber;
     }
 }
