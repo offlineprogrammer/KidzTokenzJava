@@ -63,6 +63,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         if (getIntent().hasExtra("selected_task")) {
             Bundle data = getIntent().getExtras();
             selectedTask = data.getParcelable("selected_task");
+            taskTokenzScore = selectedTask.getTaskTokenzScore();
             Log.i(TAG, "onCreate: " + selectedTask.toString());
             Log.i(TAG, "onCreate: " + selectedTask.getTaskName());
             taskImageView.setImageResource(selectedTask.getTaskImage());
@@ -105,15 +106,10 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         layoutManager.setAlignItems(AlignItems.STRETCH);
         layoutManager.setFlexWrap(FlexWrap.WRAP);
         taskTokenzRecyclerView.setLayoutManager(layoutManager);
-       // taskTokenzRecyclerView.setLayoutManager(new GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false));
         taskTokenzRecyclerView.setItemAnimator(new DefaultItemAnimator());
         int largePadding = getResources().getDimensionPixelSize(R.dimen.ktz_taskz_grid_spacing);
         int smallPadding = getResources().getDimensionPixelSize(R.dimen.ktz_taskz_grid_spacing_small);
         taskTokenzRecyclerView.addItemDecoration(new TaskTokenzGridItemDecoration(largePadding, smallPadding));
-      //  loadTaskTokenzData();
-
-       // updateTaskTokenzScore();
-
     }
 
 
