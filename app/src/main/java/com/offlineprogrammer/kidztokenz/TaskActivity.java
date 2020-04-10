@@ -91,9 +91,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
 
         for (int i = 0; i<selectedKid.getTokenNumber(); i++){
 
-            taskTokenzList.add(new TaskTokenz(taskTokenzImage,false));
-          //  taskTokenzScore.add(0);
-
+            taskTokenzList.add(new TaskTokenz(selectedKid.getTokenImage(), taskTokenzScore.get(i) > 0));
         }
 
         taskTokenzAdapter = new TaskTokenzAdapter(taskTokenzList, this);
