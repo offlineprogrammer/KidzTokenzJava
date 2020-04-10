@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 
 import com.google.firebase.database.Exclude;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,6 +20,7 @@ public class KidTask implements Parcelable {
     private String firestoreId;
     private String kidFirestoreId;
     private Boolean isNegativeReTask = false;
+    private ArrayList<Integer> taskTokenzScore = new ArrayList<>();
 
     public KidTask(String taskName,
                    int taskImage,
@@ -43,6 +45,8 @@ public class KidTask implements Parcelable {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             isNegativeReTask = in.readBoolean();
         }
+        //taskTokenzScore = in.readArrayList(Integer.class.getClassLoader());
+        in.readList(taskTokenzScore, Integer.class.getClassLoader());
 
     }
 
@@ -84,6 +88,7 @@ public class KidTask implements Parcelable {
         result.put("firestoreId", this.firestoreId);
         result.put("kidFirestoreId", this.kidFirestoreId);
         result.put("isNegativeReTask", this.isNegativeReTask);
+        result.put("taskTokenzScore", this.taskTokenzScore);
         return result;
     }
 
@@ -120,6 +125,7 @@ public class KidTask implements Parcelable {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             dest.writeBoolean(isNegativeReTask);
         }
+        dest.writeList(taskTokenzScore);
     }
 
     public String getFirestoreId() {
@@ -144,5 +150,13 @@ public class KidTask implements Parcelable {
 
     public void setNegativeReTask(Boolean negativeReTask) {
         isNegativeReTask = negativeReTask;
+    }
+
+    public ArrayList<Integer> getTaskTokenzScore() {
+        return taskTokenzScore;
+    }
+
+    public void setTaskTokenzScore(ArrayList<Integer> taskTokenzScore) {
+        this.taskTokenzScore = taskTokenzScore;
     }
 }

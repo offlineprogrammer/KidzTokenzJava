@@ -91,7 +91,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         for (int i = 0; i<selectedKid.getTokenNumber(); i++){
 
             taskTokenzList.add(new TaskTokenz(taskTokenzImage,false));
-            taskTokenzScore.add(0);
+          //  taskTokenzScore.add(0);
 
         }
 
@@ -112,7 +112,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         taskTokenzRecyclerView.addItemDecoration(new TaskTokenzGridItemDecoration(largePadding, smallPadding));
       //  loadTaskTokenzData();
 
-        updateTaskTokenzScore();
+       // updateTaskTokenzScore();
 
     }
 
