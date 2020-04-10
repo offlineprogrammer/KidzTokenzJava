@@ -388,7 +388,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
                 });
     }
 
-    private void updateKidTokenNumberImage(int newTokenNumberImage,int selectedTokenNumber) {
+    private void updateKidTokenNumberImage(final int newTokenNumberImage, final int selectedTokenNumber) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         DocumentReference selectedKidRef = db.collection("users").document(selectedKid.getUserFirestoreId()).collection("kidz").document(selectedKid.getFirestoreId());
@@ -400,6 +400,8 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "DocumentSnapshot successfully updated!");
+                        selectedKid.setTokenNumberImage(newTokenNumberImage);
+                        selectedKid.setTokenNumber(selectedTokenNumber);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {

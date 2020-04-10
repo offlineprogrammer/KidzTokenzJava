@@ -64,6 +64,11 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
             Bundle data = getIntent().getExtras();
             selectedTask = data.getParcelable("selected_task");
             taskTokenzScore = selectedTask.getTaskTokenzScore();
+
+
+
+
+
             Log.i(TAG, "onCreate: " + selectedTask.toString());
             Log.i(TAG, "onCreate: " + selectedTask.getTaskName());
             taskImageView.setImageResource(selectedTask.getTaskImage());
@@ -73,6 +78,14 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         if (getIntent().hasExtra("selected_kid")) {
             Bundle data = getIntent().getExtras();
             selectedKid = data.getParcelable("selected_kid");
+            if(taskTokenzScore.size() != selectedKid.getTokenNumber()) {
+                taskTokenzScore = new ArrayList<>();
+                for (int i = 0; i<selectedKid.getTokenNumber(); i++){
+                    taskTokenzScore.add(0);
+                }
+                updateTaskTokenzScore();
+            }
+
 
         }
 
