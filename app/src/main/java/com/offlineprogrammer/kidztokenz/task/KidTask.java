@@ -20,7 +20,7 @@ public class KidTask implements Parcelable {
     private String firestoreId;
     private String kidFirestoreId;
     private Boolean isNegativeReTask = false;
-    private ArrayList<Integer> taskTokenzScore = new ArrayList<>();
+    private ArrayList<Long> taskTokenzScore = new ArrayList<>();
 
     public KidTask(String taskName,
                    int taskImage,
@@ -45,8 +45,8 @@ public class KidTask implements Parcelable {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             isNegativeReTask = in.readBoolean();
         }
-        //taskTokenzScore = in.readArrayList(Integer.class.getClassLoader());
-        in.readList(taskTokenzScore, Integer.class.getClassLoader());
+        //taskTokenzScore = in.readArrayList(Long.class.getClassLoader());
+        in.readList(taskTokenzScore, Long.class.getClassLoader());
 
     }
 
@@ -152,11 +152,11 @@ public class KidTask implements Parcelable {
         isNegativeReTask = negativeReTask;
     }
 
-    public ArrayList<Integer> getTaskTokenzScore() {
+    public ArrayList<Long> getTaskTokenzScore() {
         return taskTokenzScore;
     }
 
-    public void setTaskTokenzScore(ArrayList<Integer> taskTokenzScore) {
+    public void setTaskTokenzScore(ArrayList<Long> taskTokenzScore) {
         this.taskTokenzScore = taskTokenzScore;
     }
 }

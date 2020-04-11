@@ -66,6 +66,7 @@ public class TaskTokenz implements Parcelable {
     @Override
     public String toString() {
         return "TaskTokenz{" +
+                " isRewarded='" + isRewarded.toString() + '\'' +
                 ", taskTokenzImage='" + taskTokenzImage + '\'' +
                 '}';
     }
