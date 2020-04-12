@@ -47,7 +47,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     Kid selectedKid;
     private static final String TAG = "TaskActivity";
     private ArrayList<TaskTokenz> taskTokenzList = new ArrayList<>();
-    private ArrayList<Long>   taskTokenzScore = new ArrayList<>();
+    private ArrayList<Long> taskTokenzScore = new ArrayList<>();
     private RecyclerView taskTokenzRecyclerView;
     private TaskTokenzAdapter taskTokenzAdapter;
 
@@ -82,12 +82,12 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     }
 
     private void verfifyTokenzScore() {
-        if(taskTokenzScore.size() != selectedKid.getTokenNumber()) {
+        if (taskTokenzScore.size() != selectedKid.getTokenNumber()) {
             Log.i(TAG, "getExtras: taskTokenzScore.size() != selectedKid.getTokenNumber() ");
             Log.i(TAG, "getExtras: taskTokenScore Size is " + taskTokenzScore.size());
             Log.i(TAG, "getExtras: selectedKid.getTokenNumber() is " + selectedKid.getTokenNumber());
             taskTokenzScore = new ArrayList<>();
-            for (int i = 0; i<selectedKid.getTokenNumber(); i++){
+            for (int i = 0; i < selectedKid.getTokenNumber(); i++) {
                 taskTokenzScore.add(0L);
             }
             updateTaskTokenzScore();
@@ -126,7 +126,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     }
 
     private void setupRecyclerView() {
-        for (int i = 0; i<selectedKid.getTokenNumber(); i++){
+        for (int i = 0; i < selectedKid.getTokenNumber(); i++) {
             taskTokenzList.add(new TaskTokenz(selectedKid.getTokenImage(), taskTokenzScore.get(i) > 0));
         }
         taskTokenzAdapter = new TaskTokenzAdapter(taskTokenzList, this);
@@ -149,32 +149,29 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     private void updateTaskTokenzScore() {
         try {
 
-            Log.i(TAG, "updateTaskTokenzScore: Start updating the score..." );
+            Log.i(TAG, "updateTaskTokenzScore: Start updating the score...");
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            Log.i(TAG, "updateTaskTokenzScore: db...");
+            DocumentReference selectedTaskRef = db.collection("users").
+                    document(selectedKid.getUserFirestoreId()).collection("kidz").document(selectedKid.getFirestoreId()).
+                    collection("taskz").document(selectedTask.getFirestoreId());
 
-
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-            Log.i(TAG, "updateTaskTokenzScore: db..." );
-        DocumentReference selectedTaskRef = db.collection("users").
-                document(selectedKid.getUserFirestoreId()).collection("kidz").document(selectedKid.getFirestoreId()).
-                collection("taskz").document(selectedTask.getFirestoreId());
-
-            Log.i(TAG, "updateTaskTokenzScore: selectedTaskRef..." + selectedTaskRef );
-
-        selectedTaskRef
-                .update("taskTokenzScore", taskTokenzScore)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.i(TAG, "DocumentSnapshot successfully updated!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.i(TAG, "Error updating document", e);
-                    }
-                });
-            Log.i(TAG, "updateTaskTokenzScore: saved...." );
+            Log.i(TAG, "updateTaskTokenzScore: selectedTaskRef..." + selectedTaskRef);
+            selectedTaskRef
+                    .update("taskTokenzScore", taskTokenzScore)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.i(TAG, "DocumentSnapshot successfully updated!");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.i(TAG, "Error updating document", e);
+                        }
+                    });
+            Log.i(TAG, "updateTaskTokenzScore: saved....");
         } catch (Exception e) {
             Log.i(TAG, "updateTaskTokenzScore: Error " + e.getMessage());
             e.printStackTrace();
@@ -184,10 +181,10 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     @Override
     public void onTaskTokenzClick(int position) {
 
-        if (taskTokenzScore.get(position) == 1){
-            taskTokenzScore.set(position,0L);
+        if (taskTokenzScore.get(position) == 1) {
+            taskTokenzScore.set(position, 0L);
         } else {
-            taskTokenzScore.set(position,1L);
+            taskTokenzScore.set(position, 1L);
         }
         updateTaskTokenzScore();
     }
