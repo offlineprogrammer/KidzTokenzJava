@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="colorPrimary">#6200EE</color>
-    <color name="colorPrimaryDark">#DADCE0</color>
-    <color name="colorAccent">#E0E0E0</color>
+    <color name="colorPrimary">#FFCF44</color>
+    <color name="colorPrimaryDark">#FD9725</color>
+    <color name="colorAccent">#FD9725</color>
     <color name="toolbarIconColor">#FFFFFF</color>
     <color name="taskGridBackgroundColor">#FFFFFF</color>
+    <color name="colorBackground">#6200EE</color>
+    <color name="colorSplashBackground">#90CCE6</color>
 
 </resources>
