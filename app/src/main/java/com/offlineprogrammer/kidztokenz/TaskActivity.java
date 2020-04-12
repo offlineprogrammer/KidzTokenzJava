@@ -45,16 +45,9 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     TextView taskNameTextView;
     KidTask selectedTask;
     Kid selectedKid;
-
-
-
     private static final String TAG = "TaskActivity";
-
     private ArrayList<TaskTokenz> taskTokenzList = new ArrayList<>();
-
     private ArrayList<Long>   taskTokenzScore = new ArrayList<>();
-
-
     private RecyclerView taskTokenzRecyclerView;
     private TaskTokenzAdapter taskTokenzAdapter;
 
@@ -63,40 +56,49 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task);
-
         taskImageView = findViewById(R.id.taskImage);
         taskNameTextView = findViewById(R.id.taskName);
+        getExtras();
+    }
 
+    private void getExtras() {
         if (getIntent().hasExtra("selected_task")) {
             Bundle data = getIntent().getExtras();
             selectedTask = data.getParcelable("selected_task");
             taskTokenzScore = selectedTask.getTaskTokenzScore();
-
-            Log.i(TAG, "onCreate: " + selectedTask.toString());
+            Log.i(TAG, "onCreate: " + taskTokenzScore);
             Log.i(TAG, "onCreate: " + selectedTask.getTaskName());
             taskImageView.setImageResource(selectedTask.getTaskImage());
             taskNameTextView.setText(selectedTask.getTaskName());
         }
-
         if (getIntent().hasExtra("selected_kid")) {
             Bundle data = getIntent().getExtras();
             selectedKid = data.getParcelable("selected_kid");
-            if(taskTokenzScore.size() != selectedKid.getTokenNumber()) {
-                taskTokenzScore = new ArrayList<>();
-                for (int i = 0; i<selectedKid.getTokenNumber(); i++){
-                    taskTokenzScore.add(0L);
-                }
-                updateTaskTokenzScore();
-                setupRecyclerView();
-            } else {
-                getTaskTokenzScore();
+        }
 
+        getTaskTokenzScore();
+
+
+    }
+
+    private void verfifyTokenzScore() {
+        if(taskTokenzScore.size() != selectedKid.getTokenNumber()) {
+            Log.i(TAG, "getExtras: taskTokenzScore.size() != selectedKid.getTokenNumber() ");
+            Log.i(TAG, "getExtras: taskTokenScore Size is " + taskTokenzScore.size());
+            Log.i(TAG, "getExtras: selectedKid.getTokenNumber() is " + selectedKid.getTokenNumber());
+            taskTokenzScore = new ArrayList<>();
+            for (int i = 0; i<selectedKid.getTokenNumber(); i++){
+                taskTokenzScore.add(0L);
             }
+            updateTaskTokenzScore();
+            selectedTask.setTaskTokenzScore(taskTokenzScore);
+            Log.i(TAG, "getExtras: taskTokenScore Size is now " + taskTokenzScore.size());
+            Log.i(TAG, "getExtras: selectedTask.getTaskTokenzScore() " + selectedTask.getTaskTokenzScore());
+
         }
     }
 
     private void getTaskTokenzScore() {
-
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference selectedTaskRef = db.collection("users").
                 document(selectedKid.getUserFirestoreId()).collection("kidz").document(selectedKid.getFirestoreId()).
@@ -108,32 +110,25 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
                         if (task.isSuccessful()) {
                             DocumentSnapshot document = task.getResult();
                             if (document.exists()) {
-                                  taskTokenzScore = (ArrayList<Long>)  document.get("taskTokenzScore");
-                               // taskTokenzScore = new ArrayList<>();
-                                setupRecyclerView();
-                                Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                                taskTokenzScore = (ArrayList<Long>) document.get("taskTokenzScore");
+                                selectedTask.setTaskTokenzScore(taskTokenzScore);
+                                Log.i(TAG, "DocumentSnapshot data: " + document.getData());
                             } else {
-                                Log.d(TAG, "No such document");
+                                Log.i(TAG, "No such document");
                             }
+                            verfifyTokenzScore();
+                            setupRecyclerView();
                         } else {
-                            Log.d(TAG, "get failed with ", task.getException());
+                            Log.i(TAG, "get failed with ", task.getException());
                         }
                     }
                 });
-
     }
 
-
-
     private void setupRecyclerView() {
-
         for (int i = 0; i<selectedKid.getTokenNumber(); i++){
-
             taskTokenzList.add(new TaskTokenz(selectedKid.getTokenImage(), taskTokenzScore.get(i) > 0));
         }
-
-        Log.i(TAG, "setupRecyclerView: " + taskTokenzList.toString());
-
         taskTokenzAdapter = new TaskTokenzAdapter(taskTokenzList, this);
         taskTokenzRecyclerView = findViewById(R.id.taskTokenzz_recyclerview);
         taskTokenzRecyclerView.setHasFixedSize(true);
@@ -152,44 +147,38 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
 
 
     private void updateTaskTokenzScore() {
+        try {
+
+            Log.i(TAG, "updateTaskTokenzScore: Start updating the score..." );
+
+
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+            Log.i(TAG, "updateTaskTokenzScore: db..." );
         DocumentReference selectedTaskRef = db.collection("users").
                 document(selectedKid.getUserFirestoreId()).collection("kidz").document(selectedKid.getFirestoreId()).
                 collection("taskz").document(selectedTask.getFirestoreId());
+
+            Log.i(TAG, "updateTaskTokenzScore: selectedTaskRef..." + selectedTaskRef );
 
         selectedTaskRef
                 .update("taskTokenzScore", taskTokenzScore)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully updated!");
-                        selectedTask.setTaskTokenzScore(taskTokenzScore);
+                        Log.i(TAG, "DocumentSnapshot successfully updated!");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error updating document", e);
+                        Log.i(TAG, "Error updating document", e);
                     }
                 });
-    }
-
-    private void loadTaskTokenzData() {
-
-        int taskTokenzImage;
-
-        if (selectedTask.getNegativeReTask()) {
-            taskTokenzImage = R.drawable.bunny;
-        } else {
-            taskTokenzImage = R.drawable.badbunny;
+            Log.i(TAG, "updateTaskTokenzScore: saved...." );
+        } catch (Exception e) {
+            Log.i(TAG, "updateTaskTokenzScore: Error " + e.getMessage());
+            e.printStackTrace();
         }
-
-        for (int i = 0; i<selectedKid.getTokenNumber(); i++){
-
-            taskTokenzList.add(new TaskTokenz(taskTokenzImage,false));
-
-        }
-
     }
 
     @Override
@@ -200,7 +189,6 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         } else {
             taskTokenzScore.set(position,1L);
         }
-
         updateTaskTokenzScore();
     }
 }

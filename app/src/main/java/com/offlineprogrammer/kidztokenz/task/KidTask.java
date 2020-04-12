@@ -99,6 +99,7 @@ public class KidTask implements Parcelable {
                 ", kidFirestoreId='" + kidFirestoreId + '\'' +
                 ", taskName='" + taskName + '\'' +
                 ", taskImage='" + taskImage + '\'' +
+                ", taskTokenzScore='" + taskTokenzScore + '\'' +
         //        ", isNegativeReTask='" + isNegativeReTask.toString() + '\'' +
                 '}';
     }
