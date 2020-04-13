@@ -1,6 +1,7 @@
 package com.offlineprogrammer.kidztokenz;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -10,6 +11,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.EventLogTags;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -45,6 +50,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     TextView taskNameTextView;
     KidTask selectedTask;
     Kid selectedKid;
+    ImageButton deleteImageButton;
     private static final String TAG = "TaskActivity";
     private ArrayList<TaskTokenz> taskTokenzList = new ArrayList<>();
     private ArrayList<Long> taskTokenzScore = new ArrayList<>();
@@ -58,7 +64,62 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         setContentView(R.layout.activity_task);
         taskImageView = findViewById(R.id.taskImage);
         taskNameTextView = findViewById(R.id.taskName);
+        deleteImageButton = findViewById(R.id.delete_button);
+
+        deleteImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDeleteTaskDialog(TaskActivity.this);
+            }
+        });
+
         getExtras();
+    }
+
+    private void showDeleteTaskDialog(TaskActivity taskActivity) {
+
+        final AlertDialog builder = new AlertDialog.Builder(taskActivity).create();
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.alert_dialog_delete_task, null);
+        Button okBtn = dialogView.findViewById(R.id.deletetask_confirm_button);
+        Button cancelBtn = dialogView.findViewById(R.id.deletetask_cancel_button);
+
+        okBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                builder.dismiss();
+                deleteTask();
+            }
+        });
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                builder.dismiss();
+            }
+        });
+        builder.setView(dialogView);
+        builder.show();
+    }
+
+    private void deleteTask() {
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference selectedTaskRef = db.collection("users").
+                document(selectedKid.getUserFirestoreId()).collection("kidz").document(selectedKid.getFirestoreId()).
+                collection("taskz").document(selectedTask.getFirestoreId());
+        selectedTaskRef.delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                        finish();
+                        //finishAndRemoveTask();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error deleting document", e);
+                    }
+                });
     }
 
     private void getExtras() {
@@ -188,4 +249,6 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         }
         updateTaskTokenzScore();
     }
+
+
 }

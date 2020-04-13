@@ -9,4 +9,7 @@
     <string name="ktz_delete_kid">Are you sure you want to delete?</string>
     <string name="deletekid_confirm_button">Yes!</string>
     <string name="deletekid_cancel_button">No</string>
+    <string name="ktz_delete_task">Are you sure you want to delete?</string>
+    <string name="deletetask_confirm_button">Yes!</string>
+    <string name="deletetask_cancel_button">No</string>
 </resources>

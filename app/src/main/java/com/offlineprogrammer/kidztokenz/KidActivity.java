@@ -484,4 +484,10 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
         startActivity(intent);
 
     }
+
+    @Override
+    public void onRestart() {
+        super.onRestart();
+        recreate();
+    }
 }

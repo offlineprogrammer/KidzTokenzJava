@@ -320,18 +320,12 @@ private KidAdapter mAdapter;
 
     @Override
     public void onKidClick(int position) {
-      //  kidzList.get(position);
-
         kidzList = mAdapter.getAllItems();
-
         Log.i(TAG, "Clicked " + position);
         Intent intent = new Intent(this, KidActivity.class);
         Log.i(TAG, "onKidClick: " + kidzList.get(position).toString());
         intent.putExtra("selected_kid",kidzList.get(position));
         startActivity(intent);
-
-
-
     }
 
     @Override
