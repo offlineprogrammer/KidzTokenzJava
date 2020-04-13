@@ -333,4 +333,10 @@ private KidAdapter mAdapter;
 
 
     }
+
+    @Override
+    public void onRestart() {
+        super.onRestart();
+        recreate();
+    }
 }

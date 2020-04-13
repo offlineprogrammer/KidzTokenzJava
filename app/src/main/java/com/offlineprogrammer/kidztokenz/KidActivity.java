@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -59,6 +60,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
     CardView tokenNumberCard;
     ImageView tokenNumberImageView;
     Kid selectedKid;
+    ImageButton deleteImageButton;
 
     private ArrayList<KidTask> taskzList = new ArrayList<>();
 
@@ -76,6 +78,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
         tokenImageCard = findViewById(R.id.tokenImageCard);
         tokenNumberCard = findViewById(R.id.tokenNumberCard);
         tokenNumberImageView = findViewById(R.id.tokenNumberImageView);
+        deleteImageButton = findViewById(R.id.delete_button);
 
 
 
@@ -98,6 +101,13 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
             }
         });
 
+        deleteImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDeleteKidDialog(KidActivity.this);
+            }
+        });
+
         if (getIntent().hasExtra("selected_kid")) {
             Bundle data = getIntent().getExtras();
             selectedKid = data.getParcelable("selected_kid");
@@ -105,8 +115,54 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
             kidNameTextView.setText(selectedKid.getKidName());
             tokenImageView.setImageResource(selectedKid.getTokenImage());
             tokenNumberImageView.setImageResource(selectedKid.getTokenNumberImage());
-            getkidTaskz(selectedKid.getFirestoreId());
+            getkidTaskz();
         }
+    }
+
+
+    private void showDeleteKidDialog(Context c) {
+
+
+        final AlertDialog builder = new AlertDialog.Builder(c).create();
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.alert_dialog_delete_kid, null);
+        Button okBtn = dialogView.findViewById(R.id.deletekid_confirm_button);
+        Button cancelBtn = dialogView.findViewById(R.id.deletekid_cancel_button);
+
+        okBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+               builder.dismiss();
+                deleteKid();
+            }
+        });
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                builder.dismiss();
+            }
+        });
+        builder.setView(dialogView);
+        builder.show();
+    }
+
+    private void deleteKid() {
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference selectedKidRef = db.collection("users").document(selectedKid.getUserFirestoreId()).collection("kidz").document(selectedKid.getFirestoreId());
+        selectedKidRef.delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                        finish();
+                        //finishAndRemoveTask();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error deleting document", e);
+                    }
+                });
     }
 
     private void configActionButton() {
@@ -133,7 +189,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
     }
 
 
-    private void getkidTaskz(String kidId) {
+    private void getkidTaskz() {
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference selectedKidRef = db.collection("users").document(selectedKid.getUserFirestoreId()).collection("kidz").document(selectedKid.getFirestoreId());
