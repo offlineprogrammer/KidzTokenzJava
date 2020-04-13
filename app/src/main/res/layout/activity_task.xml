@@ -51,6 +51,7 @@
                 android:paddingEnd="5dp">
 
                 <com.google.android.material.button.MaterialButton
+                    style="@style/Widget.AppCompat.Button.Borderless"
                     android:id="@+id/select_photo"
                     android:layout_width="wrap_content"
 
@@ -59,6 +60,7 @@
                     android:text="Select Photo" />
 
                 <com.google.android.material.button.MaterialButton
+                    style="@style/Widget.AppCompat.Button.Borderless"
                     android:id="@+id/capture_photo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

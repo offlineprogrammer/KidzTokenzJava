@@ -20,25 +20,14 @@
             android:scaleType="fitCenter"
             android:adjustViewBounds="true" />
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/kid_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:gravity="center"
+            android:text="TextView"
+            android:textSize="18sp"
+            android:textStyle="italic|bold" />
 
-            <TextView
-                android:id="@+id/kid_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="This is some temp text"
-                android:textAppearance="?attr/textAppearanceHeadline6" />
-
-            <TextView
-                android:id="@+id/product_price"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="This is some temp text"
-                android:textAppearance="?attr/textAppearanceBody2" />
-        </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
