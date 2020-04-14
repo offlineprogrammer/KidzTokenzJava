@@ -48,6 +48,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
 
     ImageView taskImageView;
     TextView taskNameTextView;
+    TextView taskmsg;
     KidTask selectedTask;
     Kid selectedKid;
     ImageButton deleteImageButton;
@@ -65,6 +66,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         taskImageView = findViewById(R.id.taskImage);
         taskNameTextView = findViewById(R.id.taskName);
         deleteImageButton = findViewById(R.id.delete_button);
+        taskmsg = findViewById(R.id.taskmsg);
 
         deleteImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -179,11 +181,31 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
                             }
                             verfifyTokenzScore();
                             setupRecyclerView();
+                            setTaskMsg();
                         } else {
                             Log.i(TAG, "get failed with ", task.getException());
                         }
                     }
                 });
+    }
+
+    private void setTaskMsg() {
+        if (selectedTask.getNegativeReTask()) {
+            // Is it inProgress
+            if (taskTokenzScore.indexOf(0L)>-1) {
+                taskmsg.setText(getResources().getString(R.string.ktz_negtask_inprogress_msg));
+            } else {
+                taskmsg.setText(getResources().getString(R.string.ktz_negtask_complete_msg));
+            }
+
+        } else {
+            if (taskTokenzScore.indexOf(0L)>-1) {
+                taskmsg.setText(getResources().getString(R.string.ktz_task_inprogress_msg));
+            } else {
+                taskmsg.setText(getResources().getString(R.string.ktz_task_complete_msg));
+            }
+
+        }
     }
 
     private void setupRecyclerView() {
@@ -255,6 +277,8 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
             taskTokenzScore.set(position, 1L);
         }
         updateTaskTokenzScore();
+        setTaskMsg();
+
     }
 
     @Override
