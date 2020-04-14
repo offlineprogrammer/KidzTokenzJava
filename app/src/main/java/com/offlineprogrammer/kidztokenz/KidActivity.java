@@ -242,8 +242,8 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
                 } else {
                     taskNameText.setError(null);
                     Date currentTime = Calendar.getInstance().getTime();
-                    Boolean isNegativeReTask = negativeReInfSwitch.isChecked();
-                    KidTask newTask = new KidTask(taskName, R.drawable.bekind, currentTime,isNegativeReTask);
+                    Boolean negativeReTask = negativeReInfSwitch.isChecked();
+                    KidTask newTask = new KidTask(taskName, R.drawable.bekind, currentTime,negativeReTask);
                     ArrayList<Long>   taskTokenzScore = new ArrayList<>();
                     for (int i = 0; i<selectedKid.getTokenNumber(); i++){
                         taskTokenzScore.add(0L);

@@ -187,8 +187,15 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     }
 
     private void setupRecyclerView() {
+        int tokenImage;
+        if (selectedTask.getNegativeReTask()) {
+            tokenImage = selectedKid.getBadTokenImage();
+        } else {
+            tokenImage = selectedKid.getTokenImage();
+        }
+
         for (int i = 0; i < selectedKid.getTokenNumber(); i++) {
-            taskTokenzList.add(new TaskTokenz(selectedKid.getTokenImage(), taskTokenzScore.get(i) > 0));
+            taskTokenzList.add(new TaskTokenz(tokenImage, taskTokenzScore.get(i) > 0));
         }
         taskTokenzAdapter = new TaskTokenzAdapter(taskTokenzList, this);
         taskTokenzRecyclerView = findViewById(R.id.taskTokenzz_recyclerview);
@@ -248,6 +255,12 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
             taskTokenzScore.set(position, 1L);
         }
         updateTaskTokenzScore();
+    }
+
+    @Override
+    public void onRestart() {
+        super.onRestart();
+        recreate();
     }
 
 

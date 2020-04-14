@@ -1,6 +1,5 @@
 package com.offlineprogrammer.kidztokenz.task;
 
-import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -19,17 +18,17 @@ public class KidTask implements Parcelable {
     private Date createdDate;
     private String firestoreId;
     private String kidFirestoreId;
-    private Boolean isNegativeReTask = false;
+    private Boolean negativeReTask;
     private ArrayList<Long> taskTokenzScore = new ArrayList<>();
 
     public KidTask(String taskName,
                    int taskImage,
                    Date createdDate,
-                   Boolean isNegativeReTask) {
+                   Boolean negativeReTask) {
         this.taskName = taskName;
         this.taskImage =taskImage;
         this.createdDate=createdDate;
-        this.isNegativeReTask = isNegativeReTask;
+        this.negativeReTask = negativeReTask;
 
     }
 
@@ -42,10 +41,7 @@ public class KidTask implements Parcelable {
         taskImage = in.readInt();
         firestoreId = in.readString();
         kidFirestoreId = in.readString();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            isNegativeReTask = in.readBoolean();
-        }
-        //taskTokenzScore = in.readArrayList(Long.class.getClassLoader());
+        negativeReTask = in.readByte() != 0;
         in.readList(taskTokenzScore, Long.class.getClassLoader());
 
     }
@@ -87,7 +83,7 @@ public class KidTask implements Parcelable {
         result.put("createdDate", this.createdDate);
         result.put("firestoreId", this.firestoreId);
         result.put("kidFirestoreId", this.kidFirestoreId);
-        result.put("isNegativeReTask", this.isNegativeReTask);
+        result.put("negativeReTask", this.negativeReTask);
         result.put("taskTokenzScore", this.taskTokenzScore);
         return result;
     }
@@ -100,7 +96,7 @@ public class KidTask implements Parcelable {
                 ", taskName='" + taskName + '\'' +
                 ", taskImage='" + taskImage + '\'' +
                 ", taskTokenzScore='" + taskTokenzScore + '\'' +
-        //        ", isNegativeReTask='" + isNegativeReTask.toString() + '\'' +
+                ", negativeReTask='" + (negativeReTask ? 1 : 0) + '\'' +
                 '}';
     }
 
@@ -123,9 +119,7 @@ public class KidTask implements Parcelable {
         dest.writeInt(taskImage);
         dest.writeString(firestoreId);
         dest.writeString(kidFirestoreId);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            dest.writeBoolean(isNegativeReTask);
-        }
+        dest.writeByte((byte) (negativeReTask ? 1 : 0));
         dest.writeList(taskTokenzScore);
     }
 
@@ -146,11 +140,11 @@ public class KidTask implements Parcelable {
     }
 
     public Boolean getNegativeReTask() {
-        return isNegativeReTask;
+        return negativeReTask;
     }
 
     public void setNegativeReTask(Boolean negativeReTask) {
-        isNegativeReTask = negativeReTask;
+        this.negativeReTask = negativeReTask;
     }
 
     public ArrayList<Long> getTaskTokenzScore() {
