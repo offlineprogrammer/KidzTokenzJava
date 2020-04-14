@@ -3,6 +3,7 @@
 
     <color name="colorPrimary">#FFCF44</color>
     <color name="colorPrimaryDark">#FD9725</color>
+    <color name="colorPrimaryDisabled">#9e9e9e</color>
     <color name="colorAccent">#FD9725</color>
     <color name="toolbarIconColor">#FFFFFF</color>
     <color name="taskGridBackgroundColor">#FFFFFF</color>
