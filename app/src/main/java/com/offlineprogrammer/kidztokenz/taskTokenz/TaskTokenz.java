@@ -4,22 +4,19 @@ import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import androidx.annotation.NonNull;
-
 import com.google.firebase.database.Exclude;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class TaskTokenz implements Parcelable {
     private int taskTokenzImage;
-    private Boolean isRewarded;
+    private Boolean rewarded;
 
     public TaskTokenz(int taskTokenzImage,
-                   Boolean isRewarded) {
+                   Boolean rewarded) {
         this.taskTokenzImage =taskTokenzImage;
-        this.isRewarded = isRewarded;
+        this.rewarded = rewarded;
 
     }
 
@@ -29,9 +26,7 @@ public class TaskTokenz implements Parcelable {
 
     protected TaskTokenz(Parcel in) {
         taskTokenzImage = in.readInt();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            isRewarded = in.readBoolean();
-        }
+        rewarded = in.readByte() != 0;
 
     }
 
@@ -59,14 +54,14 @@ public class TaskTokenz implements Parcelable {
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
         result.put("taskTokenzImage", this.taskTokenzImage);
-        result.put("isRewarded", this.isRewarded);
+        result.put("rewarded", this.rewarded);
         return result;
     }
 
     @Override
     public String toString() {
         return "TaskTokenz{" +
-                " isRewarded='" + isRewarded.toString() + '\'' +
+                " rewarded='" + rewarded.toString() + '\'' +
                 ", taskTokenzImage='" + taskTokenzImage + '\'' +
                 '}';
     }
@@ -80,20 +75,18 @@ public class TaskTokenz implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(taskTokenzImage);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            dest.writeBoolean(isRewarded);
-        }
+        dest.writeByte((byte) (rewarded ? 1 : 0));
     }
 
 
 
 
 
-    public Boolean getIsRewarded() {
-        return isRewarded;
+    public Boolean getRewarded() {
+        return rewarded;
     }
 
-    public void setIsRewarded(Boolean negativeReTask) {
-        isRewarded = negativeReTask;
+    public void setRewarded(Boolean negativeReTask) {
+        rewarded = negativeReTask;
     }
 }

@@ -30,7 +30,7 @@ public class TaskTokenzViewHolder extends RecyclerView.ViewHolder implements Vie
         TypedValue typedValue = new TypedValue();
         grayscaleMatrix.setSaturation(0);
         taskTokenzImageView.setImageResource(viewModel.getTaskTokenzImage());
-        if(!viewModel.getIsRewarded()) {
+        if(!viewModel.getRewarded()) {
             taskTokenzImageView.setColorFilter(new ColorMatrixColorFilter(grayscaleMatrix));
             taskTokenzImageView.setBackgroundColor(mContext.getColor(R.color.colorPrimaryDisabled));
         } else {
