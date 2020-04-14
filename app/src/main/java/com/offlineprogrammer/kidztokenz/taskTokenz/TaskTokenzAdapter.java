@@ -49,6 +49,12 @@ public class TaskTokenzAdapter extends RecyclerView.Adapter {
         notifyItemRemoved(position);
     }
 
+    public void updateData(ArrayList<TaskTokenz> viewModels) {
+        models.clear();
+        models.addAll(viewModels);
+        notifyDataSetChanged();
+    }
+
     public void add(TaskTokenz item, int position){
         models.add(position, item);
         Log.i(TAG, "add: " + item.toString());

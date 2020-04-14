@@ -52,6 +52,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     KidTask selectedTask;
     Kid selectedKid;
     ImageButton deleteImageButton;
+    ImageButton restartImageButton;
     private static final String TAG = "TaskActivity";
     private ArrayList<TaskTokenz> taskTokenzList = new ArrayList<>();
     private ArrayList<Long> taskTokenzScore = new ArrayList<>();
@@ -66,6 +67,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         taskImageView = findViewById(R.id.taskImage);
         taskNameTextView = findViewById(R.id.taskName);
         deleteImageButton = findViewById(R.id.delete_button);
+        restartImageButton = findViewById(R.id.restart_button);
         taskmsg = findViewById(R.id.taskmsg);
 
         deleteImageButton.setOnClickListener(new View.OnClickListener() {
@@ -75,7 +77,37 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
             }
         });
 
+        restartImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                resetTaskTokenzScore();
+            }
+        });
+
         getExtras();
+    }
+
+    private void resetTaskTokenzScore() {
+
+        taskTokenzScore = new ArrayList<>();
+        for (int i = 0; i < selectedKid.getTokenNumber(); i++) {
+            taskTokenzScore.add(0L);
+        }
+        updateTaskTokenzScore();
+        selectedTask.setTaskTokenzScore(taskTokenzScore);
+        int tokenImage;
+        taskTokenzList.clear();
+        if (selectedTask.getNegativeReTask()) {
+            tokenImage = selectedKid.getBadTokenImage();
+        } else {
+            tokenImage = selectedKid.getTokenImage();
+        }
+        for (int i = 0; i < selectedKid.getTokenNumber(); i++) {
+            taskTokenzList.add(new TaskTokenz(tokenImage, taskTokenzScore.get(i) > 0));
+        }
+
+        taskTokenzAdapter.updateData(taskTokenzList);
+        setTaskMsg();
     }
 
     private void showDeleteTaskDialog(TaskActivity taskActivity) {
