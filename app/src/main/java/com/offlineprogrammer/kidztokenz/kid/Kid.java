@@ -16,6 +16,7 @@ public class Kid  implements Parcelable {
     private int monsterImage;
     private Date createdDate;
     private int tokenImage;
+    private int badTokenImage;
     private int tokenNumberImage;
     private String firestoreId;
     private String userFirestoreId;
@@ -25,12 +26,14 @@ public class Kid  implements Parcelable {
                int monsterImage,
                Date createdDate,
                int tokenImage,
+               int badTokenImage,
                int tokenNumberImage,
                int tokenNumber) {
         this.kidName = kidName;
         this.monsterImage=monsterImage;
         this.createdDate=createdDate;
         this.tokenImage=tokenImage;
+        this.badTokenImage=badTokenImage;
         this.tokenNumberImage =tokenNumberImage;
         this.tokenNumber =tokenNumber;
     }
@@ -43,6 +46,7 @@ public class Kid  implements Parcelable {
         kidName = in.readString();
         monsterImage = in.readInt();
         tokenImage=in.readInt();
+        badTokenImage=in.readInt();
         firestoreId = in.readString();
         userFirestoreId = in.readString();
         tokenNumberImage =in.readInt();
@@ -86,6 +90,7 @@ public class Kid  implements Parcelable {
         result.put("monsterImage", this.monsterImage);
         result.put("createdDate", this.createdDate);
         result.put("tokenImage", this.tokenImage);
+        result.put("badTokenImage", this.badTokenImage);
         result.put("firestoreId", this.firestoreId);
         result.put("userFirestoreId", this.userFirestoreId);
         result.put("tokenNumberImage", this.tokenNumberImage);
@@ -102,6 +107,7 @@ public class Kid  implements Parcelable {
                 ", kidName='" + kidName + '\'' +
                 ", monsterImage='" + monsterImage + '\'' +
                 ", tokenImage='" + tokenImage + '\'' +
+                ", badTokenImage='" + badTokenImage + '\'' +
                 ", tokenNumberImage='" + tokenNumberImage + '\'' +
                 ", tokenNumber='" + tokenNumber + '\'' +
                 '}';
@@ -125,6 +131,7 @@ public class Kid  implements Parcelable {
         dest.writeString(kidName);
         dest.writeInt(monsterImage);
         dest.writeInt(tokenImage);
+        dest.writeInt(badTokenImage);
         dest.writeString(firestoreId);
         dest.writeString(userFirestoreId);
         dest.writeInt(tokenNumberImage);
@@ -169,5 +176,13 @@ public class Kid  implements Parcelable {
 
     public void setTokenNumber(int tokenNumber) {
         this.tokenNumber = tokenNumber;
+    }
+
+    public int getBadTokenImage() {
+        return badTokenImage;
+    }
+
+    public void setBadTokenImage(int badTokenImage) {
+        this.badTokenImage = badTokenImage;
     }
 }

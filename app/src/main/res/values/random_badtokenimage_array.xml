@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <array name="kidzBadTokenImages">
+        <item>@drawable/badbunny</item>
+        <item>@drawable/badelephant</item>
+        <item>@drawable/badface</item>
+        <item>@drawable/badgiraffe</item>
+        <item>@drawable/badleopard</item>
+        <item>@drawable/badmonkey</item>
+        <item>@drawable/badrocket</item>
+        <item>@drawable/badsheep</item>
+        <item>@drawable/badstar</item>
+        <item>@drawable/badteddybear</item>
+        <item>@drawable/badtrain</item>
+        <item>@drawable/badtriceratops</item>
+    </array>
+
+</resources>

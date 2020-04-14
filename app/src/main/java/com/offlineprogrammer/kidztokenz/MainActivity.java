@@ -87,12 +87,19 @@ private KidAdapter mAdapter;
         return imgs.getResourceId(rndInt, 0);
     }
 
-    private int pickTokenImage(){
-        final TypedArray imgs;
-        imgs = getResources().obtainTypedArray(R.array.kidzTokenImages);
+    private  ArrayList<Integer> pickTokenImage(){
+        ArrayList<Integer> tokenImgsList = new ArrayList<>();
+
+        final TypedArray tokenImgs;
+        final TypedArray badtokenImgs;
+        tokenImgs = getResources().obtainTypedArray(R.array.kidzTokenImages);
+        badtokenImgs = getResources().obtainTypedArray(R.array.kidzBadTokenImages);
         final Random rand = new Random();
-        final int rndInt = rand.nextInt(imgs.length());
-        return imgs.getResourceId(rndInt, 0);
+        final int rndInt = rand.nextInt(tokenImgs.length());
+        tokenImgsList.add(tokenImgs.getResourceId(rndInt, 0));
+        tokenImgsList.add(badtokenImgs.getResourceId(rndInt, 0));
+
+        return tokenImgsList;
     }
 
     private int pickTokenNumber(){
@@ -126,7 +133,8 @@ private KidAdapter mAdapter;
                 } else {
                     kidNameText.setError(null);
                     Date currentTime = Calendar.getInstance().getTime();
-                    Kid newKid = new Kid(kidName, pickMonster(), currentTime, pickTokenImage(), pickTokenNumber(),5);
+                    ArrayList<Integer> tokenImgsList = pickTokenImage();
+                    Kid newKid = new Kid(kidName, pickMonster(), currentTime, tokenImgsList.get(0),tokenImgsList.get(1), pickTokenNumber(),5);
                     newKid = saveKid(newKid);
                     Log.i(TAG, "onClick UserFireStore : " + newKid.getUserFirestoreId());
                     Log.i(TAG, "onClick KidFireStore : " + newKid.getFirestoreId());
