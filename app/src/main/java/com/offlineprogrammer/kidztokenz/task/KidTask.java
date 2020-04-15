@@ -18,7 +18,7 @@ public class KidTask implements Parcelable {
     private Date createdDate;
     private String firestoreId;
     private String kidFirestoreId;
-    private Boolean negativeReTask;
+    private Boolean negativeReTask = false;
     private ArrayList<Long> taskTokenzScore = new ArrayList<>();
 
     public KidTask(String taskName,

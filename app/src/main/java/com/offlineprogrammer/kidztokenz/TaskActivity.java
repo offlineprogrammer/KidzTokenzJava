@@ -23,6 +23,10 @@ import com.google.android.flexbox.FlexDirection;
 import com.google.android.flexbox.FlexWrap;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.flexbox.JustifyContent;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.RequestConfiguration;
+import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
+import com.google.android.gms.ads.doubleclick.PublisherAdView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -42,10 +46,12 @@ import com.offlineprogrammer.kidztokenz.taskTokenz.TaskTokenzAdapter;
 import com.offlineprogrammer.kidztokenz.taskTokenz.TaskTokenzGridItemDecoration;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.stream.Collectors;
 
 public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListener {
 
+    private PublisherAdView adView;
     ImageView taskImageView;
     TextView taskNameTextView;
     TextView taskmsg;
@@ -85,6 +91,17 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         });
 
         getExtras();
+
+        adView = findViewById(R.id.ad_view);
+        MobileAds.setRequestConfiguration(
+                new RequestConfiguration.Builder().setTestDeviceIds(Arrays.asList("B3EEABB8EE11C2BE770B684D95219ECB"))
+                        .build());
+
+        // Create an ad request.
+        PublisherAdRequest adRequest = new PublisherAdRequest.Builder().build();
+
+        // Start loading the ad in the background.
+        adView.loadAd(adRequest);
     }
 
     private void resetTaskTokenzScore() {
@@ -317,6 +334,33 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     public void onRestart() {
         super.onRestart();
         recreate();
+    }
+
+    /** Called when leaving the activity */
+    @Override
+    public void onPause() {
+        if (adView != null) {
+            adView.pause();
+        }
+        super.onPause();
+    }
+
+    /** Called when returning to the activity */
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (adView != null) {
+            adView.resume();
+        }
+    }
+
+    /** Called before the activity is destroyed */
+    @Override
+    public void onDestroy() {
+        if (adView != null) {
+            adView.destroy();
+        }
+        super.onDestroy();
     }
 
 

@@ -18,6 +18,10 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.RequestConfiguration;
+import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
+import com.google.android.gms.ads.doubleclick.PublisherAdView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -38,6 +42,7 @@ import com.offlineprogrammer.kidztokenz.kid.KidGridItemDecoration;
 import com.offlineprogrammer.kidztokenz.task.KidTask;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -47,8 +52,9 @@ import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements OnKidListener {
 
-private RecyclerView recyclerView;
-private KidAdapter mAdapter;
+    private RecyclerView recyclerView;
+    private KidAdapter mAdapter;
+    private PublisherAdView adView;
 
 
     private ArrayList<Kid> kidzList = new ArrayList<>();
@@ -63,6 +69,17 @@ private KidAdapter mAdapter;
         setContentView(R.layout.activity_main);
         setupRecyclerView();
         getDeviceToken();
+
+        adView = findViewById(R.id.ad_view);
+        MobileAds.setRequestConfiguration(
+                new RequestConfiguration.Builder().setTestDeviceIds(Arrays.asList("B3EEABB8EE11C2BE770B684D95219ECB"))
+                        .build());
+
+        // Create an ad request.
+        PublisherAdRequest adRequest = new PublisherAdRequest.Builder().build();
+
+        // Start loading the ad in the background.
+        adView.loadAd(adRequest);
     }
 
     private void setupRecyclerView() {
@@ -341,4 +358,33 @@ private KidAdapter mAdapter;
         super.onRestart();
         recreate();
     }
+
+
+    /** Called when leaving the activity */
+    @Override
+    public void onPause() {
+        if (adView != null) {
+            adView.pause();
+        }
+        super.onPause();
+    }
+
+    /** Called when returning to the activity */
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (adView != null) {
+            adView.resume();
+        }
+    }
+
+    /** Called before the activity is destroyed */
+    @Override
+    public void onDestroy() {
+        if (adView != null) {
+            adView.destroy();
+        }
+        super.onDestroy();
+    }
+
 }
