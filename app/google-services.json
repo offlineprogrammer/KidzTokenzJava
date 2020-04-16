@@ -8,6 +8,35 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:61840375833:android:e70dbf84d375e081396a88",
+        "android_client_info": {
+          "package_name": "com.offlineprogrammer.KidzTokenz"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "61840375833-4qstmumde4vardo788m4qc0udkp3uuf6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABoWceu6X7Rd7KFmD2oNr1ukC2we-9SBk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "61840375833-4qstmumde4vardo788m4qc0udkp3uuf6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:61840375833:android:a60b9242583e99cc396a88",
         "android_client_info": {
           "package_name": "com.offlineprogrammer.kidztokenz"
