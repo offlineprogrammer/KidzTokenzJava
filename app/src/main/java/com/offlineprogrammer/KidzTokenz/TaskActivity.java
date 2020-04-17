@@ -3,6 +3,7 @@ package com.offlineprogrammer.KidzTokenz;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -11,6 +12,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -48,9 +50,12 @@ import com.offlineprogrammer.KidzTokenz.taskTokenz.TaskTokenz;
 import com.offlineprogrammer.KidzTokenz.taskTokenz.TaskTokenzAdapter;
 import com.offlineprogrammer.KidzTokenz.taskTokenz.TaskTokenzGridItemDecoration;
 
+import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.UUID;
 
 public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListener {
@@ -63,6 +68,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     Kid selectedKid;
     ImageButton deleteImageButton;
     ImageButton restartImageButton;
+    ImageButton select_button;
     ImageButton capture_button;
     private static final String TAG = "TaskActivity";
     private ArrayList<TaskTokenz> taskTokenzList = new ArrayList<>();
@@ -71,6 +77,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     private TaskTokenzAdapter taskTokenzAdapter;
 
     private final int PICK_IMAGE_REQUEST = 22;
+    private final int REQUEST_IMAGE_CAPTURE = 33;
 
     private Uri filePath;
 
@@ -89,6 +96,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         taskNameTextView = findViewById(R.id.taskName);
         deleteImageButton = findViewById(R.id.delete_button);
         restartImageButton = findViewById(R.id.restart_button);
+        select_button = findViewById(R.id.select_button);
         capture_button = findViewById(R.id.capture_button);
         taskmsg = findViewById(R.id.taskmsg);
 
@@ -108,6 +116,13 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
             @Override
             public void onClick(View view) {
                 resetTaskTokenzScore();
+            }
+        });
+
+        select_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selectTaskImage();
             }
         });
 
@@ -133,11 +148,37 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     }
 
     private void captureTaskImage() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(this.getPackageManager()) != null) {
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+
+            }
+
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        "com.offlineprogrammer.KidzTokenz.fileprovider",
+                        photoFile);
+                filePath = photoURI;
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
+
+        }
+    }
+
+    private void selectTaskImage() {
 
         // Defining Implicit Intent to mobile gallery
         Intent intent = new Intent();
         intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
+        intent.setAction(Intent.ACTION_PICK);
+        String[] mimeTypes = {"image/jpeg", "image/png"};
+        intent.putExtra(Intent.EXTRA_MIME_TYPES,mimeTypes);
         startActivityForResult(
                 Intent.createChooser(
                         intent,
@@ -173,6 +214,24 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         setTaskMsg();
     }
 
+    String currentPhotoPath;
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
     @Override
     protected void onActivityResult(int requestCode,
                                     int resultCode,
@@ -184,6 +243,34 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
                 data);
 
         // checking request code and result code
+
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK
+                && data != null) {
+
+           // filePath = data.getData();
+            try {
+
+                // Setting image on image view using Bitmap
+                Bitmap bitmap = MediaStore
+                        .Images
+                        .Media
+                        .getBitmap(
+                                getContentResolver(),
+                                filePath);
+                taskImageView.setImageBitmap(bitmap);
+
+                uploadImage();
+            }
+
+            catch (IOException e) {
+                // Log the exception
+                e.printStackTrace();
+            }
+
+
+        }
+
+
         // if request code is PICK_IMAGE_REQUEST and
         // resultCode is RESULT_OK
         // then set image in the image view
