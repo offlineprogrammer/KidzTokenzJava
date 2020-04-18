@@ -452,10 +452,11 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
                             if (document.exists()) {
                                 taskTokenzScore = (ArrayList<Long>) document.get("taskTokenzScore");
                                 String sImageUrl = (String) document.get("firestoreImageUri");
+                                if(sImageUrl != null) {
                                 taskTokenImageUri = Uri.parse(sImageUrl);
                                 selectedTask.setTaskTokenzScore(taskTokenzScore);
                                 selectedTask.setFirestoreImageUri(taskTokenImageUri.toString());
-                                if(taskTokenImageUri != null) {
+
                                     Picasso.get().load(taskTokenImageUri).into(taskImageView);
                                 }
                                 Log.i(TAG, "DocumentSnapshot data: " + document.getData());
