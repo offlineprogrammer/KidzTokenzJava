@@ -32,6 +32,7 @@ import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.RequestConfiguration;
 import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
 import com.google.android.gms.ads.doubleclick.PublisherAdView;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -49,6 +50,7 @@ import com.offlineprogrammer.KidzTokenz.taskTokenz.OnTaskTokenzListener;
 import com.offlineprogrammer.KidzTokenz.taskTokenz.TaskTokenz;
 import com.offlineprogrammer.KidzTokenz.taskTokenz.TaskTokenzAdapter;
 import com.offlineprogrammer.KidzTokenz.taskTokenz.TaskTokenzGridItemDecoration;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
@@ -80,6 +82,8 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     private final int REQUEST_IMAGE_CAPTURE = 33;
 
     private Uri filePath;
+
+    private Uri taskTokenImageUri = null;
 
     FirebaseStorage storage;
     StorageReference storageReference;
@@ -313,66 +317,41 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
             progressDialog.show();
 
             // Defining the child of storageReference
-            StorageReference ref
+            final StorageReference ref
                     = storageReference
                     .child(
                             "images/"
                                     + UUID.randomUUID().toString());
 
-            // adding listeners on upload
-            // or failure of image
-            ref.putFile(filePath)
-                    .addOnSuccessListener(
-                            new OnSuccessListener<UploadTask.TaskSnapshot>() {
 
-                                @Override
-                                public void onSuccess(
-                                        UploadTask.TaskSnapshot taskSnapshot)
-                                {
 
-                                    // Image uploaded successfully
-                                    // Dismiss dialog
-                                    progressDialog.dismiss();
-                                    Toast
-                                            .makeText(TaskActivity.this,
-                                                    "Image Uploaded!!",
-                                                    Toast.LENGTH_SHORT)
-                                            .show();
-                                }
-                            })
 
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e)
-                        {
+       ref.putFile(filePath).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                @Override
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                    if (!task.isSuccessful()) {
+                        throw task.getException();
+                    }
 
-                            // Error, Image not uploaded
-                            progressDialog.dismiss();
-                            Toast
-                                    .makeText(TaskActivity.this,
-                                            "Failed " + e.getMessage(),
-                                            Toast.LENGTH_SHORT)
-                                    .show();
-                        }
-                    })
-                    .addOnProgressListener(
-                            new OnProgressListener<UploadTask.TaskSnapshot>() {
+                    // Continue with the task to get the download URL
+                    return ref.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if (task.isSuccessful()) {
+                        Uri downloadUri = task.getResult();
+                        String downloadURL = downloadUri.toString();
+                        selectedTask.setFirestoreImageUri(downloadURL);
+                        updateTaskImageUri();
+                        progressDialog.dismiss();
+                    } else {
+                        // Handle failures
+                        // ...
+                    }
+                }
+            });
 
-                                // Progress Listener for loading
-                                // percentage on the dialog box
-                                @Override
-                                public void onProgress(
-                                        UploadTask.TaskSnapshot taskSnapshot)
-                                {
-                                    double progress
-                                            = (100.0
-                                            * taskSnapshot.getBytesTransferred()
-                                            / taskSnapshot.getTotalByteCount());
-                                    progressDialog.setMessage(
-                                            "Uploaded "
-                                                    + (int)progress + "%");
-                                }
-                            });
         }
     }
 
@@ -437,7 +416,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
             selectedKid = data.getParcelable("selected_kid");
         }
 
-        getTaskTokenzScore();
+        getTaskTokenzScoreAndImage();
 
 
     }
@@ -459,7 +438,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         }
     }
 
-    private void getTaskTokenzScore() {
+    private void getTaskTokenzScoreAndImage() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference selectedTaskRef = db.collection("users").
                 document(selectedKid.getUserFirestoreId()).collection("kidz").document(selectedKid.getFirestoreId()).
@@ -472,7 +451,13 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
                             DocumentSnapshot document = task.getResult();
                             if (document.exists()) {
                                 taskTokenzScore = (ArrayList<Long>) document.get("taskTokenzScore");
+                                String sImageUrl = (String) document.get("firestoreImageUri");
+                                taskTokenImageUri = Uri.parse(sImageUrl);
                                 selectedTask.setTaskTokenzScore(taskTokenzScore);
+                                selectedTask.setFirestoreImageUri(taskTokenImageUri.toString());
+                                if(taskTokenImageUri != null) {
+                                    Picasso.get().load(taskTokenImageUri).into(taskImageView);
+                                }
                                 Log.i(TAG, "DocumentSnapshot data: " + document.getData());
                             } else {
                                 Log.i(TAG, "No such document");
@@ -533,6 +518,35 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         taskTokenzRecyclerView.addItemDecoration(new TaskTokenzGridItemDecoration(largePadding, smallPadding));
     }
 
+    private void updateTaskImageUri() {
+        try {
+
+
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            DocumentReference selectedTaskRef = db.collection("users").
+                    document(selectedKid.getUserFirestoreId()).collection("kidz").document(selectedKid.getFirestoreId()).
+                    collection("taskz").document(selectedTask.getFirestoreId());
+            selectedTaskRef
+                    .update("firestoreImageUri", selectedTask.getFirestoreImageUri().toString())
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.i(TAG, "DocumentSnapshot successfully updated!");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.i(TAG, "Error updating document", e);
+                        }
+                    });
+            Log.i(TAG, "updateTaskTokenzScore: saved....");
+        } catch (Exception e) {
+            Log.i(TAG, "updateTaskTokenzScore: Error " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
     private void updateTaskTokenzScore() {
         try {

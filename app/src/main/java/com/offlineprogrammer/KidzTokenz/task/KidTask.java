@@ -1,5 +1,6 @@
 package com.offlineprogrammer.KidzTokenz.task;
 
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -20,6 +21,7 @@ public class KidTask implements Parcelable {
     private String kidFirestoreId;
     private Boolean negativeReTask = false;
     private ArrayList<Long> taskTokenzScore = new ArrayList<>();
+    private String firestoreImageUri;
 
     public KidTask(String taskName,
                    int taskImage,
@@ -85,6 +87,7 @@ public class KidTask implements Parcelable {
         result.put("kidFirestoreId", this.kidFirestoreId);
         result.put("negativeReTask", this.negativeReTask);
         result.put("taskTokenzScore", this.taskTokenzScore);
+        result.put("firestoreImageUri", this.firestoreImageUri);
         return result;
     }
 
@@ -153,5 +156,14 @@ public class KidTask implements Parcelable {
 
     public void setTaskTokenzScore(ArrayList<Long> taskTokenzScore) {
         this.taskTokenzScore = taskTokenzScore;
+    }
+
+
+    public String getFirestoreImageUri() {
+        return firestoreImageUri;
+    }
+
+    public void setFirestoreImageUri(String firestoreImageUri) {
+        this.firestoreImageUri = firestoreImageUri;
     }
 }
