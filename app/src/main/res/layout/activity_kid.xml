@@ -76,6 +76,8 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_below="@id/kidCard"
         android:layout_width="match_parent"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
         android:id="@+id/tokenNumberImageConstraintLayout"
         android:layout_height="wrap_content">
 
@@ -88,6 +90,10 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/tokenNumberCard"
             app:cardBackgroundColor="@android:color/white"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
             app:cardCornerRadius="8dp"
             app:cardElevation="8dp"
             app:cardPreventCornerOverlap="true">
@@ -100,7 +106,7 @@
                 <ImageView
                     android:id="@+id/tokenImageView"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/ktz_kidz_card_image_height"
+                    android:layout_height="@dimen/ktz_kidz_tokenNumberImage_image_height"
                     android:background="?attr/colorPrimaryDark"
                     android:scaleType="fitCenter"
                     android:adjustViewBounds="true"
@@ -129,6 +135,10 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:cardBackgroundColor="@android:color/white"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
             app:cardCornerRadius="8dp"
             app:cardElevation="8dp"
             app:cardPreventCornerOverlap="true">
@@ -141,7 +151,7 @@
                 <ImageView
                     android:id="@+id/tokenNumberImageView"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/ktz_kidz_card_image_height"
+                    android:layout_height="@dimen/ktz_kidz_tokenNumberImage_image_height"
                     android:background="?attr/colorPrimaryDark"
                     android:scaleType="fitCenter"
                     android:adjustViewBounds="true"
