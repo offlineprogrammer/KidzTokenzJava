@@ -2,11 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.offlineprogrammer.KidzTokenz">
 
-    <uses-feature android:name="android.hardware.camera"
+    <uses-feature
+        android:name="android.hardware.camera"
         android:required="true" />
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -15,6 +16,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.KidzTokenz.Autumn">
+        <activity android:name=".LoginActivity"></activity>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.offlineprogrammer.KidzTokenz.fileprovider"
@@ -27,8 +30,11 @@
 
         <meta-data
             android:name="com.google.android.gms.ads.AD_MANAGER_APP"
-            android:value="true"/>
-        <activity android:name=".SplashActivity" android:theme="@style/AppTheme.Splash">
+            android:value="true" />
+
+        <activity
+            android:name=".SplashActivity"
+            android:theme="@style/AppTheme.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
