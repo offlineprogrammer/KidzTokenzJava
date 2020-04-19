@@ -9,5 +9,6 @@
     <color name="taskGridBackgroundColor">#FFFFFF</color>
     <color name="colorBackground">#6200EE</color>
     <color name="colorSplashBackground">#90CCE6</color>
+    <color name="guestTextView_color">#9e9e9e</color>
 
 </resources>
