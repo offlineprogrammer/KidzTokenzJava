@@ -83,13 +83,12 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     private final int REQUEST_IMAGE_CAPTURE = 33;
 
     private Uri filePath;
-
     private Uri taskTokenImageUri = null;
 
     FirebaseStorage storage;
     StorageReference storageReference;
     ProgressDialog progressDialog;
-
+    String currentPhotoPath;
 
 
 
@@ -105,9 +104,6 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         capture_button = findViewById(R.id.capture_button);
         taskmsg = findViewById(R.id.taskmsg);
 
-        // get the Firebase  storage reference
-        storage = FirebaseStorage.getInstance();
-        storageReference = storage.getReference();
 
 
         deleteImageButton.setOnClickListener(new View.OnClickListener() {
@@ -138,16 +134,22 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
             }
         });
 
+        // get the Firebase  storage reference
+        storage = FirebaseStorage.getInstance();
+        storageReference = storage.getReference();
+
         getExtras();
 
+        configureAdView();
+    }
+
+    private void configureAdView() {
         adView = findViewById(R.id.ad_view);
         MobileAds.setRequestConfiguration(
                 new RequestConfiguration.Builder().setTestDeviceIds(Arrays.asList("B3EEABB8EE11C2BE770B684D95219ECB"))
                         .build());
-
         // Create an ad request.
         PublisherAdRequest adRequest = new PublisherAdRequest.Builder().build();
-
         // Start loading the ad in the background.
         adView.loadAd(adRequest);
     }
@@ -160,7 +162,6 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
                 photoFile = createImageFile();
             } catch (IOException ex) {
                 // Error occurred while creating the File
-
             }
 
             // Continue only if the File was successfully created
@@ -193,9 +194,6 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
 
     }
 
-
-
-
     private void resetTaskTokenzScore() {
 
         taskTokenzScore = new ArrayList<>();
@@ -219,7 +217,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         setTaskMsg();
     }
 
-    String currentPhotoPath;
+
 
     private File createImageFile() throws IOException {
         // Create an image file name
@@ -251,10 +249,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
 
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK
                 && data != null) {
-
-           // filePath = data.getData();
             try {
-
                 // Setting image on image view using Bitmap
                 Bitmap bitmap = MediaStore
                         .Images
@@ -263,7 +258,6 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
                                 getContentResolver(),
                                 filePath);
                 taskImageView.setImageBitmap(bitmap);
-
                 uploadImage();
             }
 
@@ -271,8 +265,6 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
                 // Log the exception
                 e.printStackTrace();
             }
-
-
         }
 
 
@@ -286,7 +278,6 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
 
             // Get the Uri of data
             filePath = data.getData();
-
             taskImageView.setImageURI(filePath);
             uploadImage();
 
@@ -297,13 +288,10 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     private void uploadImage()
     {
         if (filePath != null) {
-
             // Code for showing progressDialog while uploading
             progressDialog = new ProgressDialog(this);
             progressDialog.setTitle("Uploading...");
             progressDialog.show();
-
-
             // Defining the child of storageReference
             final StorageReference ref
                     = storageReference
@@ -311,9 +299,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
                             "images/"
                                     + UUID.randomUUID().toString());
 
-
             taskImageView.setImageURI(filePath);
-
 
        ref.putFile(filePath).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                 @Override
@@ -321,7 +307,6 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
                     if (!task.isSuccessful()) {
                         throw task.getException();
                     }
-
                     // Continue with the task to get the download URL
                     return ref.getDownloadUrl();
                 }
@@ -333,22 +318,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
                         String downloadURL = downloadUri.toString();
                         selectedTask.setFirestoreImageUri(downloadURL);
                         taskImageView.setImageURI(filePath);
-
-//                        Picasso.get().load(filePath).into(taskImageView, new Callback() {
-//                            @Override
-//                            public void onSuccess() {
-//                                Log.d("TAG", "onSuccess");
-//                            }
-//
-//                            @Override
-//                            public void onError(Exception e) {
-//                                Log.d("TAG", "onSuccess");
-//                            }
-
-
- //                       });
                         updateTaskImageUri();
-
                         progressDialog.dismiss();
                     } else {
                         // Handle failures
@@ -361,13 +331,11 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     }
 
     private void showDeleteTaskDialog(TaskActivity taskActivity) {
-
         final AlertDialog builder = new AlertDialog.Builder(taskActivity).create();
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.alert_dialog_delete_task, null);
         Button okBtn = dialogView.findViewById(R.id.deletetask_confirm_button);
         Button cancelBtn = dialogView.findViewById(R.id.deletetask_cancel_button);
-
         okBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 builder.dismiss();
@@ -419,10 +387,9 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
             }
             else {
                 taskTokenImageUri = Uri.parse(selectedTask.getFirestoreImageUri());
-
-
-                Picasso.get().load(taskTokenImageUri).into(taskImageView);
-
+                Picasso.get().load(taskTokenImageUri)
+                        .placeholder(R.drawable.bekind)
+                        .into(taskImageView);
                 }
 
         }
@@ -472,7 +439,9 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
                                 selectedTask.setTaskTokenzScore(taskTokenzScore);
                                 selectedTask.setFirestoreImageUri(taskTokenImageUri.toString());
 
-                                    Picasso.get().load(taskTokenImageUri).into(taskImageView);
+                                    Picasso.get().load(taskTokenImageUri)
+                                            .placeholder(R.drawable.bekind)
+                                            .into(taskImageView);
                                 }
                                 Log.i(TAG, "DocumentSnapshot data: " + document.getData());
                             } else {
@@ -550,7 +519,9 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
                         public void onSuccess(Void aVoid) {
                             Log.i(TAG, "DocumentSnapshot successfully updated!");
                             taskTokenImageUri = Uri.parse(selectedTask.getFirestoreImageUri());
-                            Picasso.get().load(taskTokenImageUri).into(taskImageView);
+                            Picasso.get().load(taskTokenImageUri)
+                                    .placeholder(R.drawable.bekind)
+                                    .into(taskImageView);
                            // getTaskTokenzScoreAndImage();
                         }
                     })
