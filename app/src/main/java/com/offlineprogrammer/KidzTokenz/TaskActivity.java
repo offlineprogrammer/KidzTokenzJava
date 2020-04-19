@@ -50,6 +50,7 @@ import com.offlineprogrammer.KidzTokenz.taskTokenz.OnTaskTokenzListener;
 import com.offlineprogrammer.KidzTokenz.taskTokenz.TaskTokenz;
 import com.offlineprogrammer.KidzTokenz.taskTokenz.TaskTokenzAdapter;
 import com.offlineprogrammer.KidzTokenz.taskTokenz.TaskTokenzGridItemDecoration;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -285,24 +286,10 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
 
             // Get the Uri of data
             filePath = data.getData();
-            try {
 
-                // Setting image on image view using Bitmap
-                Bitmap bitmap = MediaStore
-                        .Images
-                        .Media
-                        .getBitmap(
-                                getContentResolver(),
-                                filePath);
-                taskImageView.setImageBitmap(bitmap);
+            taskImageView.setImageURI(filePath);
+            uploadImage();
 
-                uploadImage();
-            }
-
-            catch (IOException e) {
-                // Log the exception
-                e.printStackTrace();
-            }
         }
     }
 
@@ -316,6 +303,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
             progressDialog.setTitle("Uploading...");
             progressDialog.show();
 
+
             // Defining the child of storageReference
             final StorageReference ref
                     = storageReference
@@ -324,6 +312,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
                                     + UUID.randomUUID().toString());
 
 
+            taskImageView.setImageURI(filePath);
 
 
        ref.putFile(filePath).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
@@ -343,7 +332,23 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
                         Uri downloadUri = task.getResult();
                         String downloadURL = downloadUri.toString();
                         selectedTask.setFirestoreImageUri(downloadURL);
+                        taskImageView.setImageURI(filePath);
+
+//                        Picasso.get().load(filePath).into(taskImageView, new Callback() {
+//                            @Override
+//                            public void onSuccess() {
+//                                Log.d("TAG", "onSuccess");
+//                            }
+//
+//                            @Override
+//                            public void onError(Exception e) {
+//                                Log.d("TAG", "onSuccess");
+//                            }
+
+
+ //                       });
                         updateTaskImageUri();
+
                         progressDialog.dismiss();
                     } else {
                         // Handle failures
@@ -408,8 +413,18 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
             taskTokenzScore = selectedTask.getTaskTokenzScore();
             Log.i(TAG, "onCreate: " + taskTokenzScore);
             Log.i(TAG, "onCreate: " + selectedTask.getTaskName());
-            taskImageView.setImageResource(selectedTask.getTaskImage());
             taskNameTextView.setText(selectedTask.getTaskName());
+            if (selectedTask.getFirestoreImageUri() == null) {
+                taskImageView.setImageResource(selectedTask.getTaskImage());
+            }
+            else {
+                taskTokenImageUri = Uri.parse(selectedTask.getFirestoreImageUri());
+
+
+                Picasso.get().load(taskTokenImageUri).into(taskImageView);
+
+                }
+
         }
         if (getIntent().hasExtra("selected_kid")) {
             Bundle data = getIntent().getExtras();
@@ -534,6 +549,9 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
                         @Override
                         public void onSuccess(Void aVoid) {
                             Log.i(TAG, "DocumentSnapshot successfully updated!");
+                            taskTokenImageUri = Uri.parse(selectedTask.getFirestoreImageUri());
+                            Picasso.get().load(taskTokenImageUri).into(taskImageView);
+                           // getTaskTokenzScoreAndImage();
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -597,7 +615,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     @Override
     public void onRestart() {
         super.onRestart();
-        recreate();
+ //       recreate();
     }
 
     /** Called when leaving the activity */
