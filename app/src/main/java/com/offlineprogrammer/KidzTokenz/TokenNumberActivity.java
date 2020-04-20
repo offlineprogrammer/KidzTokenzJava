@@ -33,34 +33,34 @@ public class TokenNumberActivity extends AppCompatActivity {
         mTokenNumberList = new ArrayList<>();
 
         mTokenNumberData = new TokenNumberData("One",
-                R.drawable.tn1, 1);
+                R.drawable.tn1, getResources().getResourceEntryName(R.drawable.tn1), 1);
         mTokenNumberList.add(mTokenNumberData);
         mTokenNumberData = new TokenNumberData("Two",
-                R.drawable.tn2, 2);
+                R.drawable.tn2, getResources().getResourceEntryName(R.drawable.tn2), 2);
         mTokenNumberList.add(mTokenNumberData);
         mTokenNumberData = new TokenNumberData("Three",
-                R.drawable.tn3, 3);
+                R.drawable.tn3, getResources().getResourceEntryName(R.drawable.tn3), 3);
         mTokenNumberList.add(mTokenNumberData);
         mTokenNumberData = new TokenNumberData("Four",
-                R.drawable.tn4, 4);
+                R.drawable.tn4, getResources().getResourceEntryName(R.drawable.tn4), 4);
         mTokenNumberList.add(mTokenNumberData);
         mTokenNumberData = new TokenNumberData("Five",
-                R.drawable.tn5, 5);
+                R.drawable.tn5, getResources().getResourceEntryName(R.drawable.tn5), 5);
         mTokenNumberList.add(mTokenNumberData);
         mTokenNumberData = new TokenNumberData("Six",
-                R.drawable.tn6, 6);
+                R.drawable.tn6, getResources().getResourceEntryName(R.drawable.tn6), 6);
         mTokenNumberList.add(mTokenNumberData);
         mTokenNumberData = new TokenNumberData("Seven",
-                R.drawable.tn7, 7);
+                R.drawable.tn7, getResources().getResourceEntryName(R.drawable.tn7), 7);
         mTokenNumberList.add(mTokenNumberData);
         mTokenNumberData = new TokenNumberData("Eight",
-                R.drawable.tn8, 8);
+                R.drawable.tn8, getResources().getResourceEntryName(R.drawable.tn8), 8);
         mTokenNumberList.add(mTokenNumberData);
         mTokenNumberData = new TokenNumberData("Nine",
-                R.drawable.tn9, 9);
+                R.drawable.tn9, getResources().getResourceEntryName(R.drawable.tn9), 9);
         mTokenNumberList.add(mTokenNumberData);
         mTokenNumberData = new TokenNumberData("Ten",
-                R.drawable.tn10, 10);
+                R.drawable.tn10, getResources().getResourceEntryName(R.drawable.tn10), 10);
         mTokenNumberList.add(mTokenNumberData);
 
 

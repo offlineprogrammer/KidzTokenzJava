@@ -42,6 +42,7 @@ public class TokenNumberAdapter extends RecyclerView.Adapter<TokenNumberViewHold
             public void onClick(View view) {
                 Intent mIntent = new Intent(mContext, KidActivity.class);
                 mIntent.putExtra("Image", mTokenNumberList.get(holder.getAdapterPosition()).getTokenNumberImage());
+                mIntent.putExtra("ImageResource", mTokenNumberList.get(holder.getAdapterPosition()).getTokenNumberImageResourceName());
                 mIntent.putExtra("TokenNumber", mTokenNumberList.get(holder.getAdapterPosition()).getTokenNumber());
                 ((Activity)mContext).setResult(Activity.RESULT_OK,mIntent);
                 ((Activity)mContext).finish();

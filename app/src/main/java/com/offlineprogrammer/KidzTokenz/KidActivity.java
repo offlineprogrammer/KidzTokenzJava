@@ -356,10 +356,11 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
             if (resultCode == Activity.RESULT_OK) {
 
                 int selectedImage = data.getIntExtra("Image", 0);
+                String selectedImageResourceName =  data.getStringExtra("ImageResource");
                 tokenNumberImageView.setImageResource(selectedImage);
                 int selectedTokenNumber = data.getIntExtra("TokenNumber", 0);
                 Log.i(TAG, "onActivityResult: " + String.valueOf(selectedTokenNumber));
-                updateKidTokenNumberImage(selectedImage, selectedTokenNumber);
+                updateKidTokenNumberImage(selectedImage, selectedImageResourceName, selectedTokenNumber);
           //      recreate();
             }
             if (resultCode == Activity.RESULT_CANCELED) {
@@ -420,19 +421,22 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
                 });
     }
 
-    private void updateKidTokenNumberImage(final int newTokenNumberImage, final int selectedTokenNumber) {
+    private void updateKidTokenNumberImage(final int newTokenNumberImage, final String selectedImageResourceName, final int selectedTokenNumber) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         DocumentReference selectedKidRef = db.collection("users").document(selectedKid.getUserFirestoreId()).collection("kidz").document(selectedKid.getFirestoreId());
 
 // Set the "isCapital" field of the city 'DC'
         selectedKidRef
-                .update("tokenNumberImage", newTokenNumberImage, "tokenNumber", selectedTokenNumber)
+                .update("tokenNumberImage", newTokenNumberImage,
+                        "tokenNumberImageResourceName", selectedImageResourceName,
+                        "tokenNumber", selectedTokenNumber)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "DocumentSnapshot successfully updated!");
                         selectedKid.setTokenNumberImage(newTokenNumberImage);
+                        selectedKid.setBadTokenImageResourceName(selectedImageResourceName);
                         selectedKid.setTokenNumber(selectedTokenNumber);
                     }
                 })
