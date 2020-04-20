@@ -42,6 +42,9 @@ public class TokenAdapter extends RecyclerView.Adapter<TokenViewHolder> {
             public void onClick(View view) {
                 Intent mIntent = new Intent(mContext, KidActivity.class);
                 mIntent.putExtra("Image", mTokenList.get(holder.getAdapterPosition()).getTokenImage());
+                mIntent.putExtra("badImage", mTokenList.get(holder.getAdapterPosition()).getBadtokenImage());
+                mIntent.putExtra("tokenImageImageResourceName", mTokenList.get(holder.getAdapterPosition()).getTokenImageImageResourceName());
+                mIntent.putExtra("badtokenImageImageResourceName", mTokenList.get(holder.getAdapterPosition()).getBadtokenImageImageResourceName());
                 ((Activity)mContext).setResult(Activity.RESULT_OK,mIntent);
                 ((Activity)mContext).finish();
                 mContext.startActivity(mIntent);

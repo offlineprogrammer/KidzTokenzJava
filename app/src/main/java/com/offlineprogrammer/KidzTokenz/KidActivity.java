@@ -344,8 +344,11 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
             if (resultCode == Activity.RESULT_OK) {
 
                 int result = data.getIntExtra("Image", 0);
+                int badToken = data.getIntExtra("badImage", 0);
+                String tokenImageImageResourceName =  data.getStringExtra("tokenImageImageResourceName");
+                String badtokenImageImageResourceName =  data.getStringExtra("badtokenImageImageResourceName");
                 tokenImageView.setImageResource(result);
-                updateKidTokenImage(result);
+                updateKidTokenImage(result,badToken,tokenImageImageResourceName,badtokenImageImageResourceName);
 
 
             }
@@ -401,16 +404,23 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
         }
     }//onActivityResult
 
-    private void updateKidTokenImage(final int selectedImage) {
+
+
+    private void updateKidTokenImage(final int result, final int badToken, final String tokenImageImageResourceName, final String badtokenImageImageResourceName) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference selectedKidRef = db.collection("users").document(selectedKid.getUserFirestoreId()).collection("kidz").document(selectedKid.getFirestoreId());
         selectedKidRef
-                .update("tokenImage", selectedImage)
+                .update("tokenImage", result,"badTokenImage",badToken,
+                        "tokenImageResourceName", tokenImageImageResourceName,
+                        "badTokenImageResourceName",badtokenImageImageResourceName )
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "DocumentSnapshot successfully updated!");
-                        selectedKid.setTokenImage(selectedImage);
+                        selectedKid.setTokenImage(result);
+                        selectedKid.setBadTokenImage(badToken);
+                        selectedKid.setTokenImageResourceName(tokenImageImageResourceName);
+                        selectedKid.setBadTokenImageResourceName(badtokenImageImageResourceName);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {

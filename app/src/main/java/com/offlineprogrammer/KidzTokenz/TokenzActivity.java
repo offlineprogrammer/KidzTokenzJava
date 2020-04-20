@@ -32,40 +32,64 @@ public class TokenzActivity extends AppCompatActivity {
 
         mTokenList = new ArrayList<>();
         mTokenData = new TokenData("bunny",
-                R.drawable.bunny);
+                R.drawable.bunny,
+                R.drawable.badbunny, getResources().getResourceEntryName(R.drawable.bunny),
+                getResources().getResourceEntryName(R.drawable.badbunny));
         mTokenList.add(mTokenData);
         mTokenData = new TokenData("elephant",
-                R.drawable.elephant);
+                R.drawable.elephant,
+                R.drawable.badelephant, getResources().getResourceEntryName(R.drawable.elephant),
+                getResources().getResourceEntryName(R.drawable.badelephant));
         mTokenList.add(mTokenData);
         mTokenData = new TokenData("face",
-                R.drawable.face);
+                R.drawable.face,
+                R.drawable.badface, getResources().getResourceEntryName(R.drawable.face),
+                getResources().getResourceEntryName(R.drawable.badface));
         mTokenList.add(mTokenData);
         mTokenData = new TokenData("giraffe",
-                R.drawable.giraffe);
+                R.drawable.giraffe,
+                R.drawable.badgiraffe, getResources().getResourceEntryName(R.drawable.giraffe),
+                getResources().getResourceEntryName(R.drawable.badgiraffe));
         mTokenList.add(mTokenData);
         mTokenData = new TokenData("leopard",
-                R.drawable.leopard);
+                R.drawable.leopard,
+                R.drawable.badleopard, getResources().getResourceEntryName(R.drawable.leopard),
+                getResources().getResourceEntryName(R.drawable.badleopard));
         mTokenList.add(mTokenData);
         mTokenData = new TokenData("monkey",
-                R.drawable.monkey);
+                R.drawable.monkey,
+                R.drawable.badmonkey, getResources().getResourceEntryName(R.drawable.monkey),
+                getResources().getResourceEntryName(R.drawable.badmonkey));
         mTokenList.add(mTokenData);
         mTokenData = new TokenData("rocket",
-                R.drawable.rocket);
+                R.drawable.rocket,
+                R.drawable.badrocket, getResources().getResourceEntryName(R.drawable.rocket),
+                getResources().getResourceEntryName(R.drawable.badrocket));
         mTokenList.add(mTokenData);
         mTokenData = new TokenData("sheep",
-                R.drawable.sheep);
+                R.drawable.sheep,
+                R.drawable.badsheep, getResources().getResourceEntryName(R.drawable.sheep),
+                getResources().getResourceEntryName(R.drawable.badsheep));
         mTokenList.add(mTokenData);
         mTokenData = new TokenData("star",
-                R.drawable.star);
+                R.drawable.star,
+                R.drawable.badstar, getResources().getResourceEntryName(R.drawable.star),
+                getResources().getResourceEntryName(R.drawable.badstar));
         mTokenList.add(mTokenData);
         mTokenData = new TokenData("teddybear",
-                R.drawable.teddybear);
+                R.drawable.teddybear,
+                R.drawable.badteddybear, getResources().getResourceEntryName(R.drawable.teddybear),
+                getResources().getResourceEntryName(R.drawable.badteddybear));
         mTokenList.add(mTokenData);
         mTokenData = new TokenData("train",
-                R.drawable.train);
+                R.drawable.train,
+                R.drawable.badtrain, getResources().getResourceEntryName(R.drawable.train),
+                getResources().getResourceEntryName(R.drawable.badtrain));
         mTokenList.add(mTokenData);
         mTokenData = new TokenData("triceratops",
-                R.drawable.triceratops);
+                R.drawable.triceratops,
+                R.drawable.badtriceratops, getResources().getResourceEntryName(R.drawable.triceratops),
+                getResources().getResourceEntryName(R.drawable.badtriceratops));
         mTokenList.add(mTokenData);
 
          myAdapter = new TokenAdapter(TokenzActivity.this, mTokenList);
