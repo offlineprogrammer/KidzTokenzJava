@@ -356,6 +356,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
                 int selectedTokenNumber = data.getIntExtra("TokenNumber", 0);
                 Log.i(TAG, "onActivityResult: " + String.valueOf(selectedTokenNumber));
                 updateKidTokenNumberImage(selectedImage, selectedTokenNumber);
+          //      recreate();
             }
             if (resultCode == Activity.RESULT_CANCELED) {
                 //Write your code if there's no result
@@ -458,7 +459,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
     @Override
     public void onRestart() {
         super.onRestart();
-        recreate();
+   //     recreate();
     }
 
     /** Called when leaving the activity */

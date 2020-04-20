@@ -278,13 +278,13 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
             }
         });
 
-        FloatingActionButton fab_signout = findViewById(R.id.fab_signout);
+/*        FloatingActionButton fab_signout = findViewById(R.id.fab_signout);
         fab_signout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 signOut();
             }
-        });
+        });*/
     }
 
     private Kid saveKid(Kid newKid){

@@ -18,8 +18,12 @@
     <string name="ktz_task_inprogress_msg">Keep up the good work!!!</string>
     <string name="ktz_task_complete_msg">You did it. Well done!!!</string>
     <string name="ad_unit_id">/6499/example/banner</string>
-    <string name="task_ad_unit_id">/6499/example/banner</string>
+    <string name="task_ad_unit_id">/21967931457/KidzTokenz_Banner_TaskAds</string>
+    <string name="kid_ad_unit_id">/21967931457/KidzTokenz_Banner_KidAds</string>
+    <string name="main_ad_unit_id">/21967931457/KidzTokenz_Banner_MainAds</string>
+
+<!--    <string name="task_ad_unit_id">/6499/example/banner</string>
     <string name="kid_ad_unit_id">/6499/example/banner</string>
-    <string name="main_ad_unit_id">/6499/example/banner</string>
+    <string name="main_ad_unit_id">/6499/example/banner</string>-->
     <string name="continue_as_guest">Continue as guest</string>
 </resources>

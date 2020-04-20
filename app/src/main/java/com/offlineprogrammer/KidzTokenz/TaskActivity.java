@@ -50,8 +50,7 @@ import com.offlineprogrammer.KidzTokenz.taskTokenz.OnTaskTokenzListener;
 import com.offlineprogrammer.KidzTokenz.taskTokenz.TaskTokenz;
 import com.offlineprogrammer.KidzTokenz.taskTokenz.TaskTokenzAdapter;
 import com.offlineprogrammer.KidzTokenz.taskTokenz.TaskTokenzGridItemDecoration;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -387,7 +386,8 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
             }
             else {
                 taskTokenImageUri = Uri.parse(selectedTask.getFirestoreImageUri());
-                Picasso.get().load(taskTokenImageUri)
+                GlideApp.with(TaskActivity.this)
+                        .load(taskTokenImageUri)
                         .placeholder(R.drawable.bekind)
                         .into(taskImageView);
                 }
@@ -439,9 +439,12 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
                                 selectedTask.setTaskTokenzScore(taskTokenzScore);
                                 selectedTask.setFirestoreImageUri(taskTokenImageUri.toString());
 
-                                    Picasso.get().load(taskTokenImageUri)
+                                    GlideApp.with(TaskActivity.this)
+                                            .load(taskTokenImageUri)
                                             .placeholder(R.drawable.bekind)
                                             .into(taskImageView);
+
+
                                 }
                                 Log.i(TAG, "DocumentSnapshot data: " + document.getData());
                             } else {
@@ -519,10 +522,10 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
                         public void onSuccess(Void aVoid) {
                             Log.i(TAG, "DocumentSnapshot successfully updated!");
                             taskTokenImageUri = Uri.parse(selectedTask.getFirestoreImageUri());
-                            Picasso.get().load(taskTokenImageUri)
+                            GlideApp.with(TaskActivity.this)
+                                    .load(taskTokenImageUri)
                                     .placeholder(R.drawable.bekind)
                                     .into(taskImageView);
-                           // getTaskTokenzScoreAndImage();
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {

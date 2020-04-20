@@ -84,7 +84,7 @@ public class LoginActivity extends AppCompatActivity {
 
         if (currentUser != null) {
             Log.d(TAG, "Currently Signed in: " + currentUser.getEmail());
-            showToastMessage("Currently Logged in: " + currentUser.getEmail());
+         //   showToastMessage("Currently Logged in: " + currentUser.getEmail());
             launchMainActivity(currentUser);
         }
     }
@@ -103,12 +103,12 @@ public class LoginActivity extends AppCompatActivity {
             try {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
-                showToastMessage("Google Sign in Succeeded");
+        //        showToastMessage("Google Sign in Succeeded");
                 firebaseAuthWithGoogle(account);
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
                 Log.w(TAG, "Google sign in failed", e);
-                showToastMessage("Google Sign in Failed " + e);
+          //      showToastMessage("Google Sign in Failed " + e);
             }
         }
     }
@@ -127,22 +127,22 @@ public class LoginActivity extends AppCompatActivity {
 
                             Log.d(TAG, "signInWithCredential:success: currentUser: " + user.getEmail());
 
-                            showToastMessage("Firebase Authentication Succeeded ");
+              //              showToastMessage("Firebase Authentication Succeeded ");
                             launchMainActivity(user);
                         } else {
                             // If sign in fails, display a message to the user.
 
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
 
-                            showToastMessage("Firebase Authentication failed:" + task.getException());
+//                            showToastMessage("Firebase Authentication failed:" + task.getException());
                         }
                     }
                 });
     }
 
-    private void showToastMessage(String message) {
+    /*private void showToastMessage(String message) {
         Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
-    }
+    }*/
 
     private void launchMainActivity(FirebaseUser user) {
         if (user != null) {

@@ -1,5 +1,6 @@
 package com.offlineprogrammer.KidzTokenz.task;
 
+import android.content.Context;
 import android.net.Uri;
 import android.view.View;
 import android.widget.ImageView;
@@ -8,15 +9,18 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.offlineprogrammer.KidzTokenz.GlideApp;
 import com.offlineprogrammer.KidzTokenz.R;
-import com.squareup.picasso.Picasso;
+
 
 public class TaskViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    private Context mContext;
     private TextView taskNameTextView;
     private ImageView taskImageView;
     OnTaskListener onTaskListener;
     public TaskViewHolder(@NonNull View itemView, OnTaskListener OnTaskListener) {
         super(itemView);
+        mContext = itemView.getContext();
         taskNameTextView = itemView.findViewById(R.id.taskName);
         taskImageView = itemView.findViewById(R.id.taskImage);
         this.onTaskListener = OnTaskListener;
@@ -31,7 +35,8 @@ public class TaskViewHolder extends RecyclerView.ViewHolder implements View.OnCl
         }
         else {
             taskTokenImageUri = Uri.parse(viewModel.getFirestoreImageUri());
-            Picasso.get().load(taskTokenImageUri)
+            GlideApp.with(mContext)
+                    .load(taskTokenImageUri)
                     .placeholder(R.drawable.bekind)
                     .into(taskImageView);
         }
