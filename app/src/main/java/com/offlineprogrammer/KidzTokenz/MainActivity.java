@@ -179,7 +179,20 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
                     kidNameText.setError(null);
                     Date currentTime = Calendar.getInstance().getTime();
                     ArrayList<Integer> tokenImgsList = pickTokenImage();
-                    Kid newKid = new Kid(kidName, pickMonster(), currentTime, tokenImgsList.get(0),tokenImgsList.get(1), pickTokenNumber(),5);
+                    int monsterImage = pickMonster();
+                    String monsterImageResourceName = getResources().getResourceEntryName(monsterImage);
+                    int tokenNumberImage = pickTokenNumber();
+                    Kid newKid = new Kid(kidName,
+                            monsterImage,
+                            monsterImageResourceName,
+                            currentTime,
+                            tokenImgsList.get(0),
+                            getResources().getResourceEntryName(tokenImgsList.get(0)),
+                            tokenImgsList.get(1),
+                            getResources().getResourceEntryName(tokenImgsList.get(1)),
+                            tokenNumberImage,
+                            getResources().getResourceEntryName(tokenNumberImage),
+                            5);
                     newKid = saveKid(newKid);
                     Log.i(TAG, "onClick UserFireStore : " + newKid.getUserFirestoreId());
                     Log.i(TAG, "onClick KidFireStore : " + newKid.getFirestoreId());

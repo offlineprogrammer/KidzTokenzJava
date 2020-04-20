@@ -16,6 +16,7 @@ import java.util.Map;
 public class KidTask implements Parcelable {
     private String taskName;
     private int taskImage;
+    private String taskImageResourceName;
     private Date createdDate;
     private String firestoreId;
     private String kidFirestoreId;
@@ -25,10 +26,12 @@ public class KidTask implements Parcelable {
 
     public KidTask(String taskName,
                    int taskImage,
+                   String taskImageResourceName,
                    Date createdDate,
                    Boolean negativeReTask) {
         this.taskName = taskName;
         this.taskImage =taskImage;
+        this.taskImageResourceName = taskImageResourceName;
         this.createdDate=createdDate;
         this.negativeReTask = negativeReTask;
 
@@ -38,9 +41,21 @@ public class KidTask implements Parcelable {
 
     }
 
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(taskName);
+        dest.writeInt(taskImage);
+        dest.writeString(taskImageResourceName);
+        dest.writeString(firestoreId);
+        dest.writeString(kidFirestoreId);
+        dest.writeByte((byte) (negativeReTask ? 1 : 0));
+        dest.writeList(taskTokenzScore);
+    }
+
     protected KidTask(Parcel in) {
         taskName = in.readString();
         taskImage = in.readInt();
+        taskImageResourceName = in.readString();
         firestoreId = in.readString();
         kidFirestoreId = in.readString();
         negativeReTask = in.readByte() != 0;
@@ -82,6 +97,7 @@ public class KidTask implements Parcelable {
         HashMap<String, Object> result = new HashMap<>();
         result.put("taskName", this.taskName);
         result.put("taskImage", this.taskImage);
+        result.put("taskImageResourceName", this.taskImageResourceName);
         result.put("createdDate", this.createdDate);
         result.put("firestoreId", this.firestoreId);
         result.put("kidFirestoreId", this.kidFirestoreId);
@@ -116,15 +132,7 @@ public class KidTask implements Parcelable {
         return 0;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(taskName);
-        dest.writeInt(taskImage);
-        dest.writeString(firestoreId);
-        dest.writeString(kidFirestoreId);
-        dest.writeByte((byte) (negativeReTask ? 1 : 0));
-        dest.writeList(taskTokenzScore);
-    }
+
 
     public String getFirestoreId() {
         return firestoreId;
@@ -165,5 +173,13 @@ public class KidTask implements Parcelable {
 
     public void setFirestoreImageUri(String firestoreImageUri) {
         this.firestoreImageUri = firestoreImageUri;
+    }
+
+    public String getTaskImageResourceName() {
+        return taskImageResourceName;
+    }
+
+    public void setTaskImageResourceName(String taskImageResourceName) {
+        this.taskImageResourceName = taskImageResourceName;
     }
 }

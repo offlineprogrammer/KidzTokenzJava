@@ -14,27 +14,39 @@ import java.util.Map;
 public class Kid  implements Parcelable {
     private String kidName;
     private int monsterImage;
+    private String monsterImageResourceName;
     private Date createdDate;
     private int tokenImage;
+    private String tokenImageResourceName;
     private int badTokenImage;
+    private String badTokenImageResourceName;
     private int tokenNumberImage;
+    private String tokenNumberImageResourceName;
     private String firestoreId;
     private String userFirestoreId;
     private int tokenNumber;
 
     public Kid(String kidName,
                int monsterImage,
+               String monsterImageResourceName,
                Date createdDate,
                int tokenImage,
+               String tokenImageResourceName,
                int badTokenImage,
+               String badTokenImageResourceName,
                int tokenNumberImage,
+               String tokenNumberImageResourceName,
                int tokenNumber) {
         this.kidName = kidName;
         this.monsterImage=monsterImage;
+        this.monsterImageResourceName=monsterImageResourceName;
         this.createdDate=createdDate;
         this.tokenImage=tokenImage;
+        this.tokenImageResourceName=tokenImageResourceName;
         this.badTokenImage=badTokenImage;
+        this.badTokenImageResourceName=badTokenImageResourceName;
         this.tokenNumberImage =tokenNumberImage;
+        this.tokenNumberImageResourceName=tokenNumberImageResourceName;
         this.tokenNumber =tokenNumber;
     }
 
@@ -42,14 +54,35 @@ public class Kid  implements Parcelable {
 
     }
 
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(kidName);
+        dest.writeInt(monsterImage);
+        dest.writeString(monsterImageResourceName);
+        dest.writeInt(tokenImage);
+        dest.writeString(tokenImageResourceName);
+        dest.writeInt(badTokenImage);
+        dest.writeString(badTokenImageResourceName);
+        dest.writeString(firestoreId);
+        dest.writeString(userFirestoreId);
+        dest.writeInt(tokenNumberImage);
+        dest.writeString(tokenNumberImageResourceName);
+        dest.writeInt(tokenNumber);
+
+    }
+
     protected Kid(Parcel in) {
         kidName = in.readString();
         monsterImage = in.readInt();
+        monsterImageResourceName=in.readString();
         tokenImage=in.readInt();
+        tokenImageResourceName=in.readString();
         badTokenImage=in.readInt();
+        badTokenImageResourceName=in.readString();
         firestoreId = in.readString();
         userFirestoreId = in.readString();
         tokenNumberImage =in.readInt();
+        tokenNumberImageResourceName=in.readString();
         tokenNumber =in.readInt();
 
     }
@@ -88,12 +121,16 @@ public class Kid  implements Parcelable {
         HashMap<String, Object> result = new HashMap<>();
         result.put("kidName", this.kidName);
         result.put("monsterImage", this.monsterImage);
+        result.put("monsterImageResourceName", this.monsterImageResourceName);
         result.put("createdDate", this.createdDate);
         result.put("tokenImage", this.tokenImage);
+        result.put("tokenImageResourceName", this.tokenImageResourceName);
         result.put("badTokenImage", this.badTokenImage);
+        result.put("badTokenImageResourceName", this.badTokenImageResourceName);
         result.put("firestoreId", this.firestoreId);
         result.put("userFirestoreId", this.userFirestoreId);
         result.put("tokenNumberImage", this.tokenNumberImage);
+        result.put("tokenNumberImageResourceName", this.tokenNumberImageResourceName);
         result.put("tokenNumber", this.tokenNumber);
 
         return result;
@@ -126,17 +163,7 @@ public class Kid  implements Parcelable {
         return 0;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(kidName);
-        dest.writeInt(monsterImage);
-        dest.writeInt(tokenImage);
-        dest.writeInt(badTokenImage);
-        dest.writeString(firestoreId);
-        dest.writeString(userFirestoreId);
-        dest.writeInt(tokenNumberImage);
-        dest.writeInt(tokenNumber);
-    }
+
 
     public int getTokenImage() {
         return tokenImage;
@@ -184,5 +211,37 @@ public class Kid  implements Parcelable {
 
     public void setBadTokenImage(int badTokenImage) {
         this.badTokenImage = badTokenImage;
+    }
+
+    public String getMonsterImageResourceName() {
+        return monsterImageResourceName;
+    }
+
+    public void setMonsterImageResourceName(String monsterImageResourceName) {
+        this.monsterImageResourceName = monsterImageResourceName;
+    }
+
+    public String getTokenImageResourceName() {
+        return tokenImageResourceName;
+    }
+
+    public void setTokenImageResourceName(String tokenImageResourceName) {
+        this.tokenImageResourceName = tokenImageResourceName;
+    }
+
+    public String getBadTokenImageResourceName() {
+        return badTokenImageResourceName;
+    }
+
+    public void setBadTokenImageResourceName(String badTokenImageResourceName) {
+        this.badTokenImageResourceName = badTokenImageResourceName;
+    }
+
+    public String getTokenNumberImageResourceName() {
+        return tokenNumberImageResourceName;
+    }
+
+    public void setTokenNumberImageResourceName(String tokenNumberImageResourceName) {
+        this.tokenNumberImageResourceName = tokenNumberImageResourceName;
     }
 }

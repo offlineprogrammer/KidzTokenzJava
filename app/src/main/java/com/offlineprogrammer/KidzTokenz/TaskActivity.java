@@ -374,9 +374,10 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     }
 
     private void getExtras() {
-        if (getIntent().hasExtra("selected_task")) {
-            Bundle data = getIntent().getExtras();
-            selectedTask = data.getParcelable("selected_task");
+        if (getIntent().getExtras() != null) {
+            selectedTask = getIntent().getExtras().getParcelable("selected_task");
+            selectedKid = getIntent().getExtras().getParcelable("selected_kid");
+
             taskTokenzScore = selectedTask.getTaskTokenzScore();
             Log.i(TAG, "onCreate: " + taskTokenzScore);
             Log.i(TAG, "onCreate: " + selectedTask.getTaskName());
@@ -390,13 +391,11 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
                         .load(taskTokenImageUri)
                         .placeholder(R.drawable.bekind)
                         .into(taskImageView);
-                }
+            }
+
 
         }
-        if (getIntent().hasExtra("selected_kid")) {
-            Bundle data = getIntent().getExtras();
-            selectedKid = data.getParcelable("selected_kid");
-        }
+
 
         getTaskTokenzScoreAndImage();
 

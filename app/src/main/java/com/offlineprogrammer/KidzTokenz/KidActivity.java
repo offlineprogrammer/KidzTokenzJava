@@ -260,7 +260,11 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
                     taskNameText.setError(null);
                     Date currentTime = Calendar.getInstance().getTime();
                     Boolean negativeReTask = negativeReInfSwitch.isChecked();
-                    KidTask newTask = new KidTask(taskName, R.drawable.bekind, currentTime,negativeReTask);
+                    KidTask newTask = new KidTask(taskName,
+                                                    R.drawable.bekind,
+                                                    "bekind",
+                                                    currentTime,
+                                                    negativeReTask);
                     ArrayList<Long>   taskTokenzScore = new ArrayList<>();
                     for (int i = 0; i<selectedKid.getTokenNumber(); i++){
                         taskTokenzScore.add(0L);
@@ -269,7 +273,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
                     newTask = saveTask(newTask);
                     taskAdapter.add(newTask, 0);
                     taskRecyclerView.scrollToPosition(0);
-                    onTaskClick(0);
+                    //onTaskClick(0);
                     builder.dismiss();
                 }
 
@@ -448,10 +452,16 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
 
         Log.i(TAG, "Clicked " + position);
         Intent intent = new Intent(this, TaskActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("selected_kid",  selectedKid);
+        bundle.putParcelable("selected_task", taskzList.get(position));
+
+        intent.putExtras(bundle);
+
       //  intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT );
         Log.i(TAG, "onTaskClick: " + taskzList.get(position).toString());
-        intent.putExtra("selected_task",taskzList.get(position));
-        intent.putExtra("selected_kid",selectedKid);
+       // intent.putExtra("selected_task",taskzList.get(position));
+       // intent.putExtra("selected_kid",selectedKid);
         startActivity(intent);
 
     }
