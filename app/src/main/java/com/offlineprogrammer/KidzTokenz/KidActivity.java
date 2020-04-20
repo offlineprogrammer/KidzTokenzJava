@@ -277,54 +277,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
             }
         });
 
-     /*   takePicBtn.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
 
-                final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "MyDir" + File.separator);
-                root.mkdirs();
-                final String fname = "img_"+ System.currentTimeMillis() + ".jpg";
-                final File sdImageMainDirectory = new File(root, fname);
-                outputFileUri = Uri.fromFile(sdImageMainDirectory);
-
-                // Camera.
-                final List<Intent> cameraIntents = new ArrayList<Intent>();
-                final Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                final PackageManager packageManager = getPackageManager();
-                final List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
-                for(ResolveInfo res : listCam) {
-                    final String packageName = res.activityInfo.packageName;
-                    final Intent intent = new Intent(captureIntent);
-                    intent.setComponent(new ComponentName(packageName, res.activityInfo.name));
-                    intent.setPackage(packageName);
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
-                    cameraIntents.add(intent);
-                }
-
-                // Filesystem.
-                final Intent galleryIntent = new Intent();
-                galleryIntent.setType("image/*");
-                galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
-
-                // Chooser of filesystem options.
-                final Intent chooserIntent = Intent.createChooser(galleryIntent, "Select Source");
-
-                // Add the camera options.
-                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[cameraIntents.size()]));
-
-
-
-                Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(chooserIntent, 4);//zero can be replaced with any action code (called requestCode)
-            }
-        });
-
-        selectPicBtn.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent pickPhoto = new Intent(Intent.ACTION_PICK,
-                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(pickPhoto , 5);//one can be replaced with any action code
-            }
-        }); */
 
         taskNameText.setOnKeyListener(new View.OnKeyListener() {
             @Override

@@ -22,12 +22,17 @@ import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.RequestConfiguration;
 import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
 import com.google.android.gms.ads.doubleclick.PublisherAdView;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -60,6 +65,9 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
     private  User m_User;
     private Boolean bFoundData = false;
 
+    FirebaseAuth firebaseAuth;
+    GoogleSignInClient googleSignInClient;
+
     private static final String TAG = "MainActivity";
 
     @Override
@@ -79,7 +87,28 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
 
         // Start loading the ad in the background.
         adView.loadAd(adRequest);
+
+        googleSignInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_SIGN_IN);
+        firebaseAuth = FirebaseAuth.getInstance();
+
+
     }
+
+    private void signOut() {
+        // Firebase sign out
+        firebaseAuth.signOut();
+
+        // Google sign out
+        googleSignInClient.signOut().addOnCompleteListener(this,
+                new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        // Google Sign In failed, update UI appropriately
+                        Log.w(TAG, "Signed out of google");
+                    }
+                });
+    }
+
 
     private void setupRecyclerView() {
         mAdapter = new KidAdapter(kidzList,this);
@@ -213,7 +242,15 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
         // Create a new user
         Map<String, Object> user = new HashMap<>();
         user.put("deviceToken", m_User.getDeviceToken());
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+
+        if (currentUser != null) {
+            user.put("userId", currentUser.getEmail());
+
+        } else {
+
         user.put("userId", "guest");
+        }
 // Add a new document with a generated ID
         db.collection("users")
                 .add(user)
@@ -238,6 +275,14 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
             @Override
             public void onClick(View view) {
                 showAddKidDialog(MainActivity.this);
+            }
+        });
+
+        FloatingActionButton fab_signout = findViewById(R.id.fab_signout);
+        fab_signout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                signOut();
             }
         });
     }
@@ -286,10 +331,14 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
                                 if (document.exists()) {
                                 Log.d("Got Data", document.getId() + " => " + document.getData());
                                     ArrayList<Kid> list = (ArrayList<Kid>) document.get("kidz");
-                                m_User=document.toObject(User.class);
-                                m_User.setFirebaseId(document.getId());
-
+                                    String userId = (String) document.get("userId");
+                                    m_User=document.toObject(User.class);
+                                    m_User.setFirebaseId(document.getId());
                                     getKidzData(m_User.getFirebaseId());
+                                    if (userId.equals("guest")) {
+                                        updateUserId();
+                                    }
+
                                 } else {
                                     saveUser();
                                 }
@@ -308,6 +357,30 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
                     }
                 });
 
+    }
+
+    private void updateUserId() {
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+
+        if (currentUser != null) {
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            DocumentReference currentUserRef = db.collection("users").document(m_User.getFirebaseId());
+            currentUserRef
+                    .update("userId", currentUser.getEmail())
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d(TAG, "DocumentSnapshot successfully updated!");
+
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w(TAG, "Error updating document", e);
+                        }
+                    });
+        }
     }
 
 
