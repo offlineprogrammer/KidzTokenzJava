@@ -295,7 +295,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
             final StorageReference ref
                     = storageReference
                     .child(
-                            "images/"
+                            "images/"+selectedKid.getFirestoreId()+"/"+selectedTask.getFirestoreId()+"/"
                                     + UUID.randomUUID().toString());
 
             taskImageView.setImageURI(filePath);

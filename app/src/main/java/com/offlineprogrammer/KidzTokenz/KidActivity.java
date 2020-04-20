@@ -271,7 +271,8 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
                     }
                     newTask.setTaskTokenzScore(taskTokenzScore);
                     newTask = saveTask(newTask);
-                    taskAdapter.add(newTask, 0);
+                    taskzList.add(newTask);
+                    taskAdapter.updateData(taskzList);
                     taskRecyclerView.scrollToPosition(0);
                     //onTaskClick(0);
                     builder.dismiss();
@@ -306,7 +307,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
 
     private KidTask saveTask(KidTask newTask) {
 
-        taskzList.add(newTask);
+
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference newTaskRef = db.collection("users").document(selectedKid.getUserFirestoreId()).collection("kidz").document(selectedKid.getFirestoreId()).collection("taskz").document();
         newTask.setFirestoreId(newTaskRef.getId());
@@ -421,6 +422,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
                         selectedKid.setBadTokenImage(badToken);
                         selectedKid.setTokenImageResourceName(tokenImageImageResourceName);
                         selectedKid.setBadTokenImageResourceName(badtokenImageImageResourceName);
+                        recreate();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -446,8 +448,9 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "DocumentSnapshot successfully updated!");
                         selectedKid.setTokenNumberImage(newTokenNumberImage);
-                        selectedKid.setBadTokenImageResourceName(selectedImageResourceName);
+                        selectedKid.setTokenNumberImageResourceName(selectedImageResourceName);
                         selectedKid.setTokenNumber(selectedTokenNumber);
+                        recreate();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -483,7 +486,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
     @Override
     public void onRestart() {
         super.onRestart();
-   //     recreate();
+        recreate();
     }
 
     /** Called when leaving the activity */
