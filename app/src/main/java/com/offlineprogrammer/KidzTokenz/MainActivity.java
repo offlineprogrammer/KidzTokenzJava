@@ -1,5 +1,6 @@
 package com.offlineprogrammer.KidzTokenz;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
@@ -59,6 +60,8 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
     private RecyclerView recyclerView;
     private KidAdapter mAdapter;
     private PublisherAdView adView;
+    ProgressDialog progressBar;
+
 
 
     private ArrayList<Kid> kidzList = new ArrayList<>();
@@ -74,6 +77,9 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        setupProgressBar();
+
         setupRecyclerView();
         getDeviceToken();
 
@@ -92,6 +98,20 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
         firebaseAuth = FirebaseAuth.getInstance();
 
 
+    }
+
+    private void setupProgressBar() {
+        progressBar = new ProgressDialog(this);
+        //progressBar.setCancelable(true);
+        progressBar.setMessage("Loading data ...");
+      //  progressBar.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressBar.show();
+
+        //dismissPrograssBar();
+    }
+
+    private void dismissProgressBar() {
+        progressBar.dismiss();
     }
 
     private void signOut() {
@@ -193,6 +213,7 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
                             tokenNumberImage,
                             getResources().getResourceEntryName(tokenNumberImage),
                             5);
+                    setupProgressBar();
                     newKid = saveKid(newKid);
                     Log.i(TAG, "onClick UserFireStore : " + newKid.getUserFirestoreId());
                     Log.i(TAG, "onClick KidFireStore : " + newKid.getFirestoreId());
@@ -317,12 +338,14 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d("Add Kid", "DocumentSnapshot successfully written!");
+                        dismissProgressBar();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.w("Add Kid", "Error writing document", e);
+                        dismissProgressBar();
                     }
                 });
 
@@ -361,7 +384,7 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
                                 saveUser();
                             }
 
-
+                            dismissProgressBar();
                             configActionButton();
                         } else {
                             saveUser();
