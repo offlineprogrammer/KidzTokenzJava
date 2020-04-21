@@ -87,16 +87,17 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
         getDeviceToken();
 
         adView = findViewById(R.id.ad_view);
-        MobileAds.setRequestConfiguration(
-                new RequestConfiguration.Builder().setTestDeviceIds(Arrays.asList("B3EEABB8EE11C2BE770B684D95219ECB"))
-                        .build());
-
-        // Create an ad request.
         PublisherAdRequest adRequest = new PublisherAdRequest.Builder().build();
-
-        // Start loading the ad in the background.
         adView.loadAd(adRequest);
 
+        /*MobileAds.setRequestConfiguration(
+                new RequestConfiguration.Builder().setTestDeviceIds(Arrays.asList("B3EEABB8EE11C2BE770B684D95219ECB"))
+                        .build());
+        // Create an ad request.
+        PublisherAdRequest adRequest = new PublisherAdRequest.Builder().build();
+        // Start loading the ad in the background.
+        adView.loadAd(adRequest);
+*/
         googleSignInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_SIGN_IN);
         firebaseAuth = FirebaseAuth.getInstance();
         configureRateThisApp();
