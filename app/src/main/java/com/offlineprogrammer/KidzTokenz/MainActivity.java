@@ -1,7 +1,9 @@
 package com.offlineprogrammer.KidzTokenz;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.os.Bundle;
@@ -101,18 +103,51 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
     }
 
     private void setupProgressBar() {
+        dismissProgressBar();
         progressBar = new ProgressDialog(this);
-        //progressBar.setCancelable(true);
         progressBar.setMessage("Loading data ...");
-      //  progressBar.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progressBar.show();
-
-        //dismissPrograssBar();
     }
 
     private void dismissProgressBar() {
-        progressBar.dismiss();
+        dismissWithCheck(progressBar);
     }
+
+    public void dismissWithCheck(ProgressDialog dialog) {
+        if (dialog != null) {
+            if (dialog.isShowing()) {
+
+                //get the Context object that was used to great the dialog
+                Context context = ((ContextWrapper) dialog.getContext()).getBaseContext();
+
+                // if the Context used here was an activity AND it hasn't been finished or destroyed
+                // then dismiss it
+                if (context instanceof Activity) {
+
+                    // Api >=17
+                    if (!((Activity) context).isFinishing() && !((Activity) context).isDestroyed()) {
+                        dismissWithTryCatch(dialog);
+                    }
+                } else
+                    // if the Context used wasn't an Activity, then dismiss it too
+                    dismissWithTryCatch(dialog);
+            }
+            dialog = null;
+        }
+    }
+
+    public void dismissWithTryCatch(ProgressDialog dialog) {
+        try {
+            dialog.dismiss();
+        } catch (final IllegalArgumentException e) {
+            // Do nothing.
+        } catch (final Exception e) {
+            // Do nothing.
+        } finally {
+            dialog = null;
+        }
+    }
+
 
     private void signOut() {
         // Firebase sign out
