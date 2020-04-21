@@ -120,7 +120,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
         });
 
         if (getIntent().hasExtra("selected_kid")) {
-            setupProgressBar();
+           // setupProgressBar();
             Bundle data = getIntent().getExtras();
             selectedKid = data.getParcelable("selected_kid");
             kidImageView.setImageResource(selectedKid.getMonsterImage());
@@ -569,6 +569,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
         if (adView != null) {
             adView.destroy();
         }
+        dismissWithCheck(progressBar);
         super.onDestroy();
     }
 

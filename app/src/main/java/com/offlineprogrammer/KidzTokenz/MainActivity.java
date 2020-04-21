@@ -44,6 +44,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
+import com.kobakei.ratethisapp.RateThisApp;
 import com.offlineprogrammer.KidzTokenz.kid.Kid;
 import com.offlineprogrammer.KidzTokenz.kid.KidAdapter;
 import com.offlineprogrammer.KidzTokenz.kid.KidGridItemDecoration;
@@ -98,8 +99,41 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
 
         googleSignInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_SIGN_IN);
         firebaseAuth = FirebaseAuth.getInstance();
+        configureRateThisApp();
 
 
+    }
+
+    private void configureRateThisApp() {
+        // Custom condition: 3 days and 2 launches
+        RateThisApp.Config config = new RateThisApp.Config(3, 10);
+        config.setMessage(R.string.ktz_app_rate_msg);
+        RateThisApp.init(config);
+
+        // Monitor launch times and interval from installation
+        RateThisApp.onCreate(this);
+        // If the condition is satisfied, "Rate this app" dialog will be shown
+        RateThisApp.showRateDialogIfNeeded(this);
+
+        RateThisApp.setCallback(new RateThisApp.Callback() {
+            @Override
+            public void onYesClicked() {
+                RateThisApp.stopRateDialog(MainActivity.this);
+                Log.i(TAG, "onYesClicked ");
+            }
+
+            @Override
+            public void onNoClicked() {
+                Log.i(TAG, "onNoClicked ");
+
+            }
+
+            @Override
+            public void onCancelClicked() {
+                Log.i(TAG, "onCancelClicked ");
+
+            }
+        });
     }
 
     private void setupProgressBar() {
@@ -530,6 +564,7 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
         if (adView != null) {
             adView.destroy();
         }
+        dismissWithCheck(progressBar);
         super.onDestroy();
     }
 

@@ -26,4 +26,5 @@
     <string name="kid_ad_unit_id">/6499/example/banner</string>
     <string name="main_ad_unit_id">/6499/example/banner</string>-->
     <string name="continue_as_guest">Continue as guest</string>
+    <string name="ktz_app_rate_msg">Enjoying KidzTokenz? Would you mind giving us some feedback please?</string>
 </resources>
