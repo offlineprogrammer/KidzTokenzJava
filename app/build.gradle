@@ -8,8 +8,8 @@ android {
         applicationId "com.offlineprogrammer.KidzTokenz"
         minSdkVersion 23
         targetSdkVersion 29
-        versionCode 400004
-        versionName "4.2"
+        versionCode 400005
+        versionName "4.3"
         resConfigs "en"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
