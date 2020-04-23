@@ -3,9 +3,11 @@ package com.offlineprogrammer.KidzTokenz;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.transition.TransitionManager;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -52,6 +54,7 @@ import com.offlineprogrammer.KidzTokenz.taskTokenz.OnTaskTokenzListener;
 import com.offlineprogrammer.KidzTokenz.taskTokenz.TaskTokenz;
 import com.offlineprogrammer.KidzTokenz.taskTokenz.TaskTokenzAdapter;
 import com.offlineprogrammer.KidzTokenz.taskTokenz.TaskTokenzGridItemDecoration;
+import com.transitionseverywhere.ChangeText;
 
 
 import java.io.File;
@@ -78,6 +81,8 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     ImageButton restartImageButton;
     ImageButton select_button;
     ImageButton capture_button;
+    ConstraintLayout task_ctLayout;
+
     private static final String TAG = "TaskActivity";
     private ArrayList<TaskTokenz> taskTokenzList = new ArrayList<>();
     private ArrayList<Long> taskTokenzScore = new ArrayList<>();
@@ -110,6 +115,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         capture_button = findViewById(R.id.capture_button);
         taskmsg = findViewById(R.id.taskmsg);
         viewKonfetti = findViewById(R.id.viewKonfetti);
+        task_ctLayout = findViewById(R.id.task_ctLayout);
 
 
 
@@ -489,9 +495,13 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     }
 
     private void setTaskMsg() {
+        TransitionManager.beginDelayedTransition(task_ctLayout,
+                new ChangeText().setChangeBehavior(ChangeText.CHANGE_BEHAVIOR_OUT_IN));
         if (selectedTask.getNegativeReTask()) {
             // Is it inProgress
             if (taskTokenzScore.indexOf(0L)>-1) {
+
+
                 taskmsg.setText(getResources().getString(R.string.ktz_negtask_inprogress_msg));
             } else {
                 taskmsg.setText(getResources().getString(R.string.ktz_negtask_complete_msg));
