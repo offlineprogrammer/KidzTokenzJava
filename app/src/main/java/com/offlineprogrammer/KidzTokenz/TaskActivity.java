@@ -10,11 +10,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.util.Size;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -60,6 +62,10 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.UUID;
 
+import nl.dionsegijn.konfetti.KonfettiView;
+import nl.dionsegijn.konfetti.models.Shape;
+
+
 public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListener {
 
     private PublisherAdView adView;
@@ -88,6 +94,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     StorageReference storageReference;
     ProgressDialog progressDialog;
     String currentPhotoPath;
+    KonfettiView viewKonfetti;
 
 
 
@@ -102,6 +109,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         select_button = findViewById(R.id.select_button);
         capture_button = findViewById(R.id.capture_button);
         taskmsg = findViewById(R.id.taskmsg);
+        viewKonfetti = findViewById(R.id.viewKonfetti);
 
 
 
@@ -140,6 +148,20 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         getExtras();
 
         configureAdView();
+    }
+
+
+    private void celebratCompletion() {
+        viewKonfetti.build()
+                .addColors(Color.YELLOW, Color.GREEN, Color.MAGENTA)
+                .setDirection(0.0, 359.0)
+                .setSpeed(1f, 5f)
+                .setFadeOutEnabled(true)
+                .setTimeToLive(2000L)
+                .addShapes(Shape.Square.INSTANCE, Shape.Circle.INSTANCE)
+                .addSizes(new nl.dionsegijn.konfetti.models.Size(12, 5))
+                .setPosition(-50f, viewKonfetti.getWidth() + 50f, -50f, -50f)
+                .streamFor(300, 5000L);
     }
 
     private void configureAdView() {
@@ -476,6 +498,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
             if (taskTokenzScore.indexOf(0L)>-1) {
                 taskmsg.setText(getResources().getString(R.string.ktz_task_inprogress_msg));
             } else {
+                celebratCompletion();
                 taskmsg.setText(getResources().getString(R.string.ktz_task_complete_msg));
             }
 
