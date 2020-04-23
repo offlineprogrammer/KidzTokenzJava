@@ -34,6 +34,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -73,6 +74,8 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
 
     FirebaseAuth firebaseAuth;
     GoogleSignInClient googleSignInClient;
+    private FirebaseAnalytics mFirebaseAnalytics;
+
 
     private static final String TAG = "MainActivity";
 
@@ -100,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
 */
         googleSignInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_SIGN_IN);
         firebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         configureRateThisApp();
 
 
@@ -289,6 +293,7 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
                     Log.i(TAG, "onClick KidFireStore : " + newKid.getFirestoreId());
                     mAdapter.add(newKid, 0);
                     recyclerView.scrollToPosition(0);
+                    mFirebaseAnalytics.logEvent("kid_created", null);
                     builder.dismiss();
                 }
 

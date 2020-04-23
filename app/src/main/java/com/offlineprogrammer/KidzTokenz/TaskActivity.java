@@ -41,6 +41,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -82,6 +83,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     ImageButton select_button;
     ImageButton capture_button;
     ConstraintLayout task_ctLayout;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     private static final String TAG = "TaskActivity";
     private ArrayList<TaskTokenz> taskTokenzList = new ArrayList<>();
@@ -154,6 +156,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         getExtras();
 
         configureAdView();
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
     }
 
 
@@ -189,6 +192,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     }
 
     private void captureTaskImage() {
+        mFirebaseAnalytics.logEvent("photo_capture", null);
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(this.getPackageManager()) != null) {
             File photoFile = null;
@@ -212,6 +216,8 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     }
 
     private void selectTaskImage() {
+
+        mFirebaseAnalytics.logEvent("photo_select", null);
 
         // Defining Implicit Intent to mobile gallery
         Intent intent = new Intent();
@@ -249,6 +255,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
 
         taskTokenzAdapter.updateData(taskTokenzList);
         setTaskMsg();
+        mFirebaseAnalytics.logEvent("score_reset", null);
     }
 
 
@@ -374,6 +381,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
             public void onClick(View v) {
                 builder.dismiss();
                 deleteTask();
+                mFirebaseAnalytics.logEvent("task_deleted", null);
             }
         });
         cancelBtn.setOnClickListener(new View.OnClickListener() {
@@ -505,6 +513,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
                 taskmsg.setText(getResources().getString(R.string.ktz_negtask_inprogress_msg));
             } else {
                 taskmsg.setText(getResources().getString(R.string.ktz_negtask_complete_msg));
+                mFirebaseAnalytics.logEvent("negativeTask_completed", null);
             }
 
         } else {
@@ -513,6 +522,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
             } else {
                 celebratCompletion();
                 taskmsg.setText(getResources().getString(R.string.ktz_task_complete_msg));
+                mFirebaseAnalytics.logEvent("task_completed", null);
             }
 
         }
