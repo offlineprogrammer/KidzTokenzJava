@@ -152,16 +152,19 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
 
 
     private void celebratCompletion() {
+        viewKonfetti.bringToFront();
+        viewKonfetti.setTranslationZ(1);
         viewKonfetti.build()
-                .addColors(Color.YELLOW, Color.GREEN, Color.MAGENTA)
+                .addColors(Color.YELLOW, Color.GREEN, Color.MAGENTA,Color.RED)
                 .setDirection(0.0, 359.0)
                 .setSpeed(1f, 5f)
                 .setFadeOutEnabled(true)
-                .setTimeToLive(2000L)
+                .setTimeToLive(4000L)
                 .addShapes(Shape.Square.INSTANCE, Shape.Circle.INSTANCE)
-                .addSizes(new nl.dionsegijn.konfetti.models.Size(12, 5))
-                .setPosition(-50f, viewKonfetti.getWidth() + 50f, -50f, -50f)
-                .streamFor(300, 5000L);
+                .addSizes(new nl.dionsegijn.konfetti.models.Size(10, 20))
+                .setPosition(viewKonfetti.getX() + viewKonfetti.getWidth()/2, viewKonfetti.getY()+viewKonfetti.getHeight()/2)
+                .burst(600);
+                //.streamFor(300, 5000L);
     }
 
     private void configureAdView() {
