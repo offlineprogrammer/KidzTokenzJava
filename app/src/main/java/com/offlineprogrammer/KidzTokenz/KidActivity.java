@@ -26,10 +26,13 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.RequestConfiguration;
 import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
 import com.google.android.gms.ads.doubleclick.PublisherAdView;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -61,7 +64,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
     ImageView taskSelectedImageView;
     private Uri outputFileUri;
 
-    private PublisherAdView adView;
+
     private static final String TAG = "KidActivity";
     ImageView kidImageView;
     TextView kidNameTextView;
@@ -79,6 +82,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
 
     ProgressDialog progressBar;
     private FirebaseAnalytics mFirebaseAnalytics;
+    private com.google.android.gms.ads.AdView adView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,8 +136,14 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
             getkidTaskz();
         }
 
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
+
         adView = findViewById(R.id.ad_view);
-        PublisherAdRequest adRequest = new PublisherAdRequest.Builder().build();
+        com.google.android.gms.ads.AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
 
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);

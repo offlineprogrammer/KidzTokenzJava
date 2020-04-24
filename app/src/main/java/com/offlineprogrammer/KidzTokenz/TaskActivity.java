@@ -32,6 +32,7 @@ import com.google.android.flexbox.FlexDirection;
 import com.google.android.flexbox.FlexWrap;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.flexbox.JustifyContent;
+import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.RequestConfiguration;
 import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
@@ -72,7 +73,7 @@ import nl.dionsegijn.konfetti.models.Shape;
 
 public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListener {
 
-    private PublisherAdView adView;
+    private com.google.android.gms.ads.AdView adView;
     ImageView taskImageView;
     TextView taskNameTextView;
     TextView taskmsg;
@@ -178,8 +179,9 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
 
     private void configureAdView() {
         adView = findViewById(R.id.ad_view);
-        PublisherAdRequest adRequest = new PublisherAdRequest.Builder().build();
+        com.google.android.gms.ads.AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
+
 
         /*MobileAds.setRequestConfiguration(
                 new RequestConfiguration.Builder().setTestDeviceIds(Arrays.asList("B3EEABB8EE11C2BE770B684D95219ECB"))

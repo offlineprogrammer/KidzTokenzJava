@@ -21,10 +21,13 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.RequestConfiguration;
 import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
 import com.google.android.gms.ads.doubleclick.PublisherAdView;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -63,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
 
     private RecyclerView recyclerView;
     private KidAdapter mAdapter;
-    private PublisherAdView adView;
+    private com.google.android.gms.ads.AdView adView;
     ProgressDialog progressBar;
 
 
@@ -89,8 +92,14 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
         setupRecyclerView();
         getDeviceToken();
 
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
+
         adView = findViewById(R.id.ad_view);
-        PublisherAdRequest adRequest = new PublisherAdRequest.Builder().build();
+        com.google.android.gms.ads.AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
 
         /*MobileAds.setRequestConfiguration(
