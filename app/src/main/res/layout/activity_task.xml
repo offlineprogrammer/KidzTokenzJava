@@ -157,7 +157,7 @@
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
         ads:adSize="BANNER"
-        ads:adUnitId="ca-app-pub-7065714443867225/7386750131">
+        ads:adUnitId="@string/task_adMob_unit_id">
     </com.google.android.gms.ads.AdView>
 
 
