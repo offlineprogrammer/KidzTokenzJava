@@ -1,14 +1,5 @@
 package com.offlineprogrammer.KidzTokenz;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.FileProvider;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.transition.TransitionManager;
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -18,14 +9,21 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.util.Size;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.FileProvider;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.transition.TransitionManager;
 
 import com.google.android.flexbox.AlignItems;
 import com.google.android.flexbox.FlexDirection;
@@ -33,10 +31,6 @@ import com.google.android.flexbox.FlexWrap;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.flexbox.JustifyContent;
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.RequestConfiguration;
-import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
-import com.google.android.gms.ads.doubleclick.PublisherAdView;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -47,7 +41,6 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.offlineprogrammer.KidzTokenz.kid.Kid;
@@ -58,12 +51,10 @@ import com.offlineprogrammer.KidzTokenz.taskTokenz.TaskTokenzAdapter;
 import com.offlineprogrammer.KidzTokenz.taskTokenz.TaskTokenzGridItemDecoration;
 import com.transitionseverywhere.ChangeText;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.UUID;
 
@@ -434,7 +425,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
                 taskTokenImageUri = Uri.parse(selectedTask.getFirestoreImageUri());
                 GlideApp.with(TaskActivity.this)
                         .load(taskTokenImageUri)
-                        .placeholder(R.drawable.bekind)
+                       // .placeholder(R.drawable.bekind)
                         .into(taskImageView);
             }
 
@@ -485,7 +476,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
 
                                     GlideApp.with(TaskActivity.this)
                                             .load(taskTokenImageUri)
-                                            .placeholder(R.drawable.bekind)
+                                            //.placeholder(R.drawable.bekind)
                                             .into(taskImageView);
 
 
@@ -575,7 +566,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
                             taskTokenImageUri = Uri.parse(selectedTask.getFirestoreImageUri());
                             GlideApp.with(TaskActivity.this)
                                     .load(taskTokenImageUri)
-                                    .placeholder(R.drawable.bekind)
+                                   // .placeholder(R.drawable.bekind)
                                     .into(taskImageView);
                         }
                     })
