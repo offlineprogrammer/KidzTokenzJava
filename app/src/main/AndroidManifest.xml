@@ -19,7 +19,7 @@
         <!-- Sample AdMob App ID: ca-app-pub-3940256099942544~3347511713 -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-5600599415319200~3294627731"/>
+            android:value="ca-app-pub-7065714443867225~9461167562"/>
         <activity
             android:name=".LoginActivity"
             android:theme="@style/AppTheme.Splash" />
