@@ -1,9 +1,7 @@
 package com.offlineprogrammer.KidzTokenz;
 
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -23,8 +21,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.offlineprogrammer.KidzTokenz.kid.Kid;
 
@@ -34,14 +30,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
-import io.reactivex.Observer;
 import io.reactivex.Single;
-import io.reactivex.SingleObserver;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 
 public class FirebaseHelper {
@@ -112,7 +103,7 @@ public class FirebaseHelper {
 
                     if (snapshot != null && snapshot.exists()) {
                         Log.d(TAG, "V2.0 Current data: " + snapshot.getData());
-                      //  kidzStarz.setUser(snapshot.toObject(User.class));
+                        kidzTokenz.setUser(snapshot.toObject(User.class));
                         emitter.onNext(kidzTokenz.getUser());
 
                     } else {
