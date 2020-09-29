@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -23,18 +22,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.RequestConfiguration;
-import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
-import com.google.android.gms.ads.doubleclick.PublisherAdView;
-import com.google.android.gms.ads.initialization.InitializationStatus;
-import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -44,22 +34,19 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
-
 import com.kobakei.ratethisapp.RateThisApp;
 import com.offlineprogrammer.KidzTokenz.kid.Kid;
 import com.offlineprogrammer.KidzTokenz.kid.KidAdapter;
 import com.offlineprogrammer.KidzTokenz.kid.KidGridItemDecoration;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 
 
@@ -79,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
     FirebaseAuth firebaseAuth;
     GoogleSignInClient googleSignInClient;
     private FirebaseAnalytics mFirebaseAnalytics;
+    FirebaseHelper firebaseHelper;
 
 
     private static final String TAG = "MainActivity";
@@ -87,36 +75,33 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        firebaseHelper = new FirebaseHelper(getApplicationContext());
+
 
         setupProgressBar();
-
         setupRecyclerView();
-        getDeviceToken();
+        //getDeviceToken();
 
-        MobileAds.initialize(this, new OnInitializationCompleteListener() {
-            @Override
-            public void onInitializationComplete(InitializationStatus initializationStatus) {
-            }
-        });
+        setupAds();
 
-        adView = findViewById(R.id.ad_view);
-        com.google.android.gms.ads.AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
+        configActionButton();
 
-        /*MobileAds.setRequestConfiguration(
-                new RequestConfiguration.Builder().setTestDeviceIds(Arrays.asList("B3EEABB8EE11C2BE770B684D95219ECB"))
-                        .build());
-        // Create an ad request.
-        PublisherAdRequest adRequest = new PublisherAdRequest.Builder().build();
-        // Start loading the ad in the background.
-        adView.loadAd(adRequest);
-*/
+
         googleSignInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_SIGN_IN);
         firebaseAuth = FirebaseAuth.getInstance();
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         configureRateThisApp();
 
 
+    }
+
+    private void setupAds() {
+        MobileAds.initialize(this, initializationStatus -> {
+        });
+
+        adView = findViewById(R.id.ad_view);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
     }
 
     private void configureRateThisApp() {
@@ -188,8 +173,6 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
     public void dismissWithTryCatch(ProgressDialog dialog) {
         try {
             dialog.dismiss();
-        } catch (final IllegalArgumentException e) {
-            // Do nothing.
         } catch (final Exception e) {
             // Do nothing.
         } finally {
@@ -204,18 +187,15 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
 
         // Google sign out
         googleSignInClient.signOut().addOnCompleteListener(this,
-                new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        // Google Sign In failed, update UI appropriately
-                        Log.w(TAG, "Signed out of google");
-                    }
+                task -> {
+                    // Google Sign In failed, update UI appropriately
+                    Log.w(TAG, "Signed out of google");
                 });
     }
 
 
     private void setupRecyclerView() {
-        mAdapter = new KidAdapter(kidzList,this);
+        mAdapter = new KidAdapter(firebaseHelper.kidzTokenz.getUser().getKidz(), this);
         recyclerView = findViewById(R.id.kidz_recyclerview);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(mAdapter);
@@ -225,6 +205,7 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
         int largePadding = getResources().getDimensionPixelSize(R.dimen.ktz_kidz_grid_spacing);
         int smallPadding = getResources().getDimensionPixelSize(R.dimen.ktz_kidz_grid_spacing_small);
         recyclerView.addItemDecoration(new KidGridItemDecoration(largePadding, smallPadding));
+        dismissProgressBar();
 
     }
 
@@ -267,7 +248,7 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
         final AlertDialog builder = new AlertDialog.Builder(c).create();
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.alert_dialog_add_kid, null);
-        final TextInputLayout kidNameText = (TextInputLayout) dialogView.findViewById(R.id.kidname_text_input);
+        final TextInputLayout kidNameText = dialogView.findViewById(R.id.kidname_text_input);
 
 
         kidNameText.requestFocus();
@@ -314,27 +295,25 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
         kidNameText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
-                String kidName = String.valueOf(kidNameText.getEditText().getText());
+                String kidName = String.valueOf(Objects.requireNonNull(kidNameText.getEditText()).getText());
                 if (isKidNameValid(kidName)) {
                     kidNameText.setError(null); //Clear the error
                 }
                 return false;
             }
         });
-        cancelBtn.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                builder.dismiss();
+        cancelBtn.setOnClickListener(v -> {
+            builder.dismiss();
 
-                // btnAdd1 has been clicked
+            // btnAdd1 has been clicked
 
-            }
         });
         builder.setView(dialogView);
         builder.show();
-        builder.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        Objects.requireNonNull(builder.getWindow()).setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 
-     //   kidNameText.setMaxLines(1);
-     //   kidNameText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL );
+        //   kidNameText.setMaxLines(1);
+        //   kidNameText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL );
      //   kidNameText.setHint("Kid Name");
      //   kidNameText.requestFocus();
     }
@@ -343,15 +322,12 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
          return kidName != null && kidName.length() >= 2;
     }
 
-    private void getDeviceToken(){
-        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
-            @Override
-            public void onSuccess(InstanceIdResult instanceIdResult) {
-                String deviceToken = instanceIdResult.getToken();
-                m_User = new User(deviceToken);
-                getUserData(m_User.getDeviceToken());
+    private void getDeviceToken() {
+        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(instanceIdResult -> {
+            String deviceToken = instanceIdResult.getToken();
+            m_User = new User(deviceToken);
+            getUserData(m_User.getDeviceToken());
 
-            }
         });
     }
 
@@ -373,29 +349,16 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
 // Add a new document with a generated ID
         db.collection("users")
                 .add(user)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        m_User.setFirebaseId(documentReference.getId());
-                        Log.d("SavingData", "DocumentSnapshot added with ID: " + documentReference.getId());
-                    }
+                .addOnSuccessListener(documentReference -> {
+                    m_User.setFirebaseId(documentReference.getId());
+                    Log.d("SavingData", "DocumentSnapshot added with ID: " + documentReference.getId());
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("SavingData", "Error adding document", e);
-                    }
-                });
+                .addOnFailureListener(e -> Log.w("SavingData", "Error adding document", e));
     }
 
     private void configActionButton() {
         FloatingActionButton fab = findViewById(R.id.fab_add_kid);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showAddKidDialog(MainActivity.this);
-            }
-        });
+        fab.setOnClickListener(view -> showAddKidDialog(MainActivity.this));
 
 /*        FloatingActionButton fab_signout = findViewById(R.id.fab_signout);
         fab_signout.setOnClickListener(new View.OnClickListener() {
@@ -419,19 +382,13 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
         Map<String, Object> kidValues = newKid.toMap();
 
         newKidRef.set(kidValues, SetOptions.merge())
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d("Add Kid", "DocumentSnapshot successfully written!");
-                        dismissProgressBar();
-                    }
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("Add Kid", "DocumentSnapshot successfully written!");
+                    dismissProgressBar();
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("Add Kid", "Error writing document", e);
-                        dismissProgressBar();
-                    }
+                .addOnFailureListener(e -> {
+                    Log.w("Add Kid", "Error writing document", e);
+                    dismissProgressBar();
                 });
 
         return newKid;
@@ -444,37 +401,34 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
         db.collection("users")
                 .whereEqualTo("deviceToken", deviceToken)
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                if (document.exists()) {
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            if (document.exists()) {
                                 Log.d("Got Data", document.getId() + " => " + document.getData());
-                                    ArrayList<Kid> list = (ArrayList<Kid>) document.get("kidz");
-                                    String userId = (String) document.get("userId");
-                                    m_User=document.toObject(User.class);
-                                    m_User.setFirebaseId(document.getId());
-                                    getKidzData(m_User.getFirebaseId());
-                                    if (userId.equals("guest")) {
-                                        updateUserId();
-                                    }
-
-                                } else {
-                                    saveUser();
+                                ArrayList<Kid> list = (ArrayList<Kid>) document.get("kidz");
+                                String userId = (String) document.get("userId");
+                                m_User = document.toObject(User.class);
+                                m_User.setFirebaseId(document.getId());
+                                getKidzData(m_User.getFirebaseId());
+                                if (userId.equals("guest")) {
+                                    updateUserId();
                                 }
-                            }
 
-                            if (m_User.getFirebaseId()==null) {
+                            } else {
                                 saveUser();
                             }
-
-                            dismissProgressBar();
-                            configActionButton();
-                        } else {
-                            saveUser();
-                            Log.d("Got Date", "Error getting documents: ", task.getException());
                         }
+
+                        if (m_User.getFirebaseId() == null) {
+                            saveUser();
+                        }
+
+                        dismissProgressBar();
+                        configActionButton();
+                    } else {
+                        saveUser();
+                        Log.d("Got Date", "Error getting documents: ", task.getException());
                     }
                 });
 
@@ -488,19 +442,8 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
             DocumentReference currentUserRef = db.collection("users").document(m_User.getFirebaseId());
             currentUserRef
                     .update("userId", currentUser.getEmail())
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            Log.d(TAG, "DocumentSnapshot successfully updated!");
-
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.w(TAG, "Error updating document", e);
-                        }
-                    });
+                    .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
+                    .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
         }
     }
 
@@ -512,28 +455,24 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
         db.collection("users").document(UserFiebaseId).collection("kidz")
                 .orderBy("createdDate", Query.Direction.ASCENDING)
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                if (document.exists()) {
-                                    Log.d("Got Data", document.getId() + " => " + document.getData());
-                                    Kid myKid = document.toObject(Kid.class);
-                                    kidzList.add(myKid);
-                                    mAdapter.add(myKid,0);
-                                    recyclerView.scrollToPosition(0);
-                                } else {
-                                   // saveUser();
-                                }
-                            }
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            if (document.exists()) {
+                                Log.d("Got Data", document.getId() + " => " + document.getData());
+                                Kid myKid = document.toObject(Kid.class);
+                                kidzList.add(myKid);
+                                mAdapter.add(myKid, 0);
+                                recyclerView.scrollToPosition(0);
+                            }  // saveUser();
 
-
-                           // configActionButton();
-                        } else {
-                          //  saveUser();
-                            Log.d("Got Date", "Error getting documents: ", task.getException());
                         }
+
+
+                        // configActionButton();
+                    } else {
+                        //  saveUser();
+                        Log.d("Got Date", "Error getting documents: ", task.getException());
                     }
                 });
 
