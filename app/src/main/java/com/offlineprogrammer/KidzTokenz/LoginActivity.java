@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -16,12 +15,12 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+
+import java.util.Objects;
 
 import io.reactivex.Observer;
 import io.reactivex.SingleObserver;
@@ -48,34 +47,25 @@ public class LoginActivity extends AppCompatActivity {
         signInButton = findViewById(R.id.sign_in_button);
         signInButton.setSize(SignInButton.SIZE_WIDE);
         signInButton.setColorScheme(SignInButton.COLOR_LIGHT);
-        signInButton.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View view) {
-                mLogInProgress.setVisibility(View.VISIBLE);
-                signInToGoogle();
-            }
+        signInButton.setOnClickListener(view -> {
+            mLogInProgress.setVisibility(View.VISIBLE);
+            signInToGoogle();
         });
-
-        // Configure Google Client
         configureGoogleClient();
-
     }
 
     private void configureGoogleClient() {
-        // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 // for the requestIdToken, this is in the values.xml file that
                 // is generated from your google-services.json
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
-
         // Build a GoogleSignInClient with the options specified by gso.
         googleSignInClient = GoogleSignIn.getClient(this, gso);
-
         // Set the dimensions of the sign-in button.
         SignInButton signInButton = findViewById(R.id.sign_in_button);
         signInButton.setSize(SignInButton.SIZE_WIDE);
-
         // Initialize Firebase Auth
         firebaseHelper = new FirebaseHelper(getApplicationContext());
     }
@@ -83,16 +73,13 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = firebaseHelper.firebaseAuth.getCurrentUser();
-
         if (currentUser != null) {
             mLogInProgress.setVisibility(View.VISIBLE);
             signInButton.setVisibility(View.GONE);
             Log.d(TAG, "Currently Signed in: " + currentUser.getEmail());
             Log.d(TAG, "onStart: " + currentUser.getUid());
-            //   showToastMessage("Currently Logged in: " + currentUser.getEmail());
             getUserData();
         }
     }
@@ -111,13 +98,11 @@ public class LoginActivity extends AppCompatActivity {
             try {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
-        //        showToastMessage("Google Sign in Succeeded");
                 firebaseAuthWithGoogle(account);
             } catch (ApiException e) {
                 mLogInProgress.setVisibility(View.GONE);
                 // Google Sign In failed, update UI appropriately
                 Log.w(TAG, "Google sign in failed", e);
-          //      showToastMessage("Google Sign in Failed " + e);
             }
         }
     }
@@ -127,24 +112,17 @@ public class LoginActivity extends AppCompatActivity {
 
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
         firebaseHelper.firebaseAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            FirebaseUser user = firebaseHelper.firebaseAuth.getCurrentUser();
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        // Sign in success, update UI with the signed-in user's information
+                        FirebaseUser user = firebaseHelper.firebaseAuth.getCurrentUser();
 
-                            Log.d(TAG, "signInWithCredential:success: currentUser: " + user.getEmail());
-
-              //              showToastMessage("Firebase Authentication Succeeded ");
-                            getUserData();
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            mLogInProgress.setVisibility(View.GONE);
-                            Log.w(TAG, "signInWithCredential:failure", task.getException());
-
-//                            showToastMessage("Firebase Authentication failed:" + task.getException());
-                        }
+                        Log.d(TAG, "signInWithCredential:success: currentUser: " + Objects.requireNonNull(user).getEmail());
+                        getUserData();
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        mLogInProgress.setVisibility(View.GONE);
+                        Log.w(TAG, "signInWithCredential:failure", task.getException());
                     }
                 });
     }
@@ -163,24 +141,12 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onNext(User user) {
                         Log.d(TAG, "onNext: " + user.getUserId());
-                        Log.d(TAG, "onNext: m_User " + firebaseHelper.kidzTokenz.getUser().getUserId());
-
-                        Log.d(TAG, "MigratingUser The user is " + firebaseHelper.kidzTokenz.getUser().getUserEmail());
-
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                launchMainActivity(user);
-                            }
-                        });
+                        runOnUiThread(() -> launchMainActivity(user));
 
                     }
 
                     @Override
                     public void onError(Throwable e) {
-
-                        Log.d(TAG, "MigratingUser This is not a V2 User " );
-
                         Log.e(TAG, "onError: " + e.getMessage());
                         getUserDataV1();
                     }
@@ -202,44 +168,23 @@ public class LoginActivity extends AppCompatActivity {
                 .subscribe(new SingleObserver<User>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-
-                        Log.d(TAG, "continueWithTask kidzList => migrateUser onSubscribe   " );
-
-                        Log.d(TAG, " continueWithTask kidzList => onSubscribe");
-
-
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         Log.e(TAG, "continueWithTask kidzList => onError: " + e.getMessage());
                         saveUser();
-
                     }
 
                     @Override
                     public void onSuccess(User user) {
 
-                        Log.d(TAG, "continueWithTask kidzList => migrateUser onSuccess    " + user.toString());
-
-                        Log.d(TAG, "continueWithTask kidzList =>  onSuccess dateCreated   " + firebaseHelper.kidzTokenz.getUser().getDateCreated());
-
-                        Log.d(TAG, "continueWithTask kidzList => onSuccess kidz   " + firebaseHelper.kidzTokenz.getUser().getKidz());
-
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                launchMainActivity(user);
-                            }
-                        });
+                        runOnUiThread(() -> launchMainActivity(user));
 
 
                     }
                 });
 
-
-
-        Log.d(TAG, " continueWithTask kidzList => Done ");
 
     }
 
@@ -258,12 +203,7 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onNext(User user) {
                         Log.d(TAG, "onNext: " + user.getUserId());
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                launchMainActivity(user);
-                            }
-                        });
+                        runOnUiThread(() -> launchMainActivity(user));
 
 
                     }
