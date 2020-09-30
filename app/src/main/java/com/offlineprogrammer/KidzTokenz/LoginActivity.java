@@ -178,8 +178,23 @@ public class LoginActivity extends AppCompatActivity {
 
                     @Override
                     public void onSuccess(User user) {
+                        if (user.getKidz().size() > 0) {
 
-                        runOnUiThread(() -> launchMainActivity(user));
+                            firebaseHelper.updateKidzCollection()
+                                    .subscribe(() -> {
+                                        Log.i(TAG, "updateKidzCollection: completed");
+                                        // handle completion
+                                        runOnUiThread(() -> launchMainActivity(user));
+                                    }, throwable -> {
+                                        // handle error
+                                    })
+                            ;
+
+
+                        } else {
+                            runOnUiThread(() -> launchMainActivity(user));
+
+                        }
 
 
                     }

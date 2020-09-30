@@ -22,6 +22,7 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
 import com.offlineprogrammer.KidzTokenz.kid.Kid;
 
 import java.util.ArrayList;
@@ -30,12 +31,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.Single;
+import io.reactivex.SingleEmitter;
 
 
 public class FirebaseHelper {
+    public static final String USERS_COLLECTION = "users2.0";
     FirebaseFirestore m_db;
     FirebaseAuth firebaseAuth;
     FirebaseAnalytics mFirebaseAnalytics;
@@ -91,7 +95,7 @@ public class FirebaseHelper {
     Observable<User> getUserData() {
         return Observable.create((ObservableEmitter<User> emitter) -> {
             FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-            final DocumentReference docRef = m_db.collection("users2.0").document(currentUser.getUid());
+            final DocumentReference docRef = m_db.collection(USERS_COLLECTION).document(currentUser.getUid());
             docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
                 @Override
                 public void onEvent(@Nullable DocumentSnapshot snapshot,
@@ -153,6 +157,7 @@ public class FirebaseHelper {
                                     for (DocumentSnapshot ds : qs) {
                                         Log.d(TAG, " continueWithTask => " + ds.getData());
                                         Kid myKid = ds.toObject(Kid.class);
+                                        myKid.setKidUUID();
                                         kidzList.add(myKid);
                                     }
 
@@ -163,8 +168,7 @@ public class FirebaseHelper {
                                 Map<String, Object> user = kidzTokenz.getUser().toMap();
 
 
-
-                                m_db.collection("users2.0").document(currentUser.getUid())
+                                m_db.collection(USERS_COLLECTION).document(currentUser.getUid())
                                         .set(user)
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
@@ -173,6 +177,8 @@ public class FirebaseHelper {
 
                                                 Log.d(TAG, "continueWithTask kidzList => user2.0 is updated for    " + user.toString() );
                                                 Log.d(TAG, "continueWithTask kidzList => kidzTokenz.getUser()    " + kidzTokenz.getUser().toString() );
+
+
 //                            listenToUserDocument();
 
                                                 emitter.onSuccess(kidzTokenz.getUser());
@@ -196,13 +202,63 @@ public class FirebaseHelper {
     }
 
 
+    public Completable updateKidzCollection() {
+        return Completable.create(emitter -> {
+
+            WriteBatch batch = m_db.batch();
+
+            for (Kid oKid : kidzTokenz.getUser().getKidz()) {
+                Map<String, Object> kidValues = oKid.toMap();
+
+                DocumentReference kidRef = m_db.collection(USERS_COLLECTION).document(kidzTokenz.getUser().getUserId()).collection("kidzTokenz").document(oKid.getKidUUID());
+                batch.set(kidRef, kidValues);
 
 
+            }
+
+            batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "updateKidzCollection successfully written!");
+//                            listenToUserDocument();
+                        emitter.onComplete();
+                    } else {
+                        Log.w(TAG, "updateKidzCollection Error writing document ", task.getException());
+                        emitter.onError(task.getException());
+
+                    }
+                    // ...
+                }
+            });
 
 
+        });
+    }
 
 
+    public Single<Kid> saveKid(Kid newKid) {
+        return Single.create((SingleEmitter<Kid> emitter) -> {
+            kidzTokenz.getUser().getKidz().add(0, newKid);
+            DocumentReference newKidRef = m_db.collection(USERS_COLLECTION).document(kidzTokenz.getUser().getUserId());//.collection("kidz").document();
+            newKidRef.update("kidz", kidzTokenz.getUser().getKidz())
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d("Add Kid", "DocumentSnapshot successfully written!");
+                            emitter.onSuccess(newKid);
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w("Add Kid", "Error writing document", e);
+                            emitter.onError(e);
+                        }
+                    });
 
+        });
+    }
 
 
 }

@@ -10,6 +10,7 @@ import com.google.firebase.database.Exclude;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class Kid  implements Parcelable {
     private String kidName;
@@ -25,6 +26,7 @@ public class Kid  implements Parcelable {
     private String firestoreId;
     private String userFirestoreId;
     private int tokenNumber;
+    private String kidUUID;
 
     public Kid(String kidName,
                int monsterImage,
@@ -38,19 +40,38 @@ public class Kid  implements Parcelable {
                String tokenNumberImageResourceName,
                int tokenNumber) {
         this.kidName = kidName;
-        this.monsterImage=monsterImage;
-        this.monsterImageResourceName=monsterImageResourceName;
-        this.createdDate=createdDate;
-        this.tokenImage=tokenImage;
-        this.tokenImageResourceName=tokenImageResourceName;
-        this.badTokenImage=badTokenImage;
-        this.badTokenImageResourceName=badTokenImageResourceName;
-        this.tokenNumberImage =tokenNumberImage;
-        this.tokenNumberImageResourceName=tokenNumberImageResourceName;
-        this.tokenNumber =tokenNumber;
+        this.monsterImage = monsterImage;
+        this.monsterImageResourceName = monsterImageResourceName;
+        this.createdDate = createdDate;
+        this.tokenImage = tokenImage;
+        this.tokenImageResourceName = tokenImageResourceName;
+        this.badTokenImage = badTokenImage;
+        this.badTokenImageResourceName = badTokenImageResourceName;
+        this.tokenNumberImage = tokenNumberImage;
+        this.tokenNumberImageResourceName = tokenNumberImageResourceName;
+        this.tokenNumber = tokenNumber;
+        this.kidUUID = UUID.randomUUID().toString();
+
     }
 
     public Kid() {
+
+    }
+
+    protected Kid(Parcel in) {
+        kidName = in.readString();
+        monsterImage = in.readInt();
+        monsterImageResourceName = in.readString();
+        tokenImage = in.readInt();
+        tokenImageResourceName = in.readString();
+        badTokenImage = in.readInt();
+        badTokenImageResourceName = in.readString();
+        firestoreId = in.readString();
+        userFirestoreId = in.readString();
+        tokenNumberImage = in.readInt();
+        tokenNumberImageResourceName = in.readString();
+        tokenNumber = in.readInt();
+        kidUUID = in.readString();
 
     }
 
@@ -68,22 +89,7 @@ public class Kid  implements Parcelable {
         dest.writeInt(tokenNumberImage);
         dest.writeString(tokenNumberImageResourceName);
         dest.writeInt(tokenNumber);
-
-    }
-
-    protected Kid(Parcel in) {
-        kidName = in.readString();
-        monsterImage = in.readInt();
-        monsterImageResourceName=in.readString();
-        tokenImage=in.readInt();
-        tokenImageResourceName=in.readString();
-        badTokenImage=in.readInt();
-        badTokenImageResourceName=in.readString();
-        firestoreId = in.readString();
-        userFirestoreId = in.readString();
-        tokenNumberImage =in.readInt();
-        tokenNumberImageResourceName=in.readString();
-        tokenNumber =in.readInt();
+        dest.writeString(kidUUID);
 
     }
 
@@ -120,6 +126,7 @@ public class Kid  implements Parcelable {
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
         result.put("kidName", this.kidName);
+        result.put("kidUUID", this.kidUUID);
         result.put("monsterImage", this.monsterImage);
         result.put("monsterImageResourceName", this.monsterImageResourceName);
         result.put("createdDate", this.createdDate);
@@ -148,6 +155,14 @@ public class Kid  implements Parcelable {
                 ", tokenNumberImage='" + tokenNumberImage + '\'' +
                 ", tokenNumber='" + tokenNumber + '\'' +
                 '}';
+    }
+
+    public String getKidUUID() {
+        return kidUUID;
+    }
+
+    public void setKidUUID() {
+        this.kidUUID = UUID.randomUUID().toString();
     }
 
     public Date getCreatedDate() {
