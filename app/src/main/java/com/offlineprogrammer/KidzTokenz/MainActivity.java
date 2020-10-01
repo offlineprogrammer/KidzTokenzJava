@@ -482,10 +482,27 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
     public void onKidClick(int position) {
         kidzList = mAdapter.getAllItems();
         Log.i(TAG, "Clicked " + position);
+        Kid selectedKid = firebaseHelper.kidzTokenz.getUser().getKidz().get(position);
         Intent intent = new Intent(this, KidActivity.class);
-        Log.i(TAG, "onKidClick: " + kidzList.get(position).toString());
-        intent.putExtra("selected_kid",kidzList.get(position));
-        startActivity(intent);
+        Log.i(TAG, "onKidClick: " + selectedKid);
+        intent.putExtra("selected_kid", selectedKid);
+
+        if (selectedKid.getKidSchema().equals(Constants.V1SCHEMA)) {
+
+            firebaseHelper.find_migrate_TaskzV1(selectedKid)
+                    .subscribe(() -> {
+                        Log.i(TAG, "find_migrate_TaskzV1: completed");
+                        startActivity(intent);
+                        //   dismissProgressBar();
+                    }, throwable -> {
+                        // handle error
+                    });
+
+        } else {
+            startActivity(intent);
+        }
+
+
     }
 
     @Override

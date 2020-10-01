@@ -187,8 +187,7 @@ public class LoginActivity extends AppCompatActivity {
                                         runOnUiThread(() -> launchMainActivity(user));
                                     }, throwable -> {
                                         // handle error
-                                    })
-                            ;
+                                    });
 
 
                         } else {

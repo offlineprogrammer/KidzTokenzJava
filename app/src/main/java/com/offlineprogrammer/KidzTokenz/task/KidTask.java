@@ -1,6 +1,5 @@
 package com.offlineprogrammer.KidzTokenz.task;
 
-import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -12,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class KidTask implements Parcelable {
     private String taskName;
@@ -23,6 +23,7 @@ public class KidTask implements Parcelable {
     private Boolean negativeReTask = false;
     private ArrayList<Long> taskTokenzScore = new ArrayList<>();
     private String firestoreImageUri;
+    private String kidTaskUUID;
 
     public KidTask(String taskName,
                    int taskImage,
@@ -32,12 +33,25 @@ public class KidTask implements Parcelable {
         this.taskName = taskName;
         this.taskImage =taskImage;
         this.taskImageResourceName = taskImageResourceName;
-        this.createdDate=createdDate;
+        this.createdDate = createdDate;
         this.negativeReTask = negativeReTask;
+        this.kidTaskUUID = UUID.randomUUID().toString();
 
     }
 
     public KidTask() {
+
+    }
+
+    protected KidTask(Parcel in) {
+        taskName = in.readString();
+        taskImage = in.readInt();
+        taskImageResourceName = in.readString();
+        firestoreId = in.readString();
+        kidFirestoreId = in.readString();
+        negativeReTask = in.readByte() != 0;
+        in.readList(taskTokenzScore, Long.class.getClassLoader());
+        kidTaskUUID = in.readString();
 
     }
 
@@ -50,17 +64,7 @@ public class KidTask implements Parcelable {
         dest.writeString(kidFirestoreId);
         dest.writeByte((byte) (negativeReTask ? 1 : 0));
         dest.writeList(taskTokenzScore);
-    }
-
-    protected KidTask(Parcel in) {
-        taskName = in.readString();
-        taskImage = in.readInt();
-        taskImageResourceName = in.readString();
-        firestoreId = in.readString();
-        kidFirestoreId = in.readString();
-        negativeReTask = in.readByte() != 0;
-        in.readList(taskTokenzScore, Long.class.getClassLoader());
-
+        dest.writeString(kidTaskUUID);
     }
 
     public static final Creator<KidTask> CREATOR = new Creator<KidTask>() {
@@ -97,6 +101,7 @@ public class KidTask implements Parcelable {
         HashMap<String, Object> result = new HashMap<>();
         result.put("taskName", this.taskName);
         result.put("taskImage", this.taskImage);
+        result.put("kidTaskUUID", this.kidTaskUUID);
         result.put("taskImageResourceName", this.taskImageResourceName);
         result.put("createdDate", this.createdDate);
         result.put("firestoreId", this.firestoreId);
@@ -113,6 +118,7 @@ public class KidTask implements Parcelable {
                 "firestoreId='" + firestoreId + '\'' +
                 ", kidFirestoreId='" + kidFirestoreId + '\'' +
                 ", taskName='" + taskName + '\'' +
+                ", kidTaskUUID='" + kidTaskUUID + '\'' +
                 ", taskImage='" + taskImage + '\'' +
                 ", taskTokenzScore='" + taskTokenzScore + '\'' +
                 ", negativeReTask='" + (negativeReTask ? 1 : 0) + '\'' +
@@ -133,13 +139,20 @@ public class KidTask implements Parcelable {
     }
 
 
-
     public String getFirestoreId() {
         return firestoreId;
     }
 
     public void setFirestoreId(String firestoreId) {
         this.firestoreId = firestoreId;
+    }
+
+    public String getKidTaskUUID() {
+        return kidTaskUUID;
+    }
+
+    public void setKidTaskUUID() {
+        this.kidTaskUUID = UUID.randomUUID().toString();
     }
 
     public String getKidFirestoreId() {

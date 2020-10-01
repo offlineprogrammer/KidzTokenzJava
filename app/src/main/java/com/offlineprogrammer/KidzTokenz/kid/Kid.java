@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 
 import com.google.firebase.database.Exclude;
+import com.offlineprogrammer.KidzTokenz.Constants;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -27,6 +28,7 @@ public class Kid  implements Parcelable {
     private String userFirestoreId;
     private int tokenNumber;
     private String kidUUID;
+    private String kidSchema = Constants.V1SCHEMA;
 
     public Kid(String kidName,
                int monsterImage,
@@ -51,6 +53,7 @@ public class Kid  implements Parcelable {
         this.tokenNumberImageResourceName = tokenNumberImageResourceName;
         this.tokenNumber = tokenNumber;
         this.kidUUID = UUID.randomUUID().toString();
+        this.kidSchema = Constants.V2SCHEMA;
 
     }
 
@@ -139,6 +142,7 @@ public class Kid  implements Parcelable {
         result.put("tokenNumberImage", this.tokenNumberImage);
         result.put("tokenNumberImageResourceName", this.tokenNumberImageResourceName);
         result.put("tokenNumber", this.tokenNumber);
+        result.put("kidSchema", this.kidSchema);
 
         return result;
     }
@@ -258,5 +262,13 @@ public class Kid  implements Parcelable {
 
     public void setTokenNumberImageResourceName(String tokenNumberImageResourceName) {
         this.tokenNumberImageResourceName = tokenNumberImageResourceName;
+    }
+
+    public String getKidSchema() {
+        return kidSchema;
+    }
+
+    public void setKidSchema(String kidSchema) {
+        this.kidSchema = kidSchema;
     }
 }
