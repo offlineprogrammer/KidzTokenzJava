@@ -21,9 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputLayout;
 import com.kobakei.ratethisapp.RateThisApp;
@@ -45,21 +43,12 @@ import io.reactivex.schedulers.Schedulers;
 public class MainActivity extends AppCompatActivity implements OnKidListener {
 
     private RecyclerView recyclerView;
-    //FirebaseAuth firebaseAuth;
     GoogleSignInClient googleSignInClient;
     private com.google.android.gms.ads.AdView adView;
     ProgressDialog progressBar;
-
-
-    private ArrayList<Kid> kidzList = new ArrayList<>();
-    //private FirebaseAnalytics mFirebaseAnalytics;
     FirebaseHelper firebaseHelper;
-    private Boolean bFoundData = false;
-    private User m_User;
     private KidAdapter kidAdapter;
     private Disposable disposable;
-
-
     private static final String TAG = "MainActivity";
 
     @Override
@@ -71,10 +60,7 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
         setupRecyclerView();
         setupAds();
         configActionButton();
-        googleSignInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_SIGN_IN);
         configureRateThisApp();
-
-
     }
 
     private void setupAds() {
@@ -171,7 +157,6 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
         recyclerView = findViewById(R.id.kidz_recyclerview);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(kidAdapter);
-        //recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         int largePadding = getResources().getDimensionPixelSize(R.dimen.ktz_kidz_grid_spacing);
@@ -191,7 +176,6 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
 
     private  ArrayList<Integer> pickTokenImage(){
         ArrayList<Integer> tokenImgsList = new ArrayList<>();
-
         final TypedArray tokenImgs;
         final TypedArray badtokenImgs;
         tokenImgs = getResources().obtainTypedArray(R.array.kidzTokenImages);
@@ -200,16 +184,10 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
         final int rndInt = rand.nextInt(tokenImgs.length());
         tokenImgsList.add(tokenImgs.getResourceId(rndInt, 0));
         tokenImgsList.add(badtokenImgs.getResourceId(rndInt, 0));
-
         return tokenImgsList;
     }
 
     private int pickTokenNumber(){
-        /*final TypedArray imgs;
-        imgs = getResources().obtainTypedArray(R.array.kidzTokenNumbers);
-        final Random rand = new Random();
-        final int rndInt = rand.nextInt(imgs.length());
-        return imgs.getResourceId(rndInt, 0);*/
         return R.drawable.tn5;
     }
 
@@ -245,11 +223,8 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
                         5);
                 setupProgressBar();
                 saveKid(newKid);
-                //mFirebaseAnalytics.logEvent("kid_created", null);
                 builder.dismiss();
             }
-
-
         });
 
         kidNameText.setOnKeyListener((view, i, keyEvent) -> {
@@ -261,62 +236,38 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
         });
         cancelBtn.setOnClickListener(v -> {
             builder.dismiss();
-
-            // btnAdd1 has been clicked
-
         });
         builder.setView(dialogView);
         builder.show();
         Objects.requireNonNull(builder.getWindow()).setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-
-        //   kidNameText.setMaxLines(1);
-        //   kidNameText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL );
-     //   kidNameText.setHint("Kid Name");
-     //   kidNameText.requestFocus();
     }
 
     private boolean isKidNameValid(String kidName) {
          return kidName != null && kidName.length() >= 2;
     }
 
-
-
-
-
     private void configActionButton() {
         FloatingActionButton fab = findViewById(R.id.fab_add_kid);
         fab.setOnClickListener(view -> showAddKidDialog(MainActivity.this));
-
-/*        FloatingActionButton fab_signout = findViewById(R.id.fab_signout);
-        fab_signout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                signOut();
-            }
-        });*/
     }
 
     private void saveKid(Kid newKid) {
 
         firebaseHelper.saveKid(newKid).observeOn(Schedulers.io())
-                //.observeOn(Schedulers.m)
                 .subscribeOn(Schedulers.io())
                 .subscribe(new SingleObserver<Kid>() {
                     @Override
                     public void onSubscribe(Disposable d) {
                     }
-
                     @Override
                     public void onError(Throwable e) {
                         Log.e(TAG, "continueWithTask kidzList => onError: " + e.getMessage());
-
                     }
 
                     @Override
                     public void onSuccess(Kid kid) {
                         runOnUiThread(() -> {
                             firebaseHelper.logEvent("kid_created");
-                            //updateViewPager(kid);
                             updateRecyclerView();
                             firebaseHelper.updateKidzCollection(kid)
                                     .subscribe(() -> {
@@ -337,22 +288,16 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
         recyclerView = findViewById(R.id.kidz_recyclerview);
         recyclerView.setAdapter(kidAdapter);
         dismissProgressBar();
-
-
     }
 
 
     @Override
     public void onKidClick(int position) {
-        kidzList = kidAdapter.getAllItems();
-        Log.i(TAG, "Clicked " + position);
         Kid selectedKid = firebaseHelper.kidzTokenz.getUser().getKidz().get(position);
         Intent intent = new Intent(this, KidActivity.class);
         Log.i(TAG, "onKidClick: " + selectedKid);
         intent.putExtra("selected_kid", selectedKid);
-
         if (selectedKid.getKidSchema().equals(Constants.V1SCHEMA)) {
-
             firebaseHelper.find_migrate_TaskzV1(selectedKid)
                     .subscribe(() -> {
                         Log.i(TAG, "find_migrate_TaskzV1: completed");
@@ -365,8 +310,6 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
         } else {
             startActivity(intent);
         }
-
-
     }
 
     @Override
@@ -374,7 +317,6 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
         super.onRestart();
         recreate();
     }
-
 
     /** Called when leaving the activity */
     @Override
