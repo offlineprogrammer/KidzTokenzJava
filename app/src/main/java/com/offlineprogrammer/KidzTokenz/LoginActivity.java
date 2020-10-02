@@ -241,4 +241,18 @@ public class LoginActivity extends AppCompatActivity {
 
         }
     }
+
+
+    private void signOut() {
+        // Firebase sign out
+        firebaseHelper.firebaseAuth.signOut();
+
+        // Google sign out
+        googleSignInClient.signOut().addOnCompleteListener(this,
+                task -> {
+                    // Google Sign In failed, update UI appropriately
+                    Log.w(TAG, "Signed out of google");
+                });
+    }
+
 }

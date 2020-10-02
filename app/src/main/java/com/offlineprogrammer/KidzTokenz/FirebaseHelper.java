@@ -44,8 +44,7 @@ public class FirebaseHelper {
     KidzTokenz kidzTokenz;
 
 
-
-    public FirebaseHelper(Context c){
+    public FirebaseHelper(Context c) {
         m_db = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
         mContext = c;
@@ -53,11 +52,16 @@ public class FirebaseHelper {
         kidzTokenz = (KidzTokenz) mContext;
     }
 
+    public void logEvent(String event_name) {
+        mFirebaseAnalytics.logEvent(event_name, null);
+    }
+
+
     Observable<User> saveUser() {
         return Observable.create((ObservableEmitter<User> emitter) -> {
             Date currentTime = Calendar.getInstance().getTime();
             FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-            kidzTokenz.setUser(new User(currentUser.getUid(),currentUser.getEmail(), currentTime));
+            kidzTokenz.setUser(new User(currentUser.getUid(), currentUser.getEmail(), currentTime));
             Map<String, Object> user = kidzTokenz.getUser().toMap();
             m_db.collection("users").document(currentUser.getUid())
                     .set(user)
@@ -186,6 +190,24 @@ public class FirebaseHelper {
                 Log.w(TAG, "updateKidzCollection Error writing document ", task.getException());
                 emitter.onError(task.getException());
             }
+        });
+    }
+
+
+    public Completable updateKidzCollection(Kid newKid) {
+        return Completable.create(emitter -> {
+            Map<String, Object> kidValues = newKid.toMap();
+            m_db.collection(USERS_COLLECTION).document(kidzTokenz.getUser().getUserId()).collection("kidzTokenz").document(newKid.getKidUUID())
+                    .set(kidValues)
+                    .addOnSuccessListener(aVoid -> {
+                        Log.d(TAG, "DocumentSnapshot successfully written!");
+//                            listenToUserDocument();
+                        emitter.onComplete();
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.w(TAG, "Error writing document", e);
+                        emitter.onError(e);
+                    });
         });
     }
 
