@@ -262,4 +262,32 @@ public class FirebaseHelper {
     }
 
 
+    public Single<ArrayList<KidTask>> getkidTaskz(Kid selectedKid) {
+
+        ArrayList<KidTask> taskzList = new ArrayList<>();
+
+        return Single.create((SingleEmitter<ArrayList<KidTask>> emitter) -> {
+            FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+            final DocumentReference docRef = m_db.collection(USERS_COLLECTION).document(currentUser.getUid())
+                    .collection("kidzTokenz").document(selectedKid.getKidUUID());
+            docRef.collection("kidTaskz")
+                    .orderBy("createdDate", Query.Direction.DESCENDING)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                if (document.exists()) {
+                                    Log.d("Got Task Data", document.getId() + " => " + document.getData());
+                                    KidTask taskz = document.toObject(KidTask.class);
+                                    taskzList.add(taskz);
+                                }
+                            }
+                            emitter.onSuccess(taskzList);
+                        } else {
+                            Log.d("Got Date", "Error getting documents: ", task.getException());
+                            emitter.onError(task.getException());
+                        }
+                    });
+        });
+    }
 }

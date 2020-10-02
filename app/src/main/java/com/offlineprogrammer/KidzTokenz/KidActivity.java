@@ -1,20 +1,11 @@
 package com.offlineprogrammer.KidzTokenz;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -26,43 +17,47 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.RequestConfiguration;
-import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
-import com.google.android.gms.ads.doubleclick.PublisherAdView;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.offlineprogrammer.KidzTokenz.kid.Kid;
-import com.offlineprogrammer.KidzTokenz.task.OnTaskListener;
 import com.offlineprogrammer.KidzTokenz.task.KidTask;
+import com.offlineprogrammer.KidzTokenz.task.OnTaskListener;
 import com.offlineprogrammer.KidzTokenz.task.TaskAdapter;
 import com.offlineprogrammer.KidzTokenz.task.TaskGridItemDecoration;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
+import io.reactivex.SingleObserver;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+
 public class KidActivity extends AppCompatActivity implements OnTaskListener {
 
+    FirebaseHelper firebaseHelper;
     private Uri mImageUri = null;
     ImageView taskSelectedImageView;
-    private Uri outputFileUri;
+
 
 
     private static final String TAG = "KidActivity";
@@ -76,18 +71,20 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
     ImageButton deleteImageButton;
 
     private ArrayList<KidTask> taskzList = new ArrayList<>();
+    private Disposable disposable;
 
     private RecyclerView taskRecyclerView;
     private TaskAdapter taskAdapter;
 
     ProgressDialog progressBar;
-    private FirebaseAnalytics mFirebaseAnalytics;
+
     private com.google.android.gms.ads.AdView adView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_kid);
+        firebaseHelper = new FirebaseHelper(getApplicationContext());
 
         kidImageView = findViewById(R.id.kidMonsterImage);
         tokenImageView = findViewById(R.id.tokenImageView);
@@ -96,7 +93,6 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
         tokenNumberCard = findViewById(R.id.tokenNumberCard);
         tokenNumberImageView = findViewById(R.id.tokenNumberImageView);
         deleteImageButton = findViewById(R.id.delete_button);
-
 
 
         configActionButton();
@@ -125,17 +121,23 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
             }
         });
 
-        if (getIntent().hasExtra("selected_kid")) {
-           // setupProgressBar();
-            Bundle data = getIntent().getExtras();
-            selectedKid = data.getParcelable("selected_kid");
-            kidImageView.setImageResource(selectedKid.getMonsterImage());
+        if (getIntent().getExtras() != null) {
+            selectedKid = getIntent().getExtras().getParcelable("selected_kid");
+            kidImageView.setImageResource(getApplicationContext().getResources().getIdentifier(selectedKid.getMonsterImageResourceName(), "drawable",
+                    getApplicationContext().getPackageName()));
             kidNameTextView.setText(selectedKid.getKidName());
             tokenImageView.setImageResource(selectedKid.getTokenImage());
             tokenNumberImageView.setImageResource(selectedKid.getTokenNumberImage());
             getkidTaskz();
+            setTitle(selectedKid.getKidName());
         }
 
+        setupAds();
+
+
+    }
+
+    private void setupAds() {
         MobileAds.initialize(this, new OnInitializationCompleteListener() {
             @Override
             public void onInitializationComplete(InitializationStatus initializationStatus) {
@@ -143,20 +145,8 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
         });
 
         adView = findViewById(R.id.ad_view);
-        com.google.android.gms.ads.AdRequest adRequest = new AdRequest.Builder().build();
+        AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
-
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-
-
-        /*MobileAds.setRequestConfiguration(
-                new RequestConfiguration.Builder().setTestDeviceIds(Arrays.asList("B3EEABB8EE11C2BE770B684D95219ECB"))
-                        .build());
-        // Create an ad request.
-        PublisherAdRequest adRequest = new PublisherAdRequest.Builder().build();
-        // Start loading the ad in the background.
-        adView.loadAd(adRequest);
-*/
     }
 
     private void setupProgressBar() {
@@ -222,7 +212,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
             public void onClick(View v) {
                builder.dismiss();
                 deleteKid();
-                mFirebaseAnalytics.logEvent("kid_deleted", null);
+                firebaseHelper.logEvent("kid_deleted");
             }
         });
         cancelBtn.setOnClickListener(new View.OnClickListener() {
@@ -281,33 +271,43 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
 
     private void getkidTaskz() {
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DocumentReference selectedKidRef = db.collection("users").document(selectedKid.getUserFirestoreId()).collection("kidz").document(selectedKid.getFirestoreId());
-        selectedKidRef.collection("taskz").get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        firebaseHelper.getkidTaskz(selectedKid).observeOn(Schedulers.io())
+                //.observeOn(Schedulers.m)
+                .subscribeOn(Schedulers.io())
+                .subscribe(new SingleObserver<ArrayList<KidTask>>() {
                     @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                if (document.exists()) {
-                                    Log.d("Got Task Data", document.getId() + " => " + document.getData());
-                                    KidTask myTask = document.toObject(KidTask.class);
-                                    taskzList.add(myTask);
-                                    taskAdapter.add(myTask, 0);
-                                    taskRecyclerView.scrollToPosition(0);
-                                } else {
-                                    // saveUser();
-                                }
-                            }
-                            // configActionButton();
-                        } else {
-                            //  saveUser();
-                            Log.d("Got Date", "Error getting documents: ", task.getException());
-                        }
-                        dismissProgressBar();
+                    public void onSubscribe(Disposable d) {
+                        Log.d(TAG, "onSubscribe");
+                        disposable = d;
                     }
+
+                    @Override
+                    public void onSuccess(ArrayList<KidTask> taskz) {
+                        Log.d(TAG, "onNext:  " + taskz.size());
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                updateRecylerView(taskz);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, "onError: " + e.getMessage());
+                    }
+
+
                 });
+
     }
+
+    private void updateRecylerView(ArrayList<KidTask> taskz) {
+        taskAdapter.updateData(taskz);
+        taskRecyclerView.scrollToPosition(0);
+
+    }
+
 
     private void showAddTaskDialog(Context c) {
 
@@ -348,7 +348,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
                     taskzList.add(newTask);
                     taskAdapter.updateData(taskzList);
                     taskRecyclerView.scrollToPosition(0);
-                    mFirebaseAnalytics.logEvent("task_created", null);
+//                    mFirebaseAnalytics.logEvent("task_created", null);
                     //onTaskClick(0);
                     builder.dismiss();
                 }
@@ -438,7 +438,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
                 String selectedImageResourceName =  data.getStringExtra("ImageResource");
                 tokenNumberImageView.setImageResource(selectedImage);
                 int selectedTokenNumber = data.getIntExtra("TokenNumber", 0);
-                Log.i(TAG, "onActivityResult: " + String.valueOf(selectedTokenNumber));
+                Log.i(TAG, "onActivityResult: " + selectedTokenNumber);
                 updateKidTokenNumberImage(selectedImage, selectedImageResourceName, selectedTokenNumber);
           //      recreate();
             }
@@ -461,12 +461,12 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
 
             Uri selectedImageUri;
             if (isCamera) {
-                selectedImageUri = outputFileUri;
+                // selectedImageUri = outputFileUri;
             } else {
                 selectedImageUri = data == null ? null : data.getData();
             }
 
-            taskSelectedImageView.setImageURI(selectedImageUri);
+            //   taskSelectedImageView.setImageURI(selectedImageUri);
 
          //   Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
          //   taskSelectedImageView.setImageBitmap(thumbnail);
@@ -483,7 +483,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
 
 
     private void updateKidTokenImage(final int result, final int badToken, final String tokenImageImageResourceName, final String badtokenImageImageResourceName) {
-        mFirebaseAnalytics.logEvent("tokenImage_updated", null);
+        //mFirebaseAnalytics.logEvent("tokenImage_updated", null);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference selectedKidRef = db.collection("users").document(selectedKid.getUserFirestoreId()).collection("kidz").document(selectedKid.getFirestoreId());
         selectedKidRef
@@ -510,7 +510,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
     }
 
     private void updateKidTokenNumberImage(final int newTokenNumberImage, final String selectedImageResourceName, final int selectedTokenNumber) {
-        mFirebaseAnalytics.logEvent("tokenNumber_updated", null);
+        //mFirebaseAnalytics.logEvent("tokenNumber_updated", null);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         DocumentReference selectedKidRef = db.collection("users").document(selectedKid.getUserFirestoreId()).collection("kidz").document(selectedKid.getFirestoreId());
