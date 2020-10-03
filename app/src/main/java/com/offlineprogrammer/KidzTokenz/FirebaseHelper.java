@@ -290,4 +290,50 @@ public class FirebaseHelper {
                     });
         });
     }
+
+    private Kid findKidByUUID(String sKidUUID) {
+
+        return kidzTokenz.getUser().getKidz().stream().filter(
+                oKid -> sKidUUID.equals(oKid.getKidUUID())).findFirst().orElse(null);
+
+
+    }
+
+
+    public Completable deleteKid(Kid selectedKid) {
+        return Completable.create(emitter -> {
+            kidzTokenz.getUser().getKidz().remove(findKidByUUID(selectedKid.getKidUUID()));
+            DocumentReference newKidRef = m_db.collection(USERS_COLLECTION).document(kidzTokenz.getUser().getUserId());//.collection("kidz").document();
+            newKidRef.update("kidz", kidzTokenz.getUser().getKidz())
+                    .addOnSuccessListener(aVoid -> {
+                        Log.i(TAG, "DocumentSnapshot successfully deleted!");
+
+                        emitter.onComplete();
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.i(TAG, "Error updating document", e);
+                        emitter.onError(e);
+                    });
+
+
+        });
+    }
+
+    public Completable deleteKidTaskzCollection(Kid selectedKid) {
+        return Completable.create(emitter -> {
+            DocumentReference selectedKidRef = m_db.collection(USERS_COLLECTION).document(kidzTokenz.getUser().getUserId())
+                    .collection("kidzTokenz").document(selectedKid.getKidUUID());
+            selectedKidRef.delete()
+                    .addOnSuccessListener(aVoid -> {
+                        Log.i(TAG, "DocumentSnapshot successfully deleted!");
+                        emitter.onComplete();
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.i(TAG, "Error updating document", e);
+                        emitter.onError(e);
+                    });
+
+
+        });
+    }
 }

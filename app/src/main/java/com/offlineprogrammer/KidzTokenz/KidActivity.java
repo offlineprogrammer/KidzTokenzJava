@@ -85,7 +85,6 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_kid);
         firebaseHelper = new FirebaseHelper(getApplicationContext());
-
         kidImageView = findViewById(R.id.kidMonsterImage);
         tokenImageView = findViewById(R.id.tokenImageView);
         kidNameTextView = findViewById(R.id.myAwesomeTextView);
@@ -93,34 +92,13 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
         tokenNumberCard = findViewById(R.id.tokenNumberCard);
         tokenNumberImageView = findViewById(R.id.tokenNumberImageView);
         deleteImageButton = findViewById(R.id.delete_button);
-
-
         configActionButton();
         setupRecyclerView();
+        getIntentData();
+        setupAds();
+    }
 
-        tokenImageCard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent mIntent = new Intent(KidActivity.this, TokenzActivity.class);
-                startActivityForResult(mIntent, 2);
-            }
-        });
-
-        tokenNumberCard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent mIntent = new Intent(KidActivity.this, TokenNumberActivity.class);
-                startActivityForResult(mIntent, 3);
-            }
-        });
-
-        deleteImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showDeleteKidDialog(KidActivity.this);
-            }
-        });
-
+    private void getIntentData() {
         if (getIntent().getExtras() != null) {
             selectedKid = getIntent().getExtras().getParcelable("selected_kid");
             kidImageView.setImageResource(getApplicationContext().getResources().getIdentifier(selectedKid.getMonsterImageResourceName(), "drawable",
@@ -131,10 +109,6 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
             getkidTaskz();
             setTitle(selectedKid.getKidName());
         }
-
-        setupAds();
-
-
     }
 
     private void setupAds() {
@@ -200,14 +174,11 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
 
 
     private void showDeleteKidDialog(Context c) {
-
-
         final AlertDialog builder = new AlertDialog.Builder(c).create();
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.alert_dialog_delete_kid, null);
         Button okBtn = dialogView.findViewById(R.id.deletekid_confirm_button);
         Button cancelBtn = dialogView.findViewById(R.id.deletekid_cancel_button);
-
         okBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                builder.dismiss();
@@ -226,23 +197,21 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
 
     private void deleteKid() {
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DocumentReference selectedKidRef = db.collection("users").document(selectedKid.getUserFirestoreId()).collection("kidz").document(selectedKid.getFirestoreId());
-        selectedKidRef.delete()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully deleted!");
-                        finish();
-                        //finishAndRemoveTask();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error deleting document", e);
-                    }
+        firebaseHelper.deleteKid(selectedKid)
+                .subscribe(() -> {
+                    Log.i(TAG, "updateRewardImage: completed");
+                    firebaseHelper.logEvent("kid_deleted");
+                    firebaseHelper.deleteKidTaskzCollection(selectedKid)
+                            .subscribe(() -> {
+                                finish();
+                            }, throwable -> {
+                                // handle error
+                            });
+
+                }, throwable -> {
+                    // handle error
                 });
+
     }
 
     private void configActionButton() {
@@ -251,6 +220,29 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
             @Override
             public void onClick(View view) {
                 showAddTaskDialog(KidActivity.this);
+            }
+        });
+
+        tokenImageCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent mIntent = new Intent(KidActivity.this, TokenzActivity.class);
+                startActivityForResult(mIntent, 2);
+            }
+        });
+
+        tokenNumberCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent mIntent = new Intent(KidActivity.this, TokenNumberActivity.class);
+                startActivityForResult(mIntent, 3);
+            }
+        });
+
+        deleteImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDeleteKidDialog(KidActivity.this);
             }
         });
     }
