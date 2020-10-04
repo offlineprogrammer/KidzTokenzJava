@@ -298,11 +298,18 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
         Log.i(TAG, "onKidClick: " + selectedKid);
         intent.putExtra("selected_kid", selectedKid);
         if (selectedKid.getKidSchema().equals(Constants.V1SCHEMA)) {
+            Log.d(TAG, "onKidClick: find_migrate_TaskzV1 ");
             firebaseHelper.find_migrate_TaskzV1(selectedKid)
                     .subscribe(() -> {
                         Log.i(TAG, "find_migrate_TaskzV1: completed");
-                        startActivity(intent);
-                        //   dismissProgressBar();
+                        firebaseHelper.updateKidSchema(position)
+                                .subscribe(() -> {
+                                    Log.i(TAG, "updateKidSchema: completed");
+                                    startActivity(intent);
+
+                                }, throwable -> {
+                                    // handle error
+                                });
                     }, throwable -> {
                         // handle error
                     });
@@ -312,13 +319,25 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
         }
     }
 
+    private void updateKidSchema(int position) {
+        firebaseHelper.updateKidSchema(position)
+                .subscribe(() -> {
+                    Log.i(TAG, "updateKidSchema: completed");
+
+                }, throwable -> {
+                    // handle error
+                });
+    }
+
     @Override
     public void onRestart() {
         super.onRestart();
         recreate();
     }
 
-    /** Called when leaving the activity */
+    /**
+     * Called when leaving the activity
+     */
     @Override
     public void onPause() {
         if (adView != null) {

@@ -4,7 +4,11 @@ package com.offlineprogrammer.KidzTokenz;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -351,6 +355,34 @@ public class FirebaseHelper {
                     .addOnFailureListener(e -> {
                         Log.w(TAG, "Error writing document", e);
                         emitter.onError(e);
+                    });
+        });
+    }
+
+    public Completable updateKidSchema(int position) {
+        return Completable.create(emitter -> {
+
+            Kid selectedKid = kidzTokenz.getUser().getKidz().get(position);
+
+            selectedKid.setKidSchema(Constants.V2SCHEMA);
+
+            kidzTokenz.getUser().getKidz().set(position, selectedKid);
+
+            DocumentReference newKidRef = m_db.collection(USERS_COLLECTION).document(kidzTokenz.getUser().getUserId());//.collection("kidz").document();
+            newKidRef.update("kidz", kidzTokenz.getUser().getKidz())
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d("Add Kid", "DocumentSnapshot successfully written!");
+                            emitter.onComplete();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w("Add Kid", "Error writing document", e);
+                            emitter.onError(e);
+                        }
                     });
         });
     }
