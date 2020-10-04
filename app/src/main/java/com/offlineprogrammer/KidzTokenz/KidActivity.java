@@ -36,7 +36,6 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.SetOptions;
 import com.offlineprogrammer.KidzTokenz.kid.Kid;
 import com.offlineprogrammer.KidzTokenz.task.KidTask;
 import com.offlineprogrammer.KidzTokenz.task.OnTaskListener;
@@ -46,7 +45,6 @@ import com.offlineprogrammer.KidzTokenz.task.TaskGridItemDecoration;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Map;
 
 import io.reactivex.SingleObserver;
 import io.reactivex.disposables.Disposable;
@@ -276,6 +274,8 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
                     @Override
                     public void onSuccess(ArrayList<KidTask> taskz) {
                         Log.d(TAG, "onNext:  " + taskz.size());
+                        taskzList = taskz;
+
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -302,18 +302,11 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
 
 
     private void showAddTaskDialog(Context c) {
-
-
         final AlertDialog builder = new AlertDialog.Builder(c).create();
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.alert_dialog_add_task, null);
         final TextInputLayout taskNameText = dialogView.findViewById(R.id.taskname_text_input);
-
-
         taskNameText.requestFocus();
-
-
-
         Button okBtn = dialogView.findViewById(R.id.task_save_button);
         Button cancelBtn = dialogView.findViewById(R.id.task_cancel_button);
         final SwitchMaterial negativeReInfSwitch =dialogView.findViewById(R.id.switch_negative_ReIn);
@@ -324,22 +317,24 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
                     taskNameText.setError(getString(R.string.kid_error_name));
                 } else {
                     taskNameText.setError(null);
+
+
                     Date currentTime = Calendar.getInstance().getTime();
                     Boolean negativeReTask = negativeReInfSwitch.isChecked();
                     KidTask newTask = new KidTask(taskName,
-                                                    R.drawable.bekind,
-                                                    "bekind",
-                                                    currentTime,
-                                                    negativeReTask);
-                    ArrayList<Long>   taskTokenzScore = new ArrayList<>();
-                    for (int i = 0; i<selectedKid.getTokenNumber(); i++){
+                            R.drawable.bekind,
+                            "bekind",
+                            currentTime,
+                            negativeReTask);
+                    ArrayList<Long> taskTokenzScore = new ArrayList<>();
+                    for (int i = 0; i < selectedKid.getTokenNumber(); i++) {
                         taskTokenzScore.add(0L);
                     }
                     newTask.setTaskTokenzScore(taskTokenzScore);
-                    newTask = saveTask(newTask);
+                    saveTask(newTask);
                     taskzList.add(newTask);
-                    taskAdapter.updateData(taskzList);
-                    taskRecyclerView.scrollToPosition(0);
+                    updateRecylerView(taskzList);
+
 //                    mFirebaseAnalytics.logEvent("task_created", null);
                     //onTaskClick(0);
                     builder.dismiss();
@@ -372,30 +367,30 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
 
     }
 
-    private KidTask saveTask(KidTask newTask) {
+    private void saveTask(KidTask newTask) {
 
-
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DocumentReference newTaskRef = db.collection("users").document(selectedKid.getUserFirestoreId()).collection("kidz").document(selectedKid.getFirestoreId()).collection("taskz").document();
-        newTask.setFirestoreId(newTaskRef.getId());
-        newTask.setKidFirestoreId(selectedKid.getFirestoreId());
-        Map<String, Object> taskValues = newTask.toMap();
-
-        newTaskRef.set(taskValues, SetOptions.merge())
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
+        firebaseHelper.saveKidTask(newTask, selectedKid).observeOn(Schedulers.io())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new SingleObserver<KidTask>() {
                     @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d("Add Kid", "DocumentSnapshot successfully written!");
+                    public void onSubscribe(Disposable d) {
                     }
-                })
-                .addOnFailureListener(new OnFailureListener() {
+
                     @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("Add Kid", "Error writing document", e);
+                    public void onError(Throwable e) {
+                        Log.e(TAG, "continueWithTask kidzList => onError: " + e.getMessage());
+                    }
+
+                    @Override
+                    public void onSuccess(KidTask kid) {
+                        runOnUiThread(() -> {
+                            firebaseHelper.logEvent("kid_created");
+                            //   updateRecyclerView();
+
+                        });
                     }
                 });
 
-        return newTask;
 
     }
 

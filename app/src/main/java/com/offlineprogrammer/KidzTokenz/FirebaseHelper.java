@@ -336,4 +336,22 @@ public class FirebaseHelper {
 
         });
     }
+
+    public Single<KidTask> saveKidTask(KidTask newTask, Kid selectedKid) {
+        return Single.create((SingleEmitter<KidTask> emitter) -> {
+            Map<String, Object> kidTaskValues = newTask.toMap();
+            m_db.collection(USERS_COLLECTION).document(kidzTokenz.getUser().getUserId()).collection("kidzTokenz").document(selectedKid.getKidUUID())
+                    .collection("kidTaskz").document(newTask.getKidTaskUUID())
+                    .set(kidTaskValues)
+                    .addOnSuccessListener(aVoid -> {
+                        Log.d(TAG, "DocumentSnapshot successfully written!");
+//                            listenToUserDocument();
+                        emitter.onSuccess(newTask);
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.w(TAG, "Error writing document", e);
+                        emitter.onError(e);
+                    });
+        });
+    }
 }
