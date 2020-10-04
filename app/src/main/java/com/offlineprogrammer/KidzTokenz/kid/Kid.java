@@ -63,15 +63,9 @@ public class Kid  implements Parcelable {
 
     protected Kid(Parcel in) {
         kidName = in.readString();
-        monsterImage = in.readInt();
         monsterImageResourceName = in.readString();
-        tokenImage = in.readInt();
         tokenImageResourceName = in.readString();
-        badTokenImage = in.readInt();
         badTokenImageResourceName = in.readString();
-        firestoreId = in.readString();
-        userFirestoreId = in.readString();
-        tokenNumberImage = in.readInt();
         tokenNumberImageResourceName = in.readString();
         tokenNumber = in.readInt();
         kidUUID = in.readString();
@@ -81,15 +75,9 @@ public class Kid  implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(kidName);
-        dest.writeInt(monsterImage);
         dest.writeString(monsterImageResourceName);
-        dest.writeInt(tokenImage);
         dest.writeString(tokenImageResourceName);
-        dest.writeInt(badTokenImage);
         dest.writeString(badTokenImageResourceName);
-        dest.writeString(firestoreId);
-        dest.writeString(userFirestoreId);
-        dest.writeInt(tokenNumberImage);
         dest.writeString(tokenNumberImageResourceName);
         dest.writeInt(tokenNumber);
         dest.writeString(kidUUID);
@@ -130,20 +118,11 @@ public class Kid  implements Parcelable {
         HashMap<String, Object> result = new HashMap<>();
         result.put("kidName", this.kidName);
         result.put("kidUUID", this.kidUUID);
-        result.put("monsterImage", this.monsterImage);
-        result.put("monsterImageResourceName", this.monsterImageResourceName);
         result.put("createdDate", this.createdDate);
-        result.put("tokenImage", this.tokenImage);
         result.put("tokenImageResourceName", this.tokenImageResourceName);
-        result.put("badTokenImage", this.badTokenImage);
         result.put("badTokenImageResourceName", this.badTokenImageResourceName);
-        result.put("firestoreId", this.firestoreId);
-        result.put("userFirestoreId", this.userFirestoreId);
-        result.put("tokenNumberImage", this.tokenNumberImage);
         result.put("tokenNumberImageResourceName", this.tokenNumberImageResourceName);
         result.put("tokenNumber", this.tokenNumber);
-        result.put("kidSchema", this.kidSchema);
-
         return result;
     }
 
