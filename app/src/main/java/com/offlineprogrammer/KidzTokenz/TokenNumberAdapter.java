@@ -46,7 +46,7 @@ public class TokenNumberAdapter extends RecyclerView.Adapter<TokenNumberViewHold
                 mIntent.putExtra("TokenNumber", mTokenNumberList.get(holder.getAdapterPosition()).getTokenNumber());
                 ((Activity)mContext).setResult(Activity.RESULT_OK,mIntent);
                 ((Activity)mContext).finish();
-                mContext.startActivity(mIntent);
+                //mContext.startActivity(mIntent);
             }
         });
 

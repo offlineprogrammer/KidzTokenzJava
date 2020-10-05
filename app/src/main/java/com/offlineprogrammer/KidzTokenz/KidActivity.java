@@ -17,7 +17,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -29,13 +28,9 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.offlineprogrammer.KidzTokenz.kid.Kid;
 import com.offlineprogrammer.KidzTokenz.task.KidTask;
 import com.offlineprogrammer.KidzTokenz.task.OnTaskListener;
@@ -407,64 +402,33 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
 
         if (requestCode == 2) {
             if (resultCode == Activity.RESULT_OK) {
-
                 int result = data.getIntExtra("Image", 0);
                 int badToken = data.getIntExtra("badImage", 0);
-                String tokenImageImageResourceName =  data.getStringExtra("tokenImageImageResourceName");
-                String badtokenImageImageResourceName =  data.getStringExtra("badtokenImageImageResourceName");
-                tokenImageView.setImageResource(result);
-                updateKidTokenImage(result,badToken,tokenImageImageResourceName,badtokenImageImageResourceName);
-
-
+                String tokenImageImageResourceName = data.getStringExtra("tokenImageImageResourceName");
+                String badtokenImageImageResourceName = data.getStringExtra("badtokenImageImageResourceName");
+                tokenImageView.setImageDrawable(null);
+                tokenImageView.setImageResource(getApplicationContext().getResources().getIdentifier(tokenImageImageResourceName, "drawable",
+                        getApplicationContext().getPackageName()));
+                updateKidTokenImage(result, badToken, tokenImageImageResourceName, badtokenImageImageResourceName);
             }
             if (resultCode == Activity.RESULT_CANCELED) {
                 //Write your code if there's no result
             }
         } else if (requestCode == 3) {
             if (resultCode == Activity.RESULT_OK) {
-
                 int selectedImage = data.getIntExtra("Image", 0);
-                String selectedImageResourceName =  data.getStringExtra("ImageResource");
+                String selectedImageResourceName = data.getStringExtra("ImageResource");
                 tokenNumberImageView.setImageResource(selectedImage);
                 int selectedTokenNumber = data.getIntExtra("TokenNumber", 0);
                 Log.i(TAG, "onActivityResult: " + selectedTokenNumber);
+                tokenNumberImageView.setImageDrawable(null);
+                tokenNumberImageView.setImageResource(getApplicationContext().getResources().getIdentifier(selectedImageResourceName, "drawable",
+                        getApplicationContext().getPackageName()));
                 updateKidTokenNumberImage(selectedImage, selectedImageResourceName, selectedTokenNumber);
-          //      recreate();
+
             }
             if (resultCode == Activity.RESULT_CANCELED) {
                 //Write your code if there's no result
-            }
-        } else if (requestCode == 4) {
-
-            final boolean isCamera;
-            if (data == null) {
-                isCamera = true;
-            } else {
-                final String action = data.getAction();
-                if (action == null) {
-                    isCamera = false;
-                } else {
-                    isCamera = action.equals(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                }
-            }
-
-            Uri selectedImageUri;
-            if (isCamera) {
-                // selectedImageUri = outputFileUri;
-            } else {
-                selectedImageUri = data == null ? null : data.getData();
-            }
-
-            //   taskSelectedImageView.setImageURI(selectedImageUri);
-
-         //   Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
-         //   taskSelectedImageView.setImageBitmap(thumbnail);
-
-        } else if (requestCode == 5) {
-            if (data != null) {
-                mImageUri = data.getData();
-                Log.i(TAG, "onActivityResult: " + mImageUri.toString());
-                taskSelectedImageView.setImageURI(mImageUri);
             }
         }
     }//onActivityResult
@@ -473,58 +437,37 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
 
     private void updateKidTokenImage(final int result, final int badToken, final String tokenImageImageResourceName, final String badtokenImageImageResourceName) {
         //mFirebaseAnalytics.logEvent("tokenImage_updated", null);
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DocumentReference selectedKidRef = db.collection("users").document(selectedKid.getUserFirestoreId()).collection("kidz").document(selectedKid.getFirestoreId());
-        selectedKidRef
-                .update("tokenImage", result,"badTokenImage",badToken,
-                        "tokenImageResourceName", tokenImageImageResourceName,
-                        "badTokenImageResourceName",badtokenImageImageResourceName )
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully updated!");
-                        selectedKid.setTokenImage(result);
-                        selectedKid.setBadTokenImage(badToken);
-                        selectedKid.setTokenImageResourceName(tokenImageImageResourceName);
-                        selectedKid.setBadTokenImageResourceName(badtokenImageImageResourceName);
-                        recreate();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error updating document", e);
-                    }
+
+        selectedKid.setBadTokenImageResourceName(badtokenImageImageResourceName);
+        selectedKid.setTokenImageResourceName(tokenImageImageResourceName);
+        firebaseHelper.updateKid(selectedKid)
+                .subscribe(() -> {
+                    Log.i(TAG, "updateKidTokenImage: completed");
+                    firebaseHelper.logEvent("kid_updated");
+                    return;
+                }, throwable -> {
+                    // handle error
                 });
+
     }
 
     private void updateKidTokenNumberImage(final int newTokenNumberImage, final String selectedImageResourceName, final int selectedTokenNumber) {
-        //mFirebaseAnalytics.logEvent("tokenNumber_updated", null);
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        DocumentReference selectedKidRef = db.collection("users").document(selectedKid.getUserFirestoreId()).collection("kidz").document(selectedKid.getFirestoreId());
+        selectedKid.setTokenNumberImageResourceName(selectedImageResourceName);
+        selectedKid.setTokenNumber(selectedTokenNumber);
 
-// Set the "isCapital" field of the city 'DC'
-        selectedKidRef
-                .update("tokenNumberImage", newTokenNumberImage,
-                        "tokenNumberImageResourceName", selectedImageResourceName,
-                        "tokenNumber", selectedTokenNumber)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully updated!");
-                        selectedKid.setTokenNumberImage(newTokenNumberImage);
-                        selectedKid.setTokenNumberImageResourceName(selectedImageResourceName);
-                        selectedKid.setTokenNumber(selectedTokenNumber);
-                        recreate();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error updating document", e);
-                    }
+        firebaseHelper.updateKid(selectedKid)
+                .subscribe(() -> {
+                    Log.i(TAG, "updateKidTokenNumberImage: completed");
+                    firebaseHelper.logEvent("kid_updated");
+
+                }, throwable -> {
+                    // handle error
                 });
+
+
+        //mFirebaseAnalytics.logEvent("tokenNumber_updated", null);
+
 
     }
 
@@ -552,7 +495,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
     @Override
     public void onRestart() {
         super.onRestart();
-        recreate();
+        //       recreate();
     }
 
     /** Called when leaving the activity */

@@ -386,4 +386,29 @@ public class FirebaseHelper {
                     });
         });
     }
+
+    public Completable updateKid(Kid selectedKid) {
+        return Completable.create(emitter -> {
+            int position = kidzTokenz.getUser().getKidz().indexOf((findKidByUUID(selectedKid.getKidUUID())));
+            Kid requiredKid = findKidByUUID(selectedKid.getKidUUID());
+            requiredKid.setTokenNumberImageResourceName(selectedKid.getTokenNumberImageResourceName());
+            requiredKid.setTokenNumber(selectedKid.getTokenNumber());
+            requiredKid.setBadTokenImageResourceName(selectedKid.getBadTokenImageResourceName());
+            requiredKid.setTokenImageResourceName(selectedKid.getTokenImageResourceName());
+            kidzTokenz.getUser().getKidz().set(position, requiredKid);
+            DocumentReference newKidRef = m_db.collection(USERS_COLLECTION).document(kidzTokenz.getUser().getUserId());//.collection("kidz").document();
+            newKidRef.update("kidz", kidzTokenz.getUser().getKidz())
+                    .addOnSuccessListener(aVoid -> {
+                        Log.i(TAG, "DocumentSnapshot successfully deleted!");
+
+                        emitter.onComplete();
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.i(TAG, "Error updating document", e);
+                        emitter.onError(e);
+                    });
+
+
+        });
+    }
 }

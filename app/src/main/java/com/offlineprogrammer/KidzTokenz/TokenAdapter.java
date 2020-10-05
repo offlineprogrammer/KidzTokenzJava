@@ -47,7 +47,7 @@ public class TokenAdapter extends RecyclerView.Adapter<TokenViewHolder> {
                 mIntent.putExtra("badtokenImageImageResourceName", mTokenList.get(holder.getAdapterPosition()).getBadtokenImageImageResourceName());
                 ((Activity)mContext).setResult(Activity.RESULT_OK,mIntent);
                 ((Activity)mContext).finish();
-                mContext.startActivity(mIntent);
+               // mContext.startActivity(mIntent);
             }
         });
 
