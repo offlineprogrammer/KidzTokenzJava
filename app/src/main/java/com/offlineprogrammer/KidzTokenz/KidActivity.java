@@ -102,8 +102,10 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
             kidImageView.setImageResource(getApplicationContext().getResources().getIdentifier(selectedKid.getMonsterImageResourceName(), "drawable",
                     getApplicationContext().getPackageName()));
             kidNameTextView.setText(selectedKid.getKidName());
-            tokenImageView.setImageResource(selectedKid.getTokenImage());
-            tokenNumberImageView.setImageResource(selectedKid.getTokenNumberImage());
+            tokenImageView.setImageResource(getApplicationContext().getResources().getIdentifier(selectedKid.getTokenImageResourceName(), "drawable",
+                    getApplicationContext().getPackageName()));
+            tokenNumberImageView.setImageResource(getApplicationContext().getResources().getIdentifier(selectedKid.getTokenNumberImageResourceName(), "drawable",
+                    getApplicationContext().getPackageName()));
             getkidTaskz();
             setTitle(selectedKid.getKidName());
         }
