@@ -128,36 +128,34 @@ public class LoginActivity extends AppCompatActivity {
     }
 
         private void getUserData() {
+
             firebaseHelper.getUserData().observeOn(Schedulers.io())
                     //.observeOn(Schedulers.m)
                     .subscribeOn(Schedulers.io())
-                    .subscribe(new Observer<User>() {
+                    .subscribe(new SingleObserver<User>() {
                         @Override
                         public void onSubscribe(Disposable d) {
                             Log.d(TAG, "onSubscribe");
                             disposable = d;
-                    }
+                        }
 
-                    @Override
-                    public void onNext(User user) {
-                        Log.d(TAG, "onNext: " + user.getUserId());
-                        runOnUiThread(() -> launchMainActivity(user));
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.e(TAG, "onError: " + e.getMessage());
+                            getUserDataV1();
+                        }
 
-                    }
+                        @Override
+                        public void onSuccess(User user) {
+                            Log.d(TAG, "onNext: " + user.getUserId());
+                            runOnUiThread(() -> launchMainActivity(user));
 
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e(TAG, "onError: " + e.getMessage());
-                        getUserDataV1();
-                    }
 
-                    @Override
-                    public void onComplete() {
-                        Log.d(TAG, "onComplete");
-                    }
-                });
+                        }
+                    });
 
-    }
+
+        }
 
 
     private void getUserDataV1() {

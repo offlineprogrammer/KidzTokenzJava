@@ -4,11 +4,7 @@ package com.offlineprogrammer.KidzTokenz;
 import android.content.Context;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
 import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -29,6 +25,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import io.reactivex.Completable;
 import io.reactivex.CompletableEmitter;
@@ -80,7 +77,8 @@ public class FirebaseHelper {
         });
     }
 
-    Observable<User> getUserData() {
+
+    Observable<User> oldgetUserData() {
         return Observable.create((ObservableEmitter<User> emitter) -> {
             FirebaseUser currentUser = firebaseAuth.getCurrentUser();
             final DocumentReference docRef = m_db.collection(USERS_COLLECTION).document(currentUser.getUid());
@@ -93,6 +91,28 @@ public class FirebaseHelper {
                     Log.d(TAG, "V2.0 Current data: " + snapshot.getData());
                     kidzTokenz.setUser(snapshot.toObject(User.class));
                     emitter.onNext(kidzTokenz.getUser());
+                } else {
+                    Log.d(TAG, "V2.0 Current data: null");
+                    emitter.onError(new Exception("V2.0 o data found"));
+                }
+            });
+        });
+    }
+
+
+    Single<User> getUserData() {
+        return Single.create(emitter -> {
+            FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+            final DocumentReference docRef = m_db.collection(USERS_COLLECTION).document(currentUser.getUid());
+            docRef.addSnapshotListener((snapshot, e) -> {
+                if (e != null) {
+                    Log.w(TAG, "Listen failed.", e);
+                    return;
+                }
+                if (snapshot != null && snapshot.exists()) {
+                    Log.d(TAG, "V2.0 Current data: " + snapshot.getData());
+                    kidzTokenz.setUser(snapshot.toObject(User.class));
+                    emitter.onSuccess(kidzTokenz.getUser());
                 } else {
                     Log.d(TAG, "V2.0 Current data: null");
                     emitter.onError(new Exception("V2.0 o data found"));
@@ -303,6 +323,21 @@ public class FirebaseHelper {
 
     }
 
+    private int findKidIndexByUUID(String sKidUUID) {
+
+        AtomicInteger position = new AtomicInteger(-1);
+
+        Kid firstNotHiddenItem = kidzTokenz.getUser().getKidz().stream()
+                .peek(x -> position.incrementAndGet())  // increment every element encounter
+                .filter(oKid -> sKidUUID.equals(oKid.getKidUUID()))
+                .findFirst()
+                .get();
+
+        return position.get(); // 2
+
+
+    }
+
 
     public Completable deleteKid(Kid selectedKid) {
         return Completable.create(emitter -> {
@@ -370,22 +405,17 @@ public class FirebaseHelper {
 
             DocumentReference newKidRef = m_db.collection(USERS_COLLECTION).document(kidzTokenz.getUser().getUserId());//.collection("kidz").document();
             newKidRef.update("kidz", kidzTokenz.getUser().getKidz())
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            Log.d("Add Kid", "DocumentSnapshot successfully written!");
-                            emitter.onComplete();
-                        }
+                    .addOnSuccessListener(aVoid -> {
+                        Log.d("Add Kid", "DocumentSnapshot successfully written!");
+                        emitter.onComplete();
                     })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.w("Add Kid", "Error writing document", e);
-                            emitter.onError(e);
-                        }
+                    .addOnFailureListener(e -> {
+                        Log.w("Add Kid", "Error writing document", e);
+                        emitter.onError(e);
                     });
         });
     }
+
 
     public Completable updateKid(Kid selectedKid) {
         return Completable.create(emitter -> {
@@ -411,4 +441,6 @@ public class FirebaseHelper {
 
         });
     }
+
+
 }
