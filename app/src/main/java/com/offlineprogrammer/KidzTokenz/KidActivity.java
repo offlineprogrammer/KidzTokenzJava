@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -48,9 +47,6 @@ import io.reactivex.schedulers.Schedulers;
 public class KidActivity extends AppCompatActivity implements OnTaskListener {
 
     FirebaseHelper firebaseHelper;
-    private Uri mImageUri = null;
-    ImageView taskSelectedImageView;
-
 
 
     private static final String TAG = "KidActivity";

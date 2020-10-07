@@ -36,9 +36,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -75,7 +73,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     ImageButton select_button;
     ImageButton capture_button;
     ConstraintLayout task_ctLayout;
-    private FirebaseAnalytics mFirebaseAnalytics;
+    private FirebaseHelper firebaseHelper;
 
     private static final String TAG = "TaskActivity";
     private ArrayList<TaskTokenz> taskTokenzList = new ArrayList<>();
@@ -101,6 +99,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task);
+        firebaseHelper = new FirebaseHelper(getApplicationContext());
         taskImageView = findViewById(R.id.taskImage);
         taskNameTextView = findViewById(R.id.taskName);
         deleteImageButton = findViewById(R.id.delete_button);
@@ -110,9 +109,16 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         taskmsg = findViewById(R.id.taskmsg);
         viewKonfetti = findViewById(R.id.viewKonfetti);
         task_ctLayout = findViewById(R.id.task_ctLayout);
+        configActionButtons();
+        // get the Firebase  storage reference
+        storage = FirebaseStorage.getInstance();
+        storageReference = storage.getReference();
+        getExtras();
+        configureAdView();
 
+    }
 
-
+    private void configActionButtons() {
         deleteImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -140,15 +146,6 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
                 captureTaskImage();
             }
         });
-
-        // get the Firebase  storage reference
-        storage = FirebaseStorage.getInstance();
-        storageReference = storage.getReference();
-
-        getExtras();
-
-        configureAdView();
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
     }
 
 
@@ -156,7 +153,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         viewKonfetti.bringToFront();
         viewKonfetti.setTranslationZ(1);
         viewKonfetti.build()
-                .addColors(Color.YELLOW, Color.GREEN, Color.MAGENTA,Color.RED)
+                .addColors(Color.YELLOW, Color.GREEN, Color.MAGENTA, Color.RED)
                 .setDirection(0.0, 359.0)
                 .setSpeed(1f, 5f)
                 .setFadeOutEnabled(true)
@@ -185,7 +182,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     }
 
     private void captureTaskImage() {
-        mFirebaseAnalytics.logEvent("photo_capture", null);
+        firebaseHelper.logEvent("photo_capture");
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(this.getPackageManager()) != null) {
             File photoFile = null;
@@ -210,7 +207,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
 
     private void selectTaskImage() {
 
-        mFirebaseAnalytics.logEvent("photo_select", null);
+        firebaseHelper.logEvent("photo_select");
 
         // Defining Implicit Intent to mobile gallery
         Intent intent = new Intent();
@@ -248,7 +245,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
 
         taskTokenzAdapter.updateData(taskTokenzList);
         setTaskMsg();
-        mFirebaseAnalytics.logEvent("score_reset", null);
+        firebaseHelper.logEvent("score_reset");
     }
 
 
@@ -374,7 +371,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
             public void onClick(View v) {
                 builder.dismiss();
                 deleteTask();
-                mFirebaseAnalytics.logEvent("task_deleted", null);
+                firebaseHelper.logEvent("task_deleted");
             }
         });
         cancelBtn.setOnClickListener(new View.OnClickListener() {
@@ -456,43 +453,15 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     }
 
     private void getTaskTokenzScoreAndImage() {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DocumentReference selectedTaskRef = db.collection("users").
-                document(selectedKid.getUserFirestoreId()).collection("kidz").document(selectedKid.getFirestoreId()).
-                collection("taskz").document(selectedTask.getFirestoreId());
-        selectedTaskRef.get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            DocumentSnapshot document = task.getResult();
-                            if (document.exists()) {
-                                taskTokenzScore = (ArrayList<Long>) document.get("taskTokenzScore");
-                                String sImageUrl = (String) document.get("firestoreImageUri");
-                                if(sImageUrl != null) {
-                                taskTokenImageUri = Uri.parse(sImageUrl);
-                                selectedTask.setTaskTokenzScore(taskTokenzScore);
-                                selectedTask.setFirestoreImageUri(taskTokenImageUri.toString());
 
-                                    GlideApp.with(TaskActivity.this)
-                                            .load(taskTokenImageUri)
-                                            //.placeholder(R.drawable.bekind)
-                                            .into(taskImageView);
+        Log.i(TAG, "getTaskTokenzScoreAndImage: Task " + selectedTask);
+        Log.i(TAG, "getTaskTokenzScoreAndImage: " + selectedTask.getTaskTokenzScore());
 
 
-                                }
-                                Log.i(TAG, "DocumentSnapshot data: " + document.getData());
-                            } else {
-                                Log.i(TAG, "No such document");
-                            }
-                            verfifyTokenzScore();
-                            setupRecyclerView();
-                            setTaskMsg();
-                        } else {
-                            Log.i(TAG, "get failed with ", task.getException());
-                        }
-                    }
-                });
+        verfifyTokenzScore();
+        setupRecyclerView();
+        setTaskMsg();
+
     }
 
     private void setTaskMsg() {
@@ -506,7 +475,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
                 taskmsg.setText(getResources().getString(R.string.ktz_negtask_inprogress_msg));
             } else {
                 taskmsg.setText(getResources().getString(R.string.ktz_negtask_complete_msg));
-                mFirebaseAnalytics.logEvent("negativeTask_completed", null);
+                firebaseHelper.logEvent("negativeTask_completed");
             }
 
         } else {
@@ -515,7 +484,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
             } else {
                 celebratCompletion();
                 taskmsg.setText(getResources().getString(R.string.ktz_task_complete_msg));
-                mFirebaseAnalytics.logEvent("task_completed", null);
+                firebaseHelper.logEvent("task_completed");
             }
 
         }
@@ -524,9 +493,14 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     private void setupRecyclerView() {
         int tokenImage;
         if (selectedTask.getNegativeReTask()) {
-            tokenImage = selectedKid.getBadTokenImage();
+            tokenImage = getApplicationContext().getResources().getIdentifier(selectedKid.getBadTokenImageResourceName(), "drawable",
+                    getApplicationContext().getPackageName());
+
+            //tokenImage = selectedKid.getBadTokenImage();
         } else {
-            tokenImage = selectedKid.getTokenImage();
+            //tokenImage = selectedKid.getTokenImage();
+            tokenImage = getApplicationContext().getResources().getIdentifier(selectedKid.getTokenImageResourceName(), "drawable",
+                    getApplicationContext().getPackageName());
         }
 
         for (int i = 0; i < selectedKid.getTokenNumber(); i++) {
@@ -558,7 +532,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
                     document(selectedKid.getUserFirestoreId()).collection("kidz").document(selectedKid.getFirestoreId()).
                     collection("taskz").document(selectedTask.getFirestoreId());
             selectedTaskRef
-                    .update("firestoreImageUri", selectedTask.getFirestoreImageUri().toString())
+                    .update("firestoreImageUri", selectedTask.getFirestoreImageUri())
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
