@@ -67,7 +67,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     Kid selectedKid;
     ImageButton deleteImageButton;
     ImageButton restartImageButton;
-    ImageButton select_button;
+
     ImageButton capture_button;
     ConstraintLayout task_ctLayout;
     private FirebaseHelper firebaseHelper;
@@ -100,7 +100,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         taskNameTextView = findViewById(R.id.taskName);
         deleteImageButton = findViewById(R.id.delete_button);
         restartImageButton = findViewById(R.id.restart_button);
-        select_button = findViewById(R.id.select_button);
+
         capture_button = findViewById(R.id.capture_button);
         taskmsg = findViewById(R.id.taskmsg);
         viewKonfetti = findViewById(R.id.viewKonfetti);
@@ -127,12 +127,6 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
             }
         });
 
-        select_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                selectTaskImage();
-            }
-        });
 
         capture_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -256,36 +250,10 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         adView.loadAd(adRequest);
 
 
-        /*MobileAds.setRequestConfiguration(
-                new RequestConfiguration.Builder().setTestDeviceIds(Arrays.asList("B3EEABB8EE11C2BE770B684D95219ECB"))
-                        .build());
-        // Create an ad request.
-        PublisherAdRequest adRequest = new PublisherAdRequest.Builder().build();
-        // Start loading the ad in the background.
-        adView.loadAd(adRequest);
-*/
     }
 
 
 
-    private void selectTaskImage() {
-
-        firebaseHelper.logEvent("photo_select");
-
-        // Defining Implicit Intent to mobile gallery
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_PICK);
-        String[] mimeTypes = {"image/jpeg", "image/png"};
-        intent.putExtra(Intent.EXTRA_MIME_TYPES,mimeTypes);
-        startActivityForResult(
-                Intent.createChooser(
-                        intent,
-                        "Select Image from here..."),
-                PICK_IMAGE_REQUEST);
-
-
-    }
 
     private void resetTaskTokenzScore() {
 
@@ -297,10 +265,13 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         selectedTask.setTaskTokenzScore(taskTokenzScore);
         int tokenImage;
         taskTokenzList.clear();
+
         if (selectedTask.getNegativeReTask()) {
-            tokenImage = selectedKid.getBadTokenImage();
+            tokenImage = getApplicationContext().getResources().getIdentifier(selectedKid.getBadTokenImageResourceName(), "drawable",
+                    getApplicationContext().getPackageName());
         } else {
-            tokenImage = selectedKid.getTokenImage();
+            tokenImage = getApplicationContext().getResources().getIdentifier(selectedKid.getTokenImageResourceName(), "drawable",
+                    getApplicationContext().getPackageName());
         }
         for (int i = 0; i < selectedKid.getTokenNumber(); i++) {
             taskTokenzList.add(new TaskTokenz(tokenImage, taskTokenzScore.get(i) > 0));
@@ -442,10 +413,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         if (selectedTask.getNegativeReTask()) {
             tokenImage = getApplicationContext().getResources().getIdentifier(selectedKid.getBadTokenImageResourceName(), "drawable",
                     getApplicationContext().getPackageName());
-
-            //tokenImage = selectedKid.getBadTokenImage();
         } else {
-            //tokenImage = selectedKid.getTokenImage();
             tokenImage = getApplicationContext().getResources().getIdentifier(selectedKid.getTokenImageResourceName(), "drawable",
                     getApplicationContext().getPackageName());
         }
