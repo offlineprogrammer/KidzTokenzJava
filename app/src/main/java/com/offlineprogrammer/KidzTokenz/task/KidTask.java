@@ -49,6 +49,7 @@ public class KidTask implements Parcelable {
         taskImageResourceName = in.readString();
         firestoreId = in.readString();
         kidFirestoreId = in.readString();
+        firestoreImageUri = in.readString();
         negativeReTask = in.readByte() != 0;
         in.readList(taskTokenzScore, Long.class.getClassLoader());
         kidTaskUUID = in.readString();
@@ -62,6 +63,7 @@ public class KidTask implements Parcelable {
         dest.writeString(taskImageResourceName);
         dest.writeString(firestoreId);
         dest.writeString(kidFirestoreId);
+        dest.writeString(firestoreImageUri);
         dest.writeByte((byte) (negativeReTask ? 1 : 0));
         dest.writeList(taskTokenzScore);
         dest.writeString(kidTaskUUID);

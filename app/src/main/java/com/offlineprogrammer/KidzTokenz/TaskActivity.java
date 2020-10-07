@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +18,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.transition.TransitionManager;
@@ -35,12 +32,6 @@ import com.google.android.flexbox.FlexWrap;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.flexbox.JustifyContent;
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 import com.offlineprogrammer.KidzTokenz.kid.Kid;
 import com.offlineprogrammer.KidzTokenz.task.KidTask;
 import com.offlineprogrammer.KidzTokenz.taskTokenz.OnTaskTokenzListener;
@@ -51,10 +42,7 @@ import com.transitionseverywhere.ChangeText;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import io.reactivex.SingleObserver;
@@ -93,12 +81,10 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     private final int PICK_IMAGE_REQUEST = 22;
     private final int REQUEST_IMAGE_CAPTURE = 33;
 
-    private Uri filePath;
+
     private Uri taskTokenImageUri = null;
     private Uri imagePath;
 
-    FirebaseStorage storage;
-    StorageReference storageReference;
     ProgressDialog progressDialog;
     String currentPhotoPath;
     KonfettiView viewKonfetti;
@@ -120,9 +106,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         viewKonfetti = findViewById(R.id.viewKonfetti);
         task_ctLayout = findViewById(R.id.task_ctLayout);
         configActionButtons();
-        // get the Firebase  storage reference
-        storage = FirebaseStorage.getInstance();
-        storageReference = storage.getReference();
+
         getExtras();
         configureAdView();
 
@@ -183,11 +167,6 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         this.imagePath = UCrop.getOutput(intent);
         GlideApp.with(this).load(this.imagePath.getPath()).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).centerCrop().into(this.taskImageView);
         uploadImage();
-        // this.camera_button.setVisibility(View.GONE);
-        // this.editButton.setVisibility(0);
-        //  this.claimed_starz_ImageView.setVisibility(View.VISIBLE);
-        //    this.claimed_starz_edit_ImageView.setVisibility(View.VISIBLE);
-        // this.image = BitmapFactory.decodeFile(this.imagePath);
     }
 
     private void uploadImage() {
@@ -287,29 +266,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
 */
     }
 
-    private void captureTaskImage() {
-        firebaseHelper.logEvent("photo_capture");
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(this.getPackageManager()) != null) {
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                // Error occurred while creating the File
-            }
 
-            // Continue only if the File was successfully created
-            if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(this,
-                        "com.offlineprogrammer.KidzTokenz.fileprovider",
-                        photoFile);
-                filePath = photoURI;
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-            }
-
-        }
-    }
 
     private void selectTaskImage() {
 
@@ -353,26 +310,6 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         setTaskMsg();
         firebaseHelper.logEvent("score_reset");
     }
-
-
-
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        // Save a file: path for use with ACTION_VIEW intents
-        currentPhotoPath = image.getAbsolutePath();
-        return image;
-    }
-
-
 
 
 
@@ -532,46 +469,11 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         taskTokenzRecyclerView.addItemDecoration(new TaskTokenzGridItemDecoration(largePadding, smallPadding));
     }
 
-    private void updateTaskImageUri() {
-        try {
 
-
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-            DocumentReference selectedTaskRef = db.collection("users").
-                    document(selectedKid.getUserFirestoreId()).collection("kidz").document(selectedKid.getFirestoreId()).
-                    collection("taskz").document(selectedTask.getFirestoreId());
-            selectedTaskRef
-                    .update("firestoreImageUri", selectedTask.getFirestoreImageUri())
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            Log.i(TAG, "DocumentSnapshot successfully updated!");
-                            taskTokenImageUri = Uri.parse(selectedTask.getFirestoreImageUri());
-                            GlideApp.with(TaskActivity.this)
-                                    .load(taskTokenImageUri)
-                                   // .placeholder(R.drawable.bekind)
-                                    .into(taskImageView);
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.i(TAG, "Error updating document", e);
-                        }
-                    });
-            Log.i(TAG, "updateTaskTokenzScore: saved....");
-        } catch (Exception e) {
-            Log.i(TAG, "updateTaskTokenzScore: Error " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
 
 
     private void updateTaskTokenzImage() {
         try {
-
-
             firebaseHelper.updateTaskTokenzImage(selectedTask, selectedKid)
                     .subscribe(() -> Log.i(TAG, "updateTaskTokenzScore: done"), throwable -> {
                         // handle error
@@ -585,8 +487,6 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
 
     private void updateTaskTokenzScore() {
         try {
-
-
             selectedTask.setTaskTokenzScore(taskTokenzScore);
             Log.i(TAG, "updateTaskTokenzScore: Start updating the score...");
 
@@ -603,7 +503,6 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
 
     @Override
     public void onTaskTokenzClick(int position) {
-
         if (taskTokenzScore.get(position) == 1) {
             taskTokenzScore.set(position, 0L);
         } else {
