@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -468,6 +469,31 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
             e.printStackTrace();
         }
     }
+
+
+    @Override
+    public void onBackPressed() {
+        Log.d(TAG, "onBackPressed Called");
+        goBack();
+    }
+
+    private void goBack() {
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra("result", "result");
+        setResult(Activity.RESULT_OK, returnIntent);
+        finish();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                goBack();
+                break;
+        }
+        return true;
+    }
+
 
     @Override
     public void onTaskTokenzClick(int position) {
