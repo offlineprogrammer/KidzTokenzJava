@@ -376,6 +376,26 @@ public class FirebaseHelper {
         });
     }
 
+    public Completable updateTaskTokenzScore(KidTask selectedTask, Kid selectedKid) {
+        return Completable.create(emitter -> {
+            DocumentReference selectedTaskRef = m_db.collection(USERS_COLLECTION).document(kidzTokenz.getUser().getUserId())
+                    .collection("kidzTokenz").document(selectedKid.getKidUUID())
+                    .collection("kidTaskz").document(selectedTask.getKidTaskUUID());
+            selectedTaskRef.update("taskTokenzScore", selectedTask.getTaskTokenzScore())
+                    .addOnSuccessListener(aVoid -> {
+                        Log.i(TAG, "DocumentSnapshot successfully deleted!");
+                        emitter.onComplete();
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.i(TAG, "Error updating document", e);
+                        emitter.onError(e);
+                    });
+
+
+        });
+    }
+
+
     public Single<KidTask> saveKidTask(KidTask newTask, Kid selectedKid) {
         return Single.create((SingleEmitter<KidTask> emitter) -> {
             Map<String, Object> kidTaskValues = newTask.toMap();

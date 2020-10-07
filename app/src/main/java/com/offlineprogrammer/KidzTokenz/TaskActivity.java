@@ -560,29 +560,15 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     private void updateTaskTokenzScore() {
         try {
 
-            Log.i(TAG, "updateTaskTokenzScore: Start updating the score...");
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
-            Log.i(TAG, "updateTaskTokenzScore: db...");
-            DocumentReference selectedTaskRef = db.collection("users").
-                    document(selectedKid.getUserFirestoreId()).collection("kidz").document(selectedKid.getFirestoreId()).
-                    collection("taskz").document(selectedTask.getFirestoreId());
 
-            Log.i(TAG, "updateTaskTokenzScore: selectedTaskRef..." + selectedTaskRef);
-            selectedTaskRef
-                    .update("taskTokenzScore", taskTokenzScore)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            Log.i(TAG, "DocumentSnapshot successfully updated!");
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.i(TAG, "Error updating document", e);
-                        }
+            selectedTask.setTaskTokenzScore(taskTokenzScore);
+            Log.i(TAG, "updateTaskTokenzScore: Start updating the score...");
+
+            firebaseHelper.updateTaskTokenzScore(selectedTask, selectedKid)
+                    .subscribe(() -> Log.i(TAG, "updateTaskTokenzScore: done"), throwable -> {
+                        // handle error
                     });
-            Log.i(TAG, "updateTaskTokenzScore: saved....");
+
         } catch (Exception e) {
             Log.i(TAG, "updateTaskTokenzScore: Error " + e.getMessage());
             e.printStackTrace();
