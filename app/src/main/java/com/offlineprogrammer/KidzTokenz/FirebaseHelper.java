@@ -2,9 +2,13 @@ package com.offlineprogrammer.KidzTokenz;
 
 
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -17,6 +21,9 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.offlineprogrammer.KidzTokenz.kid.Kid;
 import com.offlineprogrammer.KidzTokenz.task.KidTask;
 
@@ -25,6 +32,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import io.reactivex.Completable;
@@ -416,6 +424,25 @@ public class FirebaseHelper {
         });
     }
 
+    public Completable updateTaskTokenzImage(KidTask selectedTask, Kid selectedKid) {
+        return Completable.create(emitter -> {
+            DocumentReference selectedTaskRef = m_db.collection(USERS_COLLECTION).document(kidzTokenz.getUser().getUserId())
+                    .collection("kidzTokenz").document(selectedKid.getKidUUID())
+                    .collection("kidTaskz").document(selectedTask.getKidTaskUUID());
+            selectedTaskRef.update("firestoreImageUri", selectedTask.getFirestoreImageUri())
+                    .addOnSuccessListener(aVoid -> {
+                        Log.i(TAG, "DocumentSnapshot successfully deleted!");
+                        emitter.onComplete();
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.i(TAG, "Error updating document", e);
+                        emitter.onError(e);
+                    });
+
+
+        });
+    }
+
 
     public Single<KidTask> saveKidTask(KidTask newTask, Kid selectedKid) {
         return Single.create((SingleEmitter<KidTask> emitter) -> {
@@ -484,4 +511,42 @@ public class FirebaseHelper {
     }
 
 
+    public Single<Uri> uploadImage(Kid selectedKid, KidTask selectedTask, Uri imagePath) {
+        return Single.create((SingleEmitter<Uri> emitter) -> {
+
+            FirebaseStorage storage;
+            StorageReference storageReference;
+            storage = FirebaseStorage.getInstance();
+            storageReference = storage.getReference();
+
+            final StorageReference ref
+                    = storageReference
+                    .child("imagesv2/" + selectedKid.getKidUUID() + "/"
+                            + Calendar.getInstance().getTime().toString() + "/"
+                            + UUID.randomUUID().toString());
+
+            ref.putFile(imagePath).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                @Override
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                    if (!task.isSuccessful()) {
+                        throw task.getException();
+                    }
+                    // Continue with the task to get the download URL
+                    return ref.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if (task.isSuccessful()) {
+                        Uri downloadUri = task.getResult();
+                        //String downloadURL = downloadUri.toString();
+                        emitter.onSuccess(downloadUri);
+
+                    } else {
+                        emitter.onError(task.getException());
+                    }
+                }
+            });
+        });
+    }
 }

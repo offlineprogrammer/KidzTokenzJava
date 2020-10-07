@@ -3,7 +3,6 @@ package com.offlineprogrammer.KidzTokenz;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,22 +25,22 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.transition.TransitionManager;
 
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.esafirm.imagepicker.features.ImagePicker;
+import com.esafirm.imagepicker.features.ReturnMode;
+import com.esafirm.imagepicker.model.Image;
 import com.google.android.flexbox.AlignItems;
 import com.google.android.flexbox.FlexDirection;
 import com.google.android.flexbox.FlexWrap;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.flexbox.JustifyContent;
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 import com.offlineprogrammer.KidzTokenz.kid.Kid;
 import com.offlineprogrammer.KidzTokenz.task.KidTask;
 import com.offlineprogrammer.KidzTokenz.taskTokenz.OnTaskTokenzListener;
@@ -49,19 +48,28 @@ import com.offlineprogrammer.KidzTokenz.taskTokenz.TaskTokenz;
 import com.offlineprogrammer.KidzTokenz.taskTokenz.TaskTokenzAdapter;
 import com.offlineprogrammer.KidzTokenz.taskTokenz.TaskTokenzGridItemDecoration;
 import com.transitionseverywhere.ChangeText;
+import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.UUID;
+import java.util.List;
 
+import io.reactivex.SingleObserver;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import nl.dionsegijn.konfetti.KonfettiView;
 import nl.dionsegijn.konfetti.models.Shape;
+import pub.devrel.easypermissions.AppSettingsDialog;
+import pub.devrel.easypermissions.EasyPermissions;
 
 
 public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListener {
+
+    private static final int CAMERA_REQUEST = 2222;
+
 
     private com.google.android.gms.ads.AdView adView;
     ImageView taskImageView;
@@ -87,6 +95,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
 
     private Uri filePath;
     private Uri taskTokenImageUri = null;
+    private Uri imagePath;
 
     FirebaseStorage storage;
     StorageReference storageReference;
@@ -144,9 +153,105 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         capture_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                captureTaskImage();
+//                captureTaskImage();
+
+                ImagePicker.create(TaskActivity.this).returnMode(ReturnMode.ALL)
+                        .folderMode(true).includeVideo(false).limit(1).theme(R.style.AppTheme_NoActionBar).single().start();
             }
         });
+    }
+
+    public void onRequestPermissionsResult(int i, @NonNull String[] strArr, @NonNull int[] iArr) {
+        super.onRequestPermissionsResult(i, strArr, iArr);
+        EasyPermissions.onRequestPermissionsResult(i, strArr, iArr, this);
+    }
+
+
+    public void onPermissionsGranted(int i, @NonNull List<String> list) {
+        Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+        //  ((ClaimStarzActivity) this.context).isManuallyPaused(true);
+        startActivityForResult(intent, CAMERA_REQUEST);
+    }
+
+    public void onPermissionsDenied(int i, @NonNull List<String> list) {
+        if (EasyPermissions.somePermissionPermanentlyDenied(this, list)) {
+            new AppSettingsDialog.Builder(this).setTitle("Permissions Required").setPositiveButton("Settings").setNegativeButton("Cancel").setRequestCode(5).build().show();
+        }
+    }
+
+    public void onCropFinish(Intent intent) {
+        this.imagePath = UCrop.getOutput(intent);
+        GlideApp.with(this).load(this.imagePath.getPath()).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).centerCrop().into(this.taskImageView);
+        uploadImage();
+        // this.camera_button.setVisibility(View.GONE);
+        // this.editButton.setVisibility(0);
+        //  this.claimed_starz_ImageView.setVisibility(View.VISIBLE);
+        //    this.claimed_starz_edit_ImageView.setVisibility(View.VISIBLE);
+        // this.image = BitmapFactory.decodeFile(this.imagePath);
+    }
+
+    private void uploadImage() {
+        if (this.imagePath != null) {
+            // Code for showing progressDialog while uploading
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setTitle("Uploading...");
+            progressDialog.show();
+
+            firebaseHelper.uploadImage(selectedKid, selectedTask, this.imagePath).observeOn(Schedulers.io())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(new SingleObserver<Uri>() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.e(TAG, "continueWithTask kidzList => onError: " + e.getMessage());
+                        }
+
+                        @Override
+                        public void onSuccess(Uri imageUri) {
+                            runOnUiThread(() -> {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        firebaseHelper.logEvent("image_uploaded");
+                                        selectedTask.setFirestoreImageUri(imageUri.toString());
+                                        updateTaskTokenzImage();
+                                        progressDialog.dismiss();
+                                    }
+                                });
+
+                            });
+                        }
+                    });
+
+        } else {
+            //  savedClaimedStarz(null);
+
+        }
+
+    }
+
+    public void onActivityResult(int i, int i2, Intent intent) {
+        super.onActivityResult(i, i2, intent);
+        if (ImagePicker.shouldHandle(i, i2, intent)) {
+            Image firstImageOrNull = ImagePicker.getFirstImageOrNull(intent);
+            if (firstImageOrNull != null) {
+                //UCrop.of(Uri.fromFile(new File(firstImageOrNull.getPath())), Uri.fromFile(new File(getCacheDir(), "cropped"))).start(this);
+                UCrop.of(Uri.fromFile(new File(firstImageOrNull.getPath())), Uri.fromFile(new File(getCacheDir(), "cropped"))).withAspectRatio(1.0f, 1.0f).start(this);
+
+                //   Uri destinationUri = Uri.fromFile(new File(myContext.getCacheDir(), "IMG_" + System.currentTimeMillis()));
+                //   UCrop.of(sourceUri, destinationUri)
+                //           .withMaxResultSize(1080, 768) // any resolution you want
+                //           .start(mContext, YourFragment/YourActivity.this);
+
+            }
+        }
+
+        if (i == UCrop.REQUEST_CROP) {
+            onCropFinish(intent);
+        }
     }
 
 
@@ -267,100 +372,9 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         return image;
     }
 
-    @Override
-    protected void onActivityResult(int requestCode,
-                                    int resultCode,
-                                    Intent data)
-    {
-
-        super.onActivityResult(requestCode,
-                resultCode,
-                data);
-
-        // checking request code and result code
-
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK
-                && data != null) {
-            try {
-                // Setting image on image view using Bitmap
-                Bitmap bitmap = MediaStore
-                        .Images
-                        .Media
-                        .getBitmap(
-                                getContentResolver(),
-                                filePath);
-                taskImageView.setImageBitmap(bitmap);
-                uploadImage();
-            }
-
-            catch (IOException e) {
-                // Log the exception
-                e.printStackTrace();
-            }
-        }
 
 
-        // if request code is PICK_IMAGE_REQUEST and
-        // resultCode is RESULT_OK
-        // then set image in the image view
-        if (requestCode == PICK_IMAGE_REQUEST
-                && resultCode == RESULT_OK
-                && data != null
-                && data.getData() != null) {
 
-            // Get the Uri of data
-            filePath = data.getData();
-            taskImageView.setImageURI(filePath);
-            uploadImage();
-
-        }
-    }
-
-
-    private void uploadImage()
-    {
-        if (filePath != null) {
-            // Code for showing progressDialog while uploading
-            progressDialog = new ProgressDialog(this);
-            progressDialog.setTitle("Uploading...");
-            progressDialog.show();
-            // Defining the child of storageReference
-            final StorageReference ref
-                    = storageReference
-                    .child(
-                            "images/"+selectedKid.getFirestoreId()+"/"+selectedTask.getFirestoreId()+"/"
-                                    + UUID.randomUUID().toString());
-
-            taskImageView.setImageURI(filePath);
-
-       ref.putFile(filePath).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                @Override
-                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                    if (!task.isSuccessful()) {
-                        throw task.getException();
-                    }
-                    // Continue with the task to get the download URL
-                    return ref.getDownloadUrl();
-                }
-            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                @Override
-                public void onComplete(@NonNull Task<Uri> task) {
-                    if (task.isSuccessful()) {
-                        Uri downloadUri = task.getResult();
-                        String downloadURL = downloadUri.toString();
-                        selectedTask.setFirestoreImageUri(downloadURL);
-                        taskImageView.setImageURI(filePath);
-                        updateTaskImageUri();
-                        progressDialog.dismiss();
-                    } else {
-                        // Handle failures
-                        // ...
-                    }
-                }
-            });
-
-        }
-    }
 
     private void showDeleteTaskDialog(TaskActivity taskActivity) {
         final AlertDialog builder = new AlertDialog.Builder(taskActivity).create();
@@ -547,6 +561,22 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
                         }
                     });
             Log.i(TAG, "updateTaskTokenzScore: saved....");
+        } catch (Exception e) {
+            Log.i(TAG, "updateTaskTokenzScore: Error " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+
+    private void updateTaskTokenzImage() {
+        try {
+
+
+            firebaseHelper.updateTaskTokenzImage(selectedTask, selectedKid)
+                    .subscribe(() -> Log.i(TAG, "updateTaskTokenzScore: done"), throwable -> {
+                        // handle error
+                    });
+
         } catch (Exception e) {
             Log.i(TAG, "updateTaskTokenzScore: Error " + e.getMessage());
             e.printStackTrace();
