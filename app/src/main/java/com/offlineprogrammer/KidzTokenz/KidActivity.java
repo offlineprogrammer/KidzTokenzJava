@@ -426,7 +426,15 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
             if (resultCode == Activity.RESULT_CANCELED) {
                 //Write your code if there's no result
             }
+        } else if (requestCode == 4) {
+            if (resultCode == Activity.RESULT_OK) {
+
+                getkidTaskz();
+
+            }
+
         }
+
     }//onActivityResult
 
 
@@ -475,16 +483,18 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
         Log.i(TAG, "Clicked " + position);
         Intent intent = new Intent(this, TaskActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putParcelable("selected_kid",  selectedKid);
+        bundle.putParcelable("selected_kid", selectedKid);
         bundle.putParcelable("selected_task", taskzList.get(position));
 
         intent.putExtras(bundle);
 
-      //  intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT );
+        //  intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT );
         Log.i(TAG, "onTaskClick: " + taskzList.get(position).toString());
-       // intent.putExtra("selected_task",taskzList.get(position));
-       // intent.putExtra("selected_kid",selectedKid);
-        startActivity(intent);
+        // intent.putExtra("selected_task",taskzList.get(position));
+        // intent.putExtra("selected_kid",selectedKid);
+
+        startActivityForResult(intent, 4);
+
 
     }
 

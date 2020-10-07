@@ -1,5 +1,6 @@
 package com.offlineprogrammer.KidzTokenz;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -385,25 +386,20 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
 
     private void deleteTask() {
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DocumentReference selectedTaskRef = db.collection("users").
-                document(selectedKid.getUserFirestoreId()).collection("kidz").document(selectedKid.getFirestoreId()).
-                collection("taskz").document(selectedTask.getFirestoreId());
-        selectedTaskRef.delete()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully deleted!");
-                        finish();
-                        //finishAndRemoveTask();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error deleting document", e);
-                    }
+        firebaseHelper.deleteKidTask(selectedTask, selectedKid)
+                .subscribe(() -> {
+                    Log.i(TAG, "updateRewardImage: completed");
+                    Intent returnIntent = new Intent();
+                    returnIntent.putExtra("result", "result");
+                    setResult(Activity.RESULT_OK, returnIntent);
+                    finish();
+
+
+                }, throwable -> {
+                    // handle error
                 });
+
+
     }
 
     private void getExtras() {
