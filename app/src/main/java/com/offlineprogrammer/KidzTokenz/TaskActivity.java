@@ -114,29 +114,16 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     }
 
     private void configActionButtons() {
-        deleteImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showDeleteTaskDialog(TaskActivity.this);
-            }
-        });
+        deleteImageButton.setOnClickListener(view -> showDeleteTaskDialog(TaskActivity.this));
 
-        restartImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                resetTaskTokenzScore();
-            }
-        });
+        restartImageButton.setOnClickListener(view -> resetTaskTokenzScore());
 
 
-        capture_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        capture_button.setOnClickListener(view -> {
 //                captureTaskImage();
 
-                ImagePicker.create(TaskActivity.this).returnMode(ReturnMode.ALL)
-                        .folderMode(true).includeVideo(false).limit(1).theme(R.style.AppTheme_NoActionBar).single().start();
-            }
+            ImagePicker.create(TaskActivity.this).returnMode(ReturnMode.ALL)
+                    .folderMode(true).includeVideo(false).limit(1).theme(R.style.AppTheme_NoActionBar).single().start();
         });
     }
 
@@ -185,25 +172,17 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
 
                         @Override
                         public void onSuccess(Uri imageUri) {
-                            runOnUiThread(() -> {
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        firebaseHelper.logEvent("image_uploaded");
-                                        selectedTask.setFirestoreImageUri(imageUri.toString());
-                                        updateTaskTokenzImage();
-                                        progressDialog.dismiss();
-                                    }
-                                });
-
-                            });
+                            runOnUiThread(() -> runOnUiThread(() -> {
+                                firebaseHelper.logEvent("image_uploaded");
+                                selectedTask.setFirestoreImageUri(imageUri.toString());
+                                updateTaskTokenzImage();
+                                progressDialog.dismiss();
+                            }));
                         }
                     });
 
-        } else {
-            //  savedClaimedStarz(null);
-
         }
+
 
     }
 
@@ -291,18 +270,12 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         View dialogView = inflater.inflate(R.layout.alert_dialog_delete_task, null);
         Button okBtn = dialogView.findViewById(R.id.deletetask_confirm_button);
         Button cancelBtn = dialogView.findViewById(R.id.deletetask_cancel_button);
-        okBtn.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                builder.dismiss();
-                deleteTask();
-                firebaseHelper.logEvent("task_deleted");
-            }
+        okBtn.setOnClickListener(v -> {
+            builder.dismiss();
+            deleteTask();
+
         });
-        cancelBtn.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                builder.dismiss();
-            }
-        });
+        cancelBtn.setOnClickListener(v -> builder.dismiss());
         builder.setView(dialogView);
         builder.show();
     }
@@ -311,6 +284,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
 
         firebaseHelper.deleteKidTask(selectedTask, selectedKid)
                 .subscribe(() -> {
+                    firebaseHelper.logEvent("task_deleted");
                     Log.i(TAG, "updateRewardImage: completed");
                     Intent returnIntent = new Intent();
                     returnIntent.putExtra("result", "result");
@@ -486,10 +460,8 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                goBack();
-                break;
+        if (item.getItemId() == android.R.id.home) {
+            goBack();
         }
         return true;
     }

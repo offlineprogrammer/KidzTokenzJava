@@ -7,7 +7,6 @@ import android.content.ContextWrapper;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -25,8 +24,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.initialization.InitializationStatus;
-import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputLayout;
@@ -103,10 +100,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
     }
 
     private void setupAds() {
-        MobileAds.initialize(this, new OnInitializationCompleteListener() {
-            @Override
-            public void onInitializationComplete(InitializationStatus initializationStatus) {
-            }
+        MobileAds.initialize(this, initializationStatus -> {
         });
 
         adView = findViewById(R.id.ad_view);
@@ -151,8 +145,6 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
     public void dismissWithTryCatch(ProgressDialog dialog) {
         try {
             dialog.dismiss();
-        } catch (final IllegalArgumentException e) {
-            // Do nothing.
         } catch (final Exception e) {
             // Do nothing.
         } finally {
@@ -170,18 +162,12 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
         View dialogView = inflater.inflate(R.layout.alert_dialog_delete_kid, null);
         Button okBtn = dialogView.findViewById(R.id.deletekid_confirm_button);
         Button cancelBtn = dialogView.findViewById(R.id.deletekid_cancel_button);
-        okBtn.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-               builder.dismiss();
-                deleteKid();
-                firebaseHelper.logEvent("kid_deleted");
-            }
+        okBtn.setOnClickListener(v -> {
+            builder.dismiss();
+            deleteKid();
+
         });
-        cancelBtn.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                builder.dismiss();
-            }
-        });
+        cancelBtn.setOnClickListener(v -> builder.dismiss());
         builder.setView(dialogView);
         builder.show();
     }
@@ -193,9 +179,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
                     Log.i(TAG, "updateRewardImage: completed");
                     firebaseHelper.logEvent("kid_deleted");
                     firebaseHelper.deleteKidTaskzCollection(selectedKid)
-                            .subscribe(() -> {
-                                finish();
-                            }, throwable -> {
+                            .subscribe(() -> finish(), throwable -> {
                                 // handle error
                             });
 
@@ -207,35 +191,19 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
 
     private void configActionButton() {
         FloatingActionButton fab = findViewById(R.id.fab_add_task);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showAddTaskDialog(KidActivity.this);
-            }
+        fab.setOnClickListener(view -> showAddTaskDialog(KidActivity.this));
+
+        tokenImageCard.setOnClickListener(view -> {
+            Intent mIntent = new Intent(KidActivity.this, TokenzActivity.class);
+            startActivityForResult(mIntent, 2);
         });
 
-        tokenImageCard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent mIntent = new Intent(KidActivity.this, TokenzActivity.class);
-                startActivityForResult(mIntent, 2);
-            }
+        tokenNumberCard.setOnClickListener(view -> {
+            Intent mIntent = new Intent(KidActivity.this, TokenNumberActivity.class);
+            startActivityForResult(mIntent, 3);
         });
 
-        tokenNumberCard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent mIntent = new Intent(KidActivity.this, TokenNumberActivity.class);
-                startActivityForResult(mIntent, 3);
-            }
-        });
-
-        deleteImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showDeleteKidDialog(KidActivity.this);
-            }
-        });
+        deleteImageButton.setOnClickListener(view -> showDeleteKidDialog(KidActivity.this));
     }
 
     private void setupRecyclerView() {
@@ -269,12 +237,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
                         Log.d(TAG, "onNext:  " + taskz.size());
                         taskzList = taskz;
 
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                updateRecylerView(taskz);
-                            }
-                        });
+                        runOnUiThread(() -> updateRecylerView(taskz));
                     }
 
                     @Override
@@ -302,58 +265,46 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
         taskNameText.requestFocus();
         Button okBtn = dialogView.findViewById(R.id.task_save_button);
         Button cancelBtn = dialogView.findViewById(R.id.task_cancel_button);
-        final SwitchMaterial negativeReInfSwitch =dialogView.findViewById(R.id.switch_negative_ReIn);
-        okBtn.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                String taskName = String.valueOf(taskNameText.getEditText().getText());
-                if (!isTaskNameValid(taskName)) {
-                    taskNameText.setError(getString(R.string.kid_error_name));
-                } else {
-                    taskNameText.setError(null);
+        final SwitchMaterial negativeReInfSwitch = dialogView.findViewById(R.id.switch_negative_ReIn);
+        okBtn.setOnClickListener(v -> {
+            String taskName = String.valueOf(taskNameText.getEditText().getText());
+            if (!isTaskNameValid(taskName)) {
+                taskNameText.setError(getString(R.string.kid_error_name));
+            } else {
+                taskNameText.setError(null);
 
 
-                    Date currentTime = Calendar.getInstance().getTime();
-                    Boolean negativeReTask = negativeReInfSwitch.isChecked();
-                    KidTask newTask = new KidTask(taskName,
-                            R.drawable.bekind,
-                            "bekind",
-                            currentTime,
-                            negativeReTask);
-                    ArrayList<Long> taskTokenzScore = new ArrayList<>();
-                    for (int i = 0; i < selectedKid.getTokenNumber(); i++) {
-                        taskTokenzScore.add(0L);
-                    }
-                    newTask.setTaskTokenzScore(taskTokenzScore);
-                    saveTask(newTask);
-                    taskzList.add(newTask);
-                    updateRecylerView(taskzList);
-
-//                    mFirebaseAnalytics.logEvent("task_created", null);
-                    //onTaskClick(0);
-                    builder.dismiss();
+                Date currentTime = Calendar.getInstance().getTime();
+                Boolean negativeReTask = negativeReInfSwitch.isChecked();
+                KidTask newTask = new KidTask(taskName,
+                        R.drawable.bekind,
+                        "bekind",
+                        currentTime,
+                        negativeReTask);
+                ArrayList<Long> taskTokenzScore = new ArrayList<>();
+                for (int i = 0; i < selectedKid.getTokenNumber(); i++) {
+                    taskTokenzScore.add(0L);
                 }
+                newTask.setTaskTokenzScore(taskTokenzScore);
+                saveTask(newTask);
+                taskzList.add(newTask);
+                updateRecylerView(taskzList);
 
-
-            }
-        });
-
-
-
-        taskNameText.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View view, int i, KeyEvent keyEvent) {
-                String kidName = String.valueOf(taskNameText.getEditText().getText());
-                if (isTaskNameValid(kidName)) {
-                    taskNameText.setError(null); //Clear the error
-                }
-                return false;
-            }
-        });
-        cancelBtn.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
                 builder.dismiss();
             }
+
+
         });
+
+
+        taskNameText.setOnKeyListener((view, i, keyEvent) -> {
+            String kidName = String.valueOf(taskNameText.getEditText().getText());
+            if (isTaskNameValid(kidName)) {
+                taskNameText.setError(null); //Clear the error
+            }
+            return false;
+        });
+        cancelBtn.setOnClickListener(v -> builder.dismiss());
         builder.setView(dialogView);
         builder.show();
         builder.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
@@ -377,7 +328,8 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
                     @Override
                     public void onSuccess(KidTask kid) {
                         runOnUiThread(() -> {
-                            firebaseHelper.logEvent("kid_created");
+                            firebaseHelper.logEvent("task_created");
+
                             //   updateRecyclerView();
 
                         });
@@ -407,9 +359,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
                         getApplicationContext().getPackageName()));
                 updateKidTokenImage(result, badToken, tokenImageImageResourceName, badtokenImageImageResourceName);
             }
-            if (resultCode == Activity.RESULT_CANCELED) {
-                //Write your code if there's no result
-            }
+            //Write your code if there's no result
         } else if (requestCode == 3) {
             if (resultCode == Activity.RESULT_OK) {
                 int selectedImage = data.getIntExtra("Image", 0);
@@ -423,9 +373,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
                 updateKidTokenNumberImage(selectedImage, selectedImageResourceName, selectedTokenNumber);
 
             }
-            if (resultCode == Activity.RESULT_CANCELED) {
-                //Write your code if there's no result
-            }
+            //Write your code if there's no result
         } else if (requestCode == 4) {
             if (resultCode == Activity.RESULT_OK) {
 
@@ -440,15 +388,13 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
 
 
     private void updateKidTokenImage(final int result, final int badToken, final String tokenImageImageResourceName, final String badtokenImageImageResourceName) {
-        //mFirebaseAnalytics.logEvent("tokenImage_updated", null);
 
         selectedKid.setBadTokenImageResourceName(badtokenImageImageResourceName);
         selectedKid.setTokenImageResourceName(tokenImageImageResourceName);
         firebaseHelper.updateKid(selectedKid)
                 .subscribe(() -> {
                     Log.i(TAG, "updateKidTokenImage: completed");
-                    firebaseHelper.logEvent("kid_updated");
-                    return;
+                    firebaseHelper.logEvent("tokenImage_updated");
                 }, throwable -> {
                     // handle error
                 });
@@ -463,14 +409,13 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
         firebaseHelper.updateKid(selectedKid)
                 .subscribe(() -> {
                     Log.i(TAG, "updateKidTokenNumberImage: completed");
-                    firebaseHelper.logEvent("kid_updated");
+                    firebaseHelper.logEvent("tokenNumber_updated");
 
                 }, throwable -> {
                     // handle error
                 });
 
 
-        //mFirebaseAnalytics.logEvent("tokenNumber_updated", null);
 
 
     }
