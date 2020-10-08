@@ -33,6 +33,12 @@ import com.google.android.flexbox.FlexWrap;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.flexbox.JustifyContent;
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.play.core.review.ReviewInfo;
+import com.google.android.play.core.review.ReviewManager;
+import com.google.android.play.core.review.ReviewManagerFactory;
+import com.google.android.play.core.tasks.OnCompleteListener;
+import com.google.android.play.core.tasks.OnFailureListener;
+import com.google.android.play.core.tasks.Task;
 import com.offlineprogrammer.KidzTokenz.kid.Kid;
 import com.offlineprogrammer.KidzTokenz.task.KidTask;
 import com.offlineprogrammer.KidzTokenz.taskTokenz.OnTaskTokenzListener;
@@ -90,6 +96,8 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     String currentPhotoPath;
     KonfettiView viewKonfetti;
 
+    ReviewInfo reviewInfo;
+    ReviewManager manager;
 
 
     @Override
@@ -112,6 +120,39 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         configureAdView();
 
     }
+
+    private void Review() {
+        manager = ReviewManagerFactory.create(this);
+        manager.requestReviewFlow().addOnCompleteListener(new OnCompleteListener<ReviewInfo>() {
+            @Override
+            public void onComplete(@NonNull Task<ReviewInfo> task) {
+                if (task.isSuccessful()) {
+                    reviewInfo = task.getResult();
+                    manager.launchReviewFlow(TaskActivity.this, reviewInfo).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(Exception e) {
+                            firebaseHelper.logEvent("rating_failed");
+
+                        }
+                    }).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            firebaseHelper.logEvent("rating_completed");
+
+                        }
+                    });
+                }
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(Exception e) {
+                firebaseHelper.logEvent("rating_request_failed");
+
+            }
+        });
+    }
+
 
     private void configActionButtons() {
         deleteImageButton.setOnClickListener(view -> showDeleteTaskDialog(TaskActivity.this));
@@ -219,9 +260,11 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
                 .setTimeToLive(4000L)
                 .addShapes(Shape.Square.INSTANCE, Shape.Circle.INSTANCE)
                 .addSizes(new nl.dionsegijn.konfetti.models.Size(10, 20))
-                .setPosition(viewKonfetti.getX() + viewKonfetti.getWidth()/2, viewKonfetti.getY()+viewKonfetti.getHeight()/2)
+                .setPosition(viewKonfetti.getX() + viewKonfetti.getWidth() / 2, viewKonfetti.getY() + viewKonfetti.getHeight() / 2)
                 .burst(600);
-                //.streamFor(300, 5000L);
+        //.streamFor(300, 5000L);
+
+        Review();
     }
 
     private void configureAdView() {
@@ -260,6 +303,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         taskTokenzAdapter.updateData(taskTokenzList);
         setTaskMsg();
         firebaseHelper.logEvent("score_reset");
+        Review();
     }
 
 
@@ -369,6 +413,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
             } else {
                 taskmsg.setText(getResources().getString(R.string.ktz_negtask_complete_msg));
                 firebaseHelper.logEvent("negativeTask_completed");
+                Review();
             }
 
         } else {
@@ -378,6 +423,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
                 celebratCompletion();
                 taskmsg.setText(getResources().getString(R.string.ktz_task_complete_msg));
                 firebaseHelper.logEvent("task_completed");
+                Review();
             }
 
         }

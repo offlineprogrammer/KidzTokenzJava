@@ -24,7 +24,6 @@ import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputLayout;
-import com.kobakei.ratethisapp.RateThisApp;
 import com.offlineprogrammer.KidzTokenz.kid.Kid;
 import com.offlineprogrammer.KidzTokenz.kid.KidAdapter;
 import com.offlineprogrammer.KidzTokenz.kid.KidGridItemDecoration;
@@ -60,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
         setupRecyclerView();
         setupAds();
         configActionButton();
-        configureRateThisApp();
+
     }
 
     private void setupAds() {
@@ -72,37 +71,7 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
         adView.loadAd(adRequest);
     }
 
-    private void configureRateThisApp() {
-        // Custom condition: 3 days and 2 launches
-        RateThisApp.Config config = new RateThisApp.Config(3, 10);
-        config.setMessage(R.string.ktz_app_rate_msg);
-        RateThisApp.init(config);
 
-        // Monitor launch times and interval from installation
-        RateThisApp.onCreate(this);
-        // If the condition is satisfied, "Rate this app" dialog will be shown
-        RateThisApp.showRateDialogIfNeeded(this);
-
-        RateThisApp.setCallback(new RateThisApp.Callback() {
-            @Override
-            public void onYesClicked() {
-                RateThisApp.stopRateDialog(MainActivity.this);
-                Log.i(TAG, "onYesClicked ");
-            }
-
-            @Override
-            public void onNoClicked() {
-                Log.i(TAG, "onNoClicked ");
-
-            }
-
-            @Override
-            public void onCancelClicked() {
-                Log.i(TAG, "onCancelClicked ");
-
-            }
-        });
-    }
 
     private void setupProgressBar() {
         dismissProgressBar();

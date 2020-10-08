@@ -15,6 +15,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -27,6 +28,12 @@ import com.google.android.gms.ads.MobileAds;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.android.play.core.review.ReviewInfo;
+import com.google.android.play.core.review.ReviewManager;
+import com.google.android.play.core.review.ReviewManagerFactory;
+import com.google.android.play.core.tasks.OnCompleteListener;
+import com.google.android.play.core.tasks.OnFailureListener;
+import com.google.android.play.core.tasks.Task;
 import com.offlineprogrammer.KidzTokenz.kid.Kid;
 import com.offlineprogrammer.KidzTokenz.task.KidTask;
 import com.offlineprogrammer.KidzTokenz.task.OnTaskListener;
@@ -65,6 +72,10 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
     ProgressDialog progressBar;
 
     private com.google.android.gms.ads.AdView adView;
+
+    ReviewInfo reviewInfo;
+    ReviewManager manager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -250,6 +261,39 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
 
     }
 
+    private void Review() {
+        manager = ReviewManagerFactory.create(this);
+        manager.requestReviewFlow().addOnCompleteListener(new OnCompleteListener<ReviewInfo>() {
+            @Override
+            public void onComplete(@NonNull Task<ReviewInfo> task) {
+                if (task.isSuccessful()) {
+                    reviewInfo = task.getResult();
+                    manager.launchReviewFlow(KidActivity.this, reviewInfo).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(Exception e) {
+                            firebaseHelper.logEvent("rating_failed");
+
+                        }
+                    }).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            firebaseHelper.logEvent("rating_completed");
+
+                        }
+                    });
+                }
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(Exception e) {
+                firebaseHelper.logEvent("rating_request_failed");
+
+            }
+        });
+    }
+
+
     private void updateRecylerView(ArrayList<KidTask> taskz) {
         taskAdapter.updateData(taskz);
         taskRecyclerView.scrollToPosition(0);
@@ -378,6 +422,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
             if (resultCode == Activity.RESULT_OK) {
 
                 getkidTaskz();
+                Review();
 
             }
 
@@ -395,6 +440,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
                 .subscribe(() -> {
                     Log.i(TAG, "updateKidTokenImage: completed");
                     firebaseHelper.logEvent("tokenImage_updated");
+                    Review();
                 }, throwable -> {
                     // handle error
                 });
@@ -410,6 +456,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
                 .subscribe(() -> {
                     Log.i(TAG, "updateKidTokenNumberImage: completed");
                     firebaseHelper.logEvent("tokenNumber_updated");
+                    Review();
 
                 }, throwable -> {
                     // handle error
