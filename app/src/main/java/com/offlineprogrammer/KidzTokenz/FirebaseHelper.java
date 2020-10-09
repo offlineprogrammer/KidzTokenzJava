@@ -21,6 +21,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -59,6 +60,7 @@ public class FirebaseHelper {
         mContext = c;
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(mContext);
         kidzTokenz = (KidzTokenz) mContext;
+        //  Log.d("fcmtoken", FirebaseInstanceId.getInstance().getToken());
     }
 
     public void logEvent(String event_name) {
@@ -111,6 +113,7 @@ public class FirebaseHelper {
     Single<User> getUserData() {
         return Single.create(emitter -> {
             FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+            Log.d("fcmtoken", FirebaseInstanceId.getInstance().getToken());
             final DocumentReference docRef = m_db.collection(USERS_COLLECTION).document(currentUser.getUid());
             docRef.addSnapshotListener((snapshot, e) -> {
                 if (e != null) {
@@ -548,5 +551,13 @@ public class FirebaseHelper {
                 }
             });
         });
+    }
+
+    public void sendRegistrationToServer(String token) {
+
+        Log.d("fcmtoken", FirebaseInstanceId.getInstance().getToken());
+        Log.d("fcmtoken 2 ", token);
+
+
     }
 }
