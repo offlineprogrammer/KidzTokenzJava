@@ -113,7 +113,7 @@ public class FirebaseHelper {
     Single<User> getUserData() {
         return Single.create(emitter -> {
             FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-            Log.d("fcmtoken", FirebaseInstanceId.getInstance().getToken());
+//            Log.d("fcmtoken", FirebaseInstanceId.getInstance().getToken());
             final DocumentReference docRef = m_db.collection(USERS_COLLECTION).document(currentUser.getUid());
             docRef.addSnapshotListener((snapshot, e) -> {
                 if (e != null) {
