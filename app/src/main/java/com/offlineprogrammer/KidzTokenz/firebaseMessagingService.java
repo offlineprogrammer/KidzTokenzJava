@@ -8,13 +8,14 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
-import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+
+import timber.log.Timber;
 
 
 public class firebaseMessagingService extends FirebaseMessagingService {
@@ -47,7 +48,7 @@ public class firebaseMessagingService extends FirebaseMessagingService {
 
     @Override
     public void onNewToken(String token) {
-        Log.d(TAG, "Refreshed token: " + token);
+        Timber.d("Refreshed token: %s", token);
 
         // If you want to send messages to this application instance or
         // manage this apps subscriptions on the server side, send the

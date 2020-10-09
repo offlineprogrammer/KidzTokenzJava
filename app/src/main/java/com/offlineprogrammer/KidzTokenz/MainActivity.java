@@ -7,7 +7,6 @@ import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -37,6 +36,7 @@ import java.util.Random;
 import io.reactivex.SingleObserver;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import timber.log.Timber;
 
 
 public class MainActivity extends AppCompatActivity implements OnKidListener {
@@ -230,7 +230,7 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
                     }
                     @Override
                     public void onError(Throwable e) {
-                        Log.e(TAG, "continueWithTask kidzList => onError: " + e.getMessage());
+                        Timber.e("continueWithTask kidzList => onError: %s", e.getMessage());
                     }
 
                     @Override
@@ -240,7 +240,7 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
                             updateRecyclerView();
                             firebaseHelper.updateKidzCollection(kid)
                                     .subscribe(() -> {
-                                        Log.i(TAG, "updateKidzCollection: completed");
+                                        Timber.i("updateKidzCollection: completed");
                                         // handle completion
                                     }, throwable -> {
                                         // handle error
@@ -264,16 +264,16 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
     public void onKidClick(int position) {
         Kid selectedKid = firebaseHelper.kidzTokenz.getUser().getKidz().get(position);
         Intent intent = new Intent(this, KidActivity.class);
-        Log.i(TAG, "onKidClick: " + selectedKid);
+        Timber.i("onKidClick: %s", selectedKid);
         intent.putExtra("selected_kid", selectedKid);
         if (selectedKid.getKidSchema().equals(Constants.V1SCHEMA)) {
-            Log.d(TAG, "onKidClick: find_migrate_TaskzV1 ");
+            Timber.d("onKidClick: find_migrate_TaskzV1 ");
             firebaseHelper.find_migrate_TaskzV1(selectedKid)
                     .subscribe(() -> {
-                        Log.i(TAG, "find_migrate_TaskzV1: completed");
+                        Timber.i("find_migrate_TaskzV1: completed");
                         firebaseHelper.updateKidSchema(position)
                                 .subscribe(() -> {
-                                    Log.i(TAG, "updateKidSchema: completed");
+                                    Timber.i("updateKidSchema: completed");
                                     startActivity(intent);
 
                                 }, throwable -> {
@@ -291,7 +291,7 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
     private void updateKidSchema(int position) {
         firebaseHelper.updateKidSchema(position)
                 .subscribe(() -> {
-                    Log.i(TAG, "updateKidSchema: completed");
+                    Timber.i("updateKidSchema: completed");
 
                 }, throwable -> {
                     // handle error

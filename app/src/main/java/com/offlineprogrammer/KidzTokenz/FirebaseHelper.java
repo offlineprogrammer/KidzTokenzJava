@@ -3,7 +3,6 @@ package com.offlineprogrammer.KidzTokenz;
 
 import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -42,6 +41,7 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.Single;
 import io.reactivex.SingleEmitter;
+import timber.log.Timber;
 
 
 public class FirebaseHelper {
@@ -77,11 +77,11 @@ public class FirebaseHelper {
             m_db.collection("users").document(currentUser.getUid())
                     .set(user)
                     .addOnSuccessListener(aVoid -> {
-                        Log.d(TAG, "DocumentSnapshot successfully written!");
+                        Timber.d("DocumentSnapshot successfully written!");
                         emitter.onNext(kidzTokenz.getUser());
                     })
                     .addOnFailureListener(e -> {
-                        Log.w(TAG, "Error writing document", e);
+                        Timber.tag(TAG).w(e, "Error writing document");
                         emitter.onError(e);
                     });
         });
@@ -94,15 +94,15 @@ public class FirebaseHelper {
             final DocumentReference docRef = m_db.collection(USERS_COLLECTION).document(currentUser.getUid());
             docRef.addSnapshotListener((snapshot, e) -> {
                 if (e != null) {
-                    Log.w(TAG, "Listen failed.", e);
+                    Timber.tag(TAG).w(e, "Listen failed.");
                     return;
                 }
                 if (snapshot != null && snapshot.exists()) {
-                    Log.d(TAG, "V2.0 Current data: " + snapshot.getData());
+                    Timber.d("V2.0 Current data: %s", snapshot.getData());
                     kidzTokenz.setUser(snapshot.toObject(User.class));
                     emitter.onNext(kidzTokenz.getUser());
                 } else {
-                    Log.d(TAG, "V2.0 Current data: null");
+                    Timber.d("V2.0 Current data: null");
                     emitter.onError(new Exception("V2.0 o data found"));
                 }
             });
@@ -117,15 +117,15 @@ public class FirebaseHelper {
             final DocumentReference docRef = m_db.collection(USERS_COLLECTION).document(currentUser.getUid());
             docRef.addSnapshotListener((snapshot, e) -> {
                 if (e != null) {
-                    Log.w(TAG, "Listen failed.", e);
+                    Timber.tag(TAG).w(e, "Listen failed.");
                     return;
                 }
                 if (snapshot != null && snapshot.exists()) {
-                    Log.d(TAG, "V2.0 Current data: " + snapshot.getData());
+                    Timber.d("V2.0 Current data: %s", snapshot.getData());
                     kidzTokenz.setUser(snapshot.toObject(User.class));
                     emitter.onSuccess(kidzTokenz.getUser());
                 } else {
-                    Log.d(TAG, "V2.0 Current data: null");
+                    Timber.d("V2.0 Current data: null");
                     emitter.onError(new Exception("V2.0 o data found"));
                 }
             });
@@ -146,7 +146,7 @@ public class FirebaseHelper {
                         List<Task<QuerySnapshot>> tasks = new ArrayList<>();
                         for (DocumentSnapshot ds : task.getResult()) {
                             tasks.add(ds.getReference().collection("kidz").get());
-                            Log.d(TAG, " continueWithTask tasks => " + tasks.toString());
+                            Timber.d(" continueWithTask tasks => %s", tasks.toString());
                         }
                         return Tasks.whenAllSuccess(tasks);
                     })
@@ -155,20 +155,20 @@ public class FirebaseHelper {
                             List<QuerySnapshot> list = task.getResult();
                             for (QuerySnapshot qs : list) {
                                 for (DocumentSnapshot ds : qs) {
-                                    Log.d(TAG, " continueWithTask => " + ds.getData());
+                                    Timber.d(" continueWithTask => %s", ds.getData());
                                     Kid myKid = ds.toObject(Kid.class);
                                     myKid.setKidUUID();
                                     kidzList.add(myKid);
                                 }
                             }
-                            Log.d(TAG, " continueWithTask kidzList => " + kidzList);
+                            Timber.d(" continueWithTask kidzList => %s", kidzList);
                             kidzTokenz.getUser().setKidz(kidzList);
                             Map<String, Object> user = kidzTokenz.getUser().toMap();
                             m_db.collection(USERS_COLLECTION).document(currentUser.getUid())
                                     .set(user)
                                     .addOnSuccessListener(aVoid -> emitter.onSuccess(kidzTokenz.getUser()))
                                     .addOnFailureListener(e -> {
-                                        Log.w(TAG, "Error writing document", e);
+                                        Timber.tag(TAG).w(e, "Error writing document");
                                         emitter.onError(e);
                                     });
                         } else {
@@ -190,7 +190,7 @@ public class FirebaseHelper {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 if (document.exists()) {
-                                    Log.d("Got Task Data", document.getId() + " => " + document.getData());
+                                    Timber.d(document.getId() + " => " + document.getData());
                                     KidTask myKidTask = document.toObject(KidTask.class);
                                     myKidTask.setKidTaskUUID();
                                     kidTaskzList.add(myKidTask);
@@ -199,7 +199,7 @@ public class FirebaseHelper {
                             }
 
                         } else {
-                            Log.d("Got Date", "Error getting documents: ", task.getException());
+                            Timber.d(task.getException(), "Error getting documents: ");
                             emitter.onError(task.getException());
                         }
                     });
@@ -219,10 +219,10 @@ public class FirebaseHelper {
         }
         batch.commit().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                Log.d(TAG, "updateKidzCollection successfully written!");
+                Timber.d("updateKidzCollection successfully written!");
                 emitter.onComplete();
             } else {
-                Log.w(TAG, "updateKidzCollection Error writing document ", task.getException());
+                Timber.tag(TAG).w(task.getException(), "updateKidzCollection Error writing document ");
                 emitter.onError(task.getException());
             }
         });
@@ -235,12 +235,12 @@ public class FirebaseHelper {
             m_db.collection(USERS_COLLECTION).document(kidzTokenz.getUser().getUserId()).collection("kidzTokenz").document(newKid.getKidUUID())
                     .set(kidValues)
                     .addOnSuccessListener(aVoid -> {
-                        Log.d(TAG, "DocumentSnapshot successfully written!");
+                        Timber.d("DocumentSnapshot successfully written!");
 //                            listenToUserDocument();
                         emitter.onComplete();
                     })
                     .addOnFailureListener(e -> {
-                        Log.w(TAG, "Error writing document", e);
+                        Timber.tag(TAG).w(e, "Error writing document");
                         emitter.onError(e);
                     });
         });
@@ -263,11 +263,11 @@ public class FirebaseHelper {
 
             batch.commit().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
-                    Log.d(TAG, "updateKidzCollection successfully written!");
+                    Timber.d("updateKidzCollection successfully written!");
 //                            listenToUserDocument();
                     emitter.onComplete();
                 } else {
-                    Log.w(TAG, "updateKidzCollection Error writing document ", task.getException());
+                    Timber.tag(TAG).w(task.getException(), "updateKidzCollection Error writing document ");
                     emitter.onError(task.getException());
 
                 }
@@ -285,11 +285,11 @@ public class FirebaseHelper {
             DocumentReference newKidRef = m_db.collection(USERS_COLLECTION).document(kidzTokenz.getUser().getUserId());//.collection("kidz").document();
             newKidRef.update("kidz", kidzTokenz.getUser().getKidz())
                     .addOnSuccessListener(aVoid -> {
-                        Log.d("Add Kid", "DocumentSnapshot successfully written!");
+                        Timber.d("DocumentSnapshot successfully written!");
                         emitter.onSuccess(newKid);
                     })
                     .addOnFailureListener(e -> {
-                        Log.w("Add Kid", "Error writing document", e);
+                        Timber.tag("Add Kid").w(e, "Error writing document");
                         emitter.onError(e);
                     });
 
@@ -312,14 +312,14 @@ public class FirebaseHelper {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 if (document.exists()) {
-                                    Log.d("Got Task Data", document.getId() + " => " + document.getData());
+                                    Timber.d(document.getId() + " => " + document.getData());
                                     KidTask taskz = document.toObject(KidTask.class);
                                     taskzList.add(taskz);
                                 }
                             }
                             emitter.onSuccess(taskzList);
                         } else {
-                            Log.d("Got Date", "Error getting documents: ", task.getException());
+                            Timber.d(task.getException(), "Error getting documents: ");
                             emitter.onError(task.getException());
                         }
                     });
@@ -356,12 +356,12 @@ public class FirebaseHelper {
             DocumentReference newKidRef = m_db.collection(USERS_COLLECTION).document(kidzTokenz.getUser().getUserId());//.collection("kidz").document();
             newKidRef.update("kidz", kidzTokenz.getUser().getKidz())
                     .addOnSuccessListener(aVoid -> {
-                        Log.i(TAG, "DocumentSnapshot successfully deleted!");
+                        Timber.i("DocumentSnapshot successfully deleted!");
 
                         emitter.onComplete();
                     })
                     .addOnFailureListener(e -> {
-                        Log.i(TAG, "Error updating document", e);
+                        Timber.i(e, "Error updating document");
                         emitter.onError(e);
                     });
 
@@ -375,11 +375,11 @@ public class FirebaseHelper {
                     .collection("kidzTokenz").document(selectedKid.getKidUUID());
             selectedKidRef.delete()
                     .addOnSuccessListener(aVoid -> {
-                        Log.i(TAG, "DocumentSnapshot successfully deleted!");
+                        Timber.i("DocumentSnapshot successfully deleted!");
                         emitter.onComplete();
                     })
                     .addOnFailureListener(e -> {
-                        Log.i(TAG, "Error updating document", e);
+                        Timber.i(e, "Error updating document");
                         emitter.onError(e);
                     });
 
@@ -394,12 +394,12 @@ public class FirebaseHelper {
                     .collection("kidTaskz").document(selectedTask.getKidTaskUUID());
             selectedTaskRef.delete()
                     .addOnSuccessListener(aVoid -> {
-                        Log.i(TAG, "DocumentSnapshot successfully deleted!");
+                        Timber.i("DocumentSnapshot successfully deleted!");
 
                         emitter.onComplete();
                     })
                     .addOnFailureListener(e -> {
-                        Log.i(TAG, "Error updating document", e);
+                        Timber.i(e, "Error updating document");
                         emitter.onError(e);
                     });
 
@@ -415,11 +415,11 @@ public class FirebaseHelper {
                     .collection("kidTaskz").document(selectedTask.getKidTaskUUID());
             selectedTaskRef.update("taskTokenzScore", selectedTask.getTaskTokenzScore())
                     .addOnSuccessListener(aVoid -> {
-                        Log.i(TAG, "DocumentSnapshot successfully deleted!");
+                        Timber.i("DocumentSnapshot successfully deleted!");
                         emitter.onComplete();
                     })
                     .addOnFailureListener(e -> {
-                        Log.i(TAG, "Error updating document", e);
+                        Timber.i(e, "Error updating document");
                         emitter.onError(e);
                     });
 
@@ -434,11 +434,11 @@ public class FirebaseHelper {
                     .collection("kidTaskz").document(selectedTask.getKidTaskUUID());
             selectedTaskRef.update("firestoreImageUri", selectedTask.getFirestoreImageUri())
                     .addOnSuccessListener(aVoid -> {
-                        Log.i(TAG, "DocumentSnapshot successfully deleted!");
+                        Timber.i("DocumentSnapshot successfully deleted!");
                         emitter.onComplete();
                     })
                     .addOnFailureListener(e -> {
-                        Log.i(TAG, "Error updating document", e);
+                        Timber.i(e, "Error updating document");
                         emitter.onError(e);
                     });
 
@@ -454,12 +454,12 @@ public class FirebaseHelper {
                     .collection("kidTaskz").document(newTask.getKidTaskUUID())
                     .set(kidTaskValues)
                     .addOnSuccessListener(aVoid -> {
-                        Log.d(TAG, "DocumentSnapshot successfully written!");
+                        Timber.d("DocumentSnapshot successfully written!");
 //                            listenToUserDocument();
                         emitter.onSuccess(newTask);
                     })
                     .addOnFailureListener(e -> {
-                        Log.w(TAG, "Error writing document", e);
+                        Timber.tag(TAG).w(e, "Error writing document");
                         emitter.onError(e);
                     });
         });
@@ -477,11 +477,11 @@ public class FirebaseHelper {
             DocumentReference newKidRef = m_db.collection(USERS_COLLECTION).document(kidzTokenz.getUser().getUserId());//.collection("kidz").document();
             newKidRef.update("kidz", kidzTokenz.getUser().getKidz())
                     .addOnSuccessListener(aVoid -> {
-                        Log.d("Add Kid", "DocumentSnapshot successfully written!");
+                        Timber.d("DocumentSnapshot successfully written!");
                         emitter.onComplete();
                     })
                     .addOnFailureListener(e -> {
-                        Log.w("Add Kid", "Error writing document", e);
+                        Timber.tag("Add Kid").w(e, "Error writing document");
                         emitter.onError(e);
                     });
         });
@@ -500,12 +500,12 @@ public class FirebaseHelper {
             DocumentReference newKidRef = m_db.collection(USERS_COLLECTION).document(kidzTokenz.getUser().getUserId());//.collection("kidz").document();
             newKidRef.update("kidz", kidzTokenz.getUser().getKidz())
                     .addOnSuccessListener(aVoid -> {
-                        Log.i(TAG, "DocumentSnapshot successfully deleted!");
+                        Timber.i("DocumentSnapshot successfully deleted!");
 
                         emitter.onComplete();
                     })
                     .addOnFailureListener(e -> {
-                        Log.i(TAG, "Error updating document", e);
+                        Timber.i(e, "Error updating document");
                         emitter.onError(e);
                     });
 
@@ -555,8 +555,8 @@ public class FirebaseHelper {
 
     public void sendRegistrationToServer(String token) {
 
-        Log.d("fcmtoken", FirebaseInstanceId.getInstance().getToken());
-        Log.d("fcmtoken 2 ", token);
+        Timber.d(FirebaseInstanceId.getInstance().getToken());
+        Timber.d(token);
 
 
     }

@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -59,6 +58,7 @@ import nl.dionsegijn.konfetti.KonfettiView;
 import nl.dionsegijn.konfetti.models.Shape;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
+import timber.log.Timber;
 
 
 public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListener {
@@ -208,7 +208,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
 
                         @Override
                         public void onError(Throwable e) {
-                            Log.e(TAG, "continueWithTask kidzList => onError: " + e.getMessage());
+                            Timber.e("continueWithTask kidzList => onError: %s", e.getMessage());
                         }
 
                         @Override
@@ -329,7 +329,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         firebaseHelper.deleteKidTask(selectedTask, selectedKid)
                 .subscribe(() -> {
                     firebaseHelper.logEvent("task_deleted");
-                    Log.i(TAG, "updateRewardImage: completed");
+                    Timber.i("updateRewardImage: completed");
                     Intent returnIntent = new Intent();
                     returnIntent.putExtra("result", "result");
                     setResult(Activity.RESULT_OK, returnIntent);
@@ -349,17 +349,16 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
             selectedKid = getIntent().getExtras().getParcelable("selected_kid");
 
             taskTokenzScore = selectedTask.getTaskTokenzScore();
-            Log.i(TAG, "onCreate: " + taskTokenzScore);
-            Log.i(TAG, "onCreate: " + selectedTask.getTaskName());
+            Timber.i("onCreate: %s", taskTokenzScore);
+            Timber.i("onCreate: %s", selectedTask.getTaskName());
             taskNameTextView.setText(selectedTask.getTaskName());
             if (selectedTask.getFirestoreImageUri() == null) {
                 taskImageView.setImageResource(selectedTask.getTaskImage());
-            }
-            else {
+            } else {
                 taskTokenImageUri = Uri.parse(selectedTask.getFirestoreImageUri());
                 GlideApp.with(TaskActivity.this)
                         .load(taskTokenImageUri)
-                       // .placeholder(R.drawable.bekind)
+                        // .placeholder(R.drawable.bekind)
                         .into(taskImageView);
             }
 
@@ -374,25 +373,25 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
 
     private void verfifyTokenzScore() {
         if (taskTokenzScore.size() != selectedKid.getTokenNumber()) {
-            Log.i(TAG, "getExtras: taskTokenzScore.size() != selectedKid.getTokenNumber() ");
-            Log.i(TAG, "getExtras: taskTokenScore Size is " + taskTokenzScore.size());
-            Log.i(TAG, "getExtras: selectedKid.getTokenNumber() is " + selectedKid.getTokenNumber());
+            Timber.i("getExtras: taskTokenzScore.size() != selectedKid.getTokenNumber() ");
+            Timber.i("getExtras: taskTokenScore Size is %s", taskTokenzScore.size());
+            Timber.i("getExtras: selectedKid.getTokenNumber() is %s", selectedKid.getTokenNumber());
             taskTokenzScore = new ArrayList<>();
             for (int i = 0; i < selectedKid.getTokenNumber(); i++) {
                 taskTokenzScore.add(0L);
             }
             updateTaskTokenzScore();
             selectedTask.setTaskTokenzScore(taskTokenzScore);
-            Log.i(TAG, "getExtras: taskTokenScore Size is now " + taskTokenzScore.size());
-            Log.i(TAG, "getExtras: selectedTask.getTaskTokenzScore() " + selectedTask.getTaskTokenzScore());
+            Timber.i("getExtras: taskTokenScore Size is now %s", taskTokenzScore.size());
+            Timber.i("getExtras: selectedTask.getTaskTokenzScore() %s", selectedTask.getTaskTokenzScore());
 
         }
     }
 
     private void getTaskTokenzScoreAndImage() {
 
-        Log.i(TAG, "getTaskTokenzScoreAndImage: Task " + selectedTask);
-        Log.i(TAG, "getTaskTokenzScoreAndImage: " + selectedTask.getTaskTokenzScore());
+        Timber.i("getTaskTokenzScoreAndImage: Task %s", selectedTask);
+        Timber.i("getTaskTokenzScoreAndImage: %s", selectedTask.getTaskTokenzScore());
 
 
         verfifyTokenzScore();
@@ -464,12 +463,12 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     private void updateTaskTokenzImage() {
         try {
             firebaseHelper.updateTaskTokenzImage(selectedTask, selectedKid)
-                    .subscribe(() -> Log.i(TAG, "updateTaskTokenzScore: done"), throwable -> {
+                    .subscribe(() -> Timber.i("updateTaskTokenzScore: done"), throwable -> {
                         // handle error
                     });
 
         } catch (Exception e) {
-            Log.i(TAG, "updateTaskTokenzScore: Error " + e.getMessage());
+            Timber.i("updateTaskTokenzScore: Error %s", e.getMessage());
             e.printStackTrace();
         }
     }
@@ -477,15 +476,15 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     private void updateTaskTokenzScore() {
         try {
             selectedTask.setTaskTokenzScore(taskTokenzScore);
-            Log.i(TAG, "updateTaskTokenzScore: Start updating the score...");
+            Timber.i("updateTaskTokenzScore: Start updating the score...");
 
             firebaseHelper.updateTaskTokenzScore(selectedTask, selectedKid)
-                    .subscribe(() -> Log.i(TAG, "updateTaskTokenzScore: done"), throwable -> {
+                    .subscribe(() -> Timber.i("updateTaskTokenzScore: done"), throwable -> {
                         // handle error
                     });
 
         } catch (Exception e) {
-            Log.i(TAG, "updateTaskTokenzScore: Error " + e.getMessage());
+            Timber.i("updateTaskTokenzScore: Error %s", e.getMessage());
             e.printStackTrace();
         }
     }
@@ -493,7 +492,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
 
     @Override
     public void onBackPressed() {
-        Log.d(TAG, "onBackPressed Called");
+        Timber.d("onBackPressed Called");
         goBack();
     }
 

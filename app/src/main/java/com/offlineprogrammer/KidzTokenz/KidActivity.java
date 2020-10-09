@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -47,6 +46,7 @@ import java.util.Date;
 import io.reactivex.SingleObserver;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import timber.log.Timber;
 
 public class KidActivity extends AppCompatActivity implements OnTaskListener {
 
@@ -187,7 +187,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
 
         firebaseHelper.deleteKid(selectedKid)
                 .subscribe(() -> {
-                    Log.i(TAG, "updateRewardImage: completed");
+                    Timber.i("updateRewardImage: completed");
                     firebaseHelper.logEvent("kid_deleted");
                     firebaseHelper.deleteKidTaskzCollection(selectedKid)
                             .subscribe(() -> finish(), throwable -> {
@@ -239,13 +239,13 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
                 .subscribe(new SingleObserver<ArrayList<KidTask>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-                        Log.d(TAG, "onSubscribe");
+                        Timber.d("onSubscribe");
                         disposable = d;
                     }
 
                     @Override
                     public void onSuccess(ArrayList<KidTask> taskz) {
-                        Log.d(TAG, "onNext:  " + taskz.size());
+                        Timber.d("onNext:  " + taskz.size());
                         taskzList = taskz;
 
                         runOnUiThread(() -> updateRecylerView(taskz));
@@ -253,7 +253,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.e(TAG, "onError: " + e.getMessage());
+                        Timber.e("onError: " + e.getMessage());
                     }
 
 
@@ -366,7 +366,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.e(TAG, "continueWithTask kidzList => onError: " + e.getMessage());
+                        Timber.e("continueWithTask kidzList => onError: " + e.getMessage());
                     }
 
                     @Override
@@ -410,7 +410,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
                 String selectedImageResourceName = data.getStringExtra("ImageResource");
                 tokenNumberImageView.setImageResource(selectedImage);
                 int selectedTokenNumber = data.getIntExtra("TokenNumber", 0);
-                Log.i(TAG, "onActivityResult: " + selectedTokenNumber);
+                Timber.i("onActivityResult: " + selectedTokenNumber);
                 tokenNumberImageView.setImageDrawable(null);
                 tokenNumberImageView.setImageResource(getApplicationContext().getResources().getIdentifier(selectedImageResourceName, "drawable",
                         getApplicationContext().getPackageName()));
@@ -438,7 +438,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
         selectedKid.setTokenImageResourceName(tokenImageImageResourceName);
         firebaseHelper.updateKid(selectedKid)
                 .subscribe(() -> {
-                    Log.i(TAG, "updateKidTokenImage: completed");
+                    Timber.i("updateKidTokenImage: completed");
                     firebaseHelper.logEvent("tokenImage_updated");
                     Review();
                 }, throwable -> {
@@ -454,7 +454,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
 
         firebaseHelper.updateKid(selectedKid)
                 .subscribe(() -> {
-                    Log.i(TAG, "updateKidTokenNumberImage: completed");
+                    Timber.i("updateKidTokenNumberImage: completed");
                     firebaseHelper.logEvent("tokenNumber_updated");
                     Review();
 
@@ -472,7 +472,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
 
         taskzList = taskAdapter.getAllItems();
 
-        Log.i(TAG, "Clicked " + position);
+        Timber.i("Clicked %s", position);
         Intent intent = new Intent(this, TaskActivity.class);
         Bundle bundle = new Bundle();
         bundle.putParcelable("selected_kid", selectedKid);
@@ -481,7 +481,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
         intent.putExtras(bundle);
 
         //  intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT );
-        Log.i(TAG, "onTaskClick: " + taskzList.get(position).toString());
+        Timber.i("onTaskClick: %s", taskzList.get(position).toString());
         // intent.putExtra("selected_task",taskzList.get(position));
         // intent.putExtra("selected_kid",selectedKid);
 

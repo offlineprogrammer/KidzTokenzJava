@@ -1,6 +1,5 @@
 package com.offlineprogrammer.KidzTokenz.taskTokenz;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +11,8 @@ import com.offlineprogrammer.KidzTokenz.R;
 
 import java.util.ArrayList;
 
+import timber.log.Timber;
+
 public class TaskTokenzAdapter extends RecyclerView.Adapter {
     private ArrayList<TaskTokenz> models = new ArrayList<>();
     private OnTaskTokenzListener onTaskTokenzListener;
@@ -19,7 +20,7 @@ public class TaskTokenzAdapter extends RecyclerView.Adapter {
 
     public TaskTokenzAdapter(@NonNull final ArrayList<TaskTokenz> viewModels, OnTaskTokenzListener OnTaskTokenzListener) {
         this.models.addAll(viewModels);
-        this.onTaskTokenzListener =OnTaskTokenzListener;
+        this.onTaskTokenzListener = OnTaskTokenzListener;
     }
 
     @NonNull
@@ -57,7 +58,7 @@ public class TaskTokenzAdapter extends RecyclerView.Adapter {
 
     public void add(TaskTokenz item, int position){
         models.add(position, item);
-        Log.i(TAG, "add: " + item.toString());
+        Timber.i("add: " + item.toString());
         notifyItemInserted(position);
     }
 

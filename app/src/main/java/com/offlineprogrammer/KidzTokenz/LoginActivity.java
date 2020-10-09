@@ -2,7 +2,6 @@ package com.offlineprogrammer.KidzTokenz;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -26,6 +25,7 @@ import io.reactivex.Observer;
 import io.reactivex.SingleObserver;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import timber.log.Timber;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -78,8 +78,8 @@ public class LoginActivity extends AppCompatActivity {
         if (currentUser != null) {
             mLogInProgress.setVisibility(View.VISIBLE);
             signInButton.setVisibility(View.GONE);
-            Log.d(TAG, "Currently Signed in: " + currentUser.getEmail());
-            Log.d(TAG, "onStart: " + currentUser.getUid());
+            Timber.d("Currently Signed in: %s", currentUser.getEmail());
+            Timber.d("onStart: %s", currentUser.getUid());
             getUserData();
         }
     }
@@ -102,13 +102,13 @@ public class LoginActivity extends AppCompatActivity {
             } catch (ApiException e) {
                 mLogInProgress.setVisibility(View.GONE);
                 // Google Sign In failed, update UI appropriately
-                Log.w(TAG, "Google sign in failed", e);
+                Timber.tag(TAG).w(e, "Google sign in failed");
             }
         }
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
-        Log.d(TAG, "firebaseAuthWithGoogle:" + account.getId());
+        Timber.d("firebaseAuthWithGoogle:%s", account.getId());
 
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
         firebaseHelper.firebaseAuth.signInWithCredential(credential)
@@ -117,12 +117,12 @@ public class LoginActivity extends AppCompatActivity {
                         // Sign in success, update UI with the signed-in user's information
                         FirebaseUser user = firebaseHelper.firebaseAuth.getCurrentUser();
 
-                        Log.d(TAG, "signInWithCredential:success: currentUser: " + Objects.requireNonNull(user).getEmail());
+                        Timber.d("signInWithCredential:success: currentUser: %s", Objects.requireNonNull(user).getEmail());
                         getUserData();
                     } else {
                         // If sign in fails, display a message to the user.
                         mLogInProgress.setVisibility(View.GONE);
-                        Log.w(TAG, "signInWithCredential:failure", task.getException());
+                        Timber.tag(TAG).w(task.getException(), "signInWithCredential:failure");
                     }
                 });
     }
@@ -135,19 +135,19 @@ public class LoginActivity extends AppCompatActivity {
                     .subscribe(new SingleObserver<User>() {
                         @Override
                         public void onSubscribe(Disposable d) {
-                            Log.d(TAG, "onSubscribe");
+                            Timber.d("onSubscribe");
                             disposable = d;
                         }
 
                         @Override
                         public void onError(Throwable e) {
-                            Log.e(TAG, "onError: " + e.getMessage());
+                            Timber.e("onError: %s", e.getMessage());
                             getUserDataV1();
                         }
 
                         @Override
                         public void onSuccess(User user) {
-                            Log.d(TAG, "onNext: " + user.getUserId());
+                            Timber.d("onNext: %s", user.getUserId());
                             runOnUiThread(() -> launchMainActivity(user));
 
 
@@ -170,7 +170,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.e(TAG, "continueWithTask kidzList => onError: " + e.getMessage());
+                        Timber.e("continueWithTask kidzList => onError: %s", e.getMessage());
                         saveUser();
                     }
 
@@ -180,7 +180,7 @@ public class LoginActivity extends AppCompatActivity {
 
                             firebaseHelper.updateKidzCollection()
                                     .subscribe(() -> {
-                                        Log.i(TAG, "updateKidzCollection: completed");
+                                        Timber.i("updateKidzCollection: completed");
                                         // handle completion
                                         runOnUiThread(() -> launchMainActivity(user));
                                     }, throwable -> {
@@ -208,13 +208,13 @@ public class LoginActivity extends AppCompatActivity {
                 .subscribe(new Observer<User>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-                        Log.d(TAG, "onSubscribe");
+                        Timber.d("onSubscribe");
                         disposable = d;
                     }
 
                     @Override
                     public void onNext(User user) {
-                        Log.d(TAG, "onNext: " + user.getUserId());
+                        Timber.d("onNext: %s", user.getUserId());
                         runOnUiThread(() -> launchMainActivity(user));
 
 
@@ -222,12 +222,12 @@ public class LoginActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.e(TAG, "onError: " + e.getMessage());
+                        Timber.e("onError: %s", e.getMessage());
                     }
 
                     @Override
                     public void onComplete() {
-                        Log.d(TAG, "onComplete");
+                        Timber.d("onComplete");
                     }
                 });
     }
@@ -249,7 +249,7 @@ public class LoginActivity extends AppCompatActivity {
         googleSignInClient.signOut().addOnCompleteListener(this,
                 task -> {
                     // Google Sign In failed, update UI appropriately
-                    Log.w(TAG, "Signed out of google");
+                    Timber.tag(TAG).w("Signed out of google");
                 });
     }
 
