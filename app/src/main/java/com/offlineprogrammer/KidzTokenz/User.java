@@ -1,5 +1,7 @@
 package com.offlineprogrammer.KidzTokenz;
 
+import androidx.annotation.Keep;
+
 import com.google.firebase.database.Exclude;
 import com.offlineprogrammer.KidzTokenz.kid.Kid;
 
@@ -8,6 +10,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+@Keep
 class User {
     private String deviceToken;
     private String firebaseId;
@@ -37,7 +40,6 @@ class User {
         result.put("kidz", this.kidz);
         return result;
     }
-
 
 
     User() {

@@ -4,6 +4,7 @@ package com.offlineprogrammer.KidzTokenz;
 import android.content.Context;
 import android.net.Uri;
 
+import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.Continuation;
@@ -43,7 +44,7 @@ import io.reactivex.Single;
 import io.reactivex.SingleEmitter;
 import timber.log.Timber;
 
-
+@Keep
 public class FirebaseHelper {
     public static final String USERS_COLLECTION = "users2.0";
     FirebaseFirestore m_db;

@@ -3,6 +3,7 @@ package com.offlineprogrammer.KidzTokenz.kid;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 
 import com.google.firebase.database.Exclude;
@@ -13,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+@Keep
 public class Kid  implements Parcelable {
     private String kidName;
     private int monsterImage;
@@ -160,7 +162,6 @@ public class Kid  implements Parcelable {
     public int describeContents() {
         return 0;
     }
-
 
 
     public int getTokenImage() {

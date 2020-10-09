@@ -3,6 +3,7 @@ package com.offlineprogrammer.KidzTokenz.task;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 
 import com.google.firebase.database.Exclude;
@@ -13,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+@Keep
 public class KidTask implements Parcelable {
     private String taskName;
     private int taskImage;
@@ -24,6 +26,7 @@ public class KidTask implements Parcelable {
     private ArrayList<Long> taskTokenzScore = new ArrayList<>();
     private String firestoreImageUri;
     private String kidTaskUUID;
+
 
     public KidTask(String taskName,
                    int taskImage,

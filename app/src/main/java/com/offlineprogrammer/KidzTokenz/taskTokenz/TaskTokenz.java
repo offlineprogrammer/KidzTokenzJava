@@ -3,17 +3,20 @@ package com.offlineprogrammer.KidzTokenz.taskTokenz;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.Keep;
+
 import com.google.firebase.database.Exclude;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Keep
 public class TaskTokenz implements Parcelable {
     private int taskTokenzImage;
     private Boolean rewarded;
 
     public TaskTokenz(int taskTokenzImage,
-                   Boolean rewarded) {
+                      Boolean rewarded) {
         this.taskTokenzImage =taskTokenzImage;
         this.rewarded = rewarded;
 
@@ -76,9 +79,6 @@ public class TaskTokenz implements Parcelable {
         dest.writeInt(taskTokenzImage);
         dest.writeByte((byte) (rewarded ? 1 : 0));
     }
-
-
-
 
 
     public Boolean getRewarded() {
