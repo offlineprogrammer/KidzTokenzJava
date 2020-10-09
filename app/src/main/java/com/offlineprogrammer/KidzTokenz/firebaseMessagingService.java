@@ -9,7 +9,6 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
-import android.widget.RemoteViews;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -33,28 +32,16 @@ public class firebaseMessagingService extends FirebaseMessagingService {
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "default")
-                .setSmallIcon(R.drawable.storeicon)
-                //.setContentTitle(remoteMessage.getNotification().getTitle())
-                //.setContentText(remoteMessage.getNotification().getBody())
+                .setSmallIcon(R.drawable.ic_stat_name)
+                .setContentTitle(remoteMessage.getNotification().getTitle())
+                .setContentText(remoteMessage.getNotification().getBody())
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(pendingIntent)
                 .setSound(defaultSoundUri)
-                .setContent(getCustomDesign(remoteMessage.getNotification().getTitle(), remoteMessage.getNotification().getBody()))
                 .setAutoCancel(true);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         notificationManager.notify(0, builder.build());
-    }
-
-    private RemoteViews getCustomDesign(String title,
-                                        String message) {
-        RemoteViews remoteViews = new RemoteViews(
-                getApplicationContext().getPackageName(),
-                R.layout.notification);
-        remoteViews.setTextViewText(R.id.title, title);
-        remoteViews.setTextViewText(R.id.message, message);
-        remoteViews.setImageViewResource(R.id.icon, R.drawable.storeicon);
-        return remoteViews;
     }
 
 
@@ -73,7 +60,7 @@ public class firebaseMessagingService extends FirebaseMessagingService {
     private void sendRegistrationToServer(String token) {
         firebaseHelper = new FirebaseHelper(getApplicationContext());
         firebaseHelper.sendRegistrationToServer(token);
-        // TODO: Implement this method to send token to your app server.
+
 
     }
 
