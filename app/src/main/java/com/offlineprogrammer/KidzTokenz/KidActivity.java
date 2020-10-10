@@ -366,7 +366,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
 
                     @Override
                     public void onError(Throwable e) {
-                        Timber.e("continueWithTask kidzList => onError: " + e.getMessage());
+                        Timber.e("continueWithTask kidzList => onError: %s", e.getMessage());
                     }
 
                     @Override

@@ -60,7 +60,15 @@ public class firebaseMessagingService extends FirebaseMessagingService {
 
     private void sendRegistrationToServer(String token) {
         firebaseHelper = new FirebaseHelper(getApplicationContext());
-        firebaseHelper.sendRegistrationToServer(token);
+        firebaseHelper.updateUserFcmInstanceId(token)
+                .subscribe(() -> {
+                    Timber.i("updateUserFcmInstanceId: completed");
+
+                }, throwable -> {
+                    // handle error
+                });
+
+        // firebaseHelper.sendRegistrationToServer(token);
 
 
     }

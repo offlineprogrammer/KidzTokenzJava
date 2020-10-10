@@ -18,6 +18,7 @@ class User {
     private Date dateCreated;
     private String userEmail;
     private ArrayList<Kid> kidz;
+    private String fcmInstanceId;
 
     User(String deviceToken) {
         this.deviceToken = deviceToken;
@@ -37,6 +38,7 @@ class User {
         result.put("userId", this.userId);
         result.put("userEmail", this.userEmail);
         result.put("dateCreated", this.dateCreated);
+        result.put("fcmInstanceId", this.fcmInstanceId);
         result.put("kidz", this.kidz);
         return result;
     }
@@ -89,5 +91,13 @@ class User {
 
     public void setKidz(ArrayList<Kid> kidz) {
         this.kidz = kidz;
+    }
+
+    public String getFcmInstanceId() {
+        return fcmInstanceId;
+    }
+
+    public void setFcmInstanceId(String fcmInstanceId) {
+        this.fcmInstanceId = fcmInstanceId;
     }
 }

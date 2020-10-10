@@ -8,14 +8,16 @@ android {
         applicationId "com.offlineprogrammer.KidzTokenz"
         minSdkVersion 24
         targetSdkVersion 29
-        versionCode 400008
-        versionName "4.33"
+        versionCode 400009
+        versionName "4.4"
         resConfigs "en"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true  // shrink
+            useProguard true    // obfuscate
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {

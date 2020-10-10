@@ -74,6 +74,7 @@ public class FirebaseHelper {
             Date currentTime = Calendar.getInstance().getTime();
             FirebaseUser currentUser = firebaseAuth.getCurrentUser();
             kidzTokenz.setUser(new User(currentUser.getUid(), currentUser.getEmail(), currentTime));
+            kidzTokenz.getUser().setFcmInstanceId(FirebaseInstanceId.getInstance().getToken());
             Map<String, Object> user = kidzTokenz.getUser().toMap();
             m_db.collection("users").document(currentUser.getUid())
                     .set(user)
@@ -139,7 +140,8 @@ public class FirebaseHelper {
             FirebaseUser currentUser = firebaseAuth.getCurrentUser();
             ArrayList<Kid> kidzList = new ArrayList<>();
             Date currentTime = Calendar.getInstance().getTime();
-            kidzTokenz.setUser(new User(currentUser.getUid(),currentUser.getEmail(), currentTime));
+            kidzTokenz.setUser(new User(currentUser.getUid(), currentUser.getEmail(), currentTime));
+            kidzTokenz.getUser().setFcmInstanceId(FirebaseInstanceId.getInstance().getToken());
             m_db.collection("users")
                     .whereEqualTo("userId", currentUser.getEmail())
                     .get()
@@ -554,11 +556,23 @@ public class FirebaseHelper {
         });
     }
 
-    public void sendRegistrationToServer(String token) {
 
-        Timber.d(FirebaseInstanceId.getInstance().getToken());
-        Timber.d(token);
+    public Completable updateUserFcmInstanceId(String token) {
+        return Completable.create(emitter -> {
+            kidzTokenz.getUser().setFcmInstanceId(token);
+            DocumentReference newKidRef = m_db.collection(USERS_COLLECTION).document(kidzTokenz.getUser().getUserId());//.collection("kidz").document();
+            newKidRef.update("fcmInstanceId", kidzTokenz.getUser().getFcmInstanceId())
+                    .addOnSuccessListener(aVoid -> {
+                        Timber.d("fcmInstanceId successfully written!");
+                        emitter.onComplete();
+                    })
+                    .addOnFailureListener(e -> {
+                        Timber.tag("Add Kid").w(e, "Error writing document");
+                        emitter.onError(e);
+                    });
 
-
+        });
     }
+
+
 }
