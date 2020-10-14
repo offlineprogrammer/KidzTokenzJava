@@ -11,6 +11,7 @@ import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.BuildConfig;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -59,13 +60,19 @@ public class FirebaseHelper {
         m_db = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
         mContext = c;
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(mContext);
+        if (BuildConfig.BUILD_TYPE.equalsIgnoreCase("release")) {
+            //  mFirebaseAnalytics = FirebaseAnalytics.getInstance(mContext);
+        }
+
         kidzTokenz = (KidzTokenz) mContext;
         //  Log.d("fcmtoken", FirebaseInstanceId.getInstance().getToken());
     }
 
     public void logEvent(String event_name) {
-        mFirebaseAnalytics.logEvent(event_name, null);
+        if (BuildConfig.BUILD_TYPE.equalsIgnoreCase("release")) {
+            //  mFirebaseAnalytics.logEvent(event_name, null);
+        }
+
     }
 
 

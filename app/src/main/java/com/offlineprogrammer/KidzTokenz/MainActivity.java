@@ -161,6 +161,7 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
     }
 
     private void showAddKidDialog(Context c) {
+
         final AlertDialog builder = new AlertDialog.Builder(c).create();
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.alert_dialog_add_kid, null);
@@ -216,6 +217,7 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
     }
 
     private void configActionButton() {
+        // throw new RuntimeException("Test Crash"); // Force a crash
         FloatingActionButton fab = findViewById(R.id.fab_add_kid);
         fab.setOnClickListener(view -> showAddKidDialog(MainActivity.this));
     }
