@@ -6,9 +6,11 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -32,6 +34,7 @@ import com.google.android.flexbox.FlexWrap;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.flexbox.JustifyContent;
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.android.play.core.review.ReviewInfo;
 import com.google.android.play.core.review.ReviewManager;
 import com.google.android.play.core.review.ReviewManagerFactory;
@@ -49,6 +52,8 @@ import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import io.reactivex.SingleObserver;
@@ -264,6 +269,52 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
 
     private void shareCelebration() {
 
+        final AlertDialog builder = new AlertDialog.Builder(TaskActivity.this).create();
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.alert_dialog_celebrate, null);
+        final TextInputLayout thoughtText = dialogView.findViewById(R.id.thoughts_text_input);
+        thoughtText.requestFocus();
+        Button okBtn = dialogView.findViewById(R.id.celebrate_capture_button);
+        Button cancelBtn = dialogView.findViewById(R.id.celebrate_share_button);
+        okBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String thoughttxt = String.valueOf(thoughtText.getEditText().getText());
+                if (!isThoughtTXTValid(thoughttxt)) {
+                    thoughtText.setError(getString(R.string.kid_error_name));
+                } else {
+                    thoughtText.setError(null);
+                    Date currentTime = Calendar.getInstance().getTime();
+                    //  mFirebaseAnalytics.logEvent("kid_created", null);
+                    builder.dismiss();
+                }
+
+
+            }
+        });
+
+        thoughtText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+                String kidName = String.valueOf(thoughtText.getEditText().getText());
+                if (isThoughtTXTValid(kidName)) {
+                    thoughtText.setError(null); //Clear the error
+                }
+                return false;
+            }
+        });
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                builder.dismiss();
+            }
+        });
+        builder.setView(dialogView);
+        builder.show();
+        builder.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+
+    }
+
+    private boolean isThoughtTXTValid(String thoughttxt) {
+        return true;
     }
 
     private void configureAdView() {
