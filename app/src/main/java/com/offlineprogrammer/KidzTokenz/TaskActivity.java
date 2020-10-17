@@ -80,7 +80,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     private FirebaseHelper firebaseHelper;
 
     private static final String TAG = "TaskActivity";
-    private ArrayList<TaskTokenz> taskTokenzList = new ArrayList<>();
+    private final ArrayList<TaskTokenz> taskTokenzList = new ArrayList<>();
     private ArrayList<Long> taskTokenzScore = new ArrayList<>();
     private RecyclerView taskTokenzRecyclerView;
     private TaskTokenzAdapter taskTokenzAdapter;
@@ -232,14 +232,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         if (ImagePicker.shouldHandle(i, i2, intent)) {
             Image firstImageOrNull = ImagePicker.getFirstImageOrNull(intent);
             if (firstImageOrNull != null) {
-                //UCrop.of(Uri.fromFile(new File(firstImageOrNull.getPath())), Uri.fromFile(new File(getCacheDir(), "cropped"))).start(this);
                 UCrop.of(Uri.fromFile(new File(firstImageOrNull.getPath())), Uri.fromFile(new File(getCacheDir(), "cropped"))).withAspectRatio(1.0f, 1.0f).start(this);
-
-                //   Uri destinationUri = Uri.fromFile(new File(myContext.getCacheDir(), "IMG_" + System.currentTimeMillis()));
-                //   UCrop.of(sourceUri, destinationUri)
-                //           .withMaxResultSize(1080, 768) // any resolution you want
-                //           .start(mContext, YourFragment/YourActivity.this);
-
             }
         }
 
@@ -264,7 +257,13 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
                 .burst(600);
         //.streamFor(300, 5000L);
 
+        shareCelebration();
+
         Review();
+    }
+
+    private void shareCelebration() {
+
     }
 
     private void configureAdView() {
