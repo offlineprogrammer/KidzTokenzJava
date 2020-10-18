@@ -29,4 +29,6 @@
     <string name="continue_as_guest">Continue as guest</string>
     <string name="ktz_app_rate_msg">Enjoying KidzTokenz? Would you mind giving us some feedback please?</string>
     <string name="ktz_hint_shareyourthoughts">Share your thoughts</string>
+    <string name="capture_this_moment">Capture this moment</string>
+    <string name="ktz_button_share">Share</string>
 </resources>

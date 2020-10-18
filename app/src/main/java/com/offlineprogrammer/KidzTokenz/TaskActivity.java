@@ -272,17 +272,17 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         final AlertDialog builder = new AlertDialog.Builder(TaskActivity.this).create();
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.alert_dialog_celebrate, null);
-        final TextInputLayout thoughtText = dialogView.findViewById(R.id.thoughts_text_input);
-        thoughtText.requestFocus();
-        Button okBtn = dialogView.findViewById(R.id.celebrate_capture_button);
-        Button cancelBtn = dialogView.findViewById(R.id.celebrate_share_button);
+        final TextInputLayout share_celebrate_thoughtText = dialogView.findViewById(R.id.share_celebrate_desc_text_input);
+        share_celebrate_thoughtText.requestFocus();
+        Button okBtn = dialogView.findViewById(R.id.share_celebrate_button);
+
         okBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                String thoughttxt = String.valueOf(thoughtText.getEditText().getText());
+                String thoughttxt = String.valueOf(share_celebrate_thoughtText.getEditText().getText());
                 if (!isThoughtTXTValid(thoughttxt)) {
-                    thoughtText.setError(getString(R.string.kid_error_name));
+                    share_celebrate_thoughtText.setError(getString(R.string.kid_error_name));
                 } else {
-                    thoughtText.setError(null);
+                    share_celebrate_thoughtText.setError(null);
                     Date currentTime = Calendar.getInstance().getTime();
                     //  mFirebaseAnalytics.logEvent("kid_created", null);
                     builder.dismiss();
@@ -292,21 +292,17 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
             }
         });
 
-        thoughtText.setOnKeyListener(new View.OnKeyListener() {
+        share_celebrate_thoughtText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
-                String kidName = String.valueOf(thoughtText.getEditText().getText());
+                String kidName = String.valueOf(share_celebrate_thoughtText.getEditText().getText());
                 if (isThoughtTXTValid(kidName)) {
-                    thoughtText.setError(null); //Clear the error
+                    share_celebrate_thoughtText.setError(null); //Clear the error
                 }
                 return false;
             }
         });
-        cancelBtn.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                builder.dismiss();
-            }
-        });
+
         builder.setView(dialogView);
         builder.show();
         builder.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
