@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -192,9 +193,23 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     }
 
     public void onCropFinish(Intent intent) {
+        if (intent == null) {
+            return;
+        }
         this.imagePath = UCrop.getOutput(intent);
-        GlideApp.with(this).load(this.imagePath.getPath()).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).centerCrop().into(this.taskImageView);
-        uploadImage();
+
+        if (taskTokenzScore.indexOf(0L) > -1) {
+            GlideApp.with(this).load(this.imagePath.getPath()).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).centerCrop().into(this.taskImageView);
+            uploadImage();
+        } else {
+
+            shareCelebration(imagePath);
+
+
+        }
+
+
+        // uploadImage();
     }
 
     private void uploadImage() {
@@ -262,19 +277,55 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
                 .burst(600);
         //.streamFor(300, 5000L);
 
-        shareCelebration();
+        shareCelebration(null);
 
         Review();
     }
 
-    private void shareCelebration() {
-
+    private void shareCelebration(Uri imagePath) {
         final AlertDialog builder = new AlertDialog.Builder(TaskActivity.this).create();
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.alert_dialog_celebrate, null);
         final TextInputLayout share_celebrate_thoughtText = dialogView.findViewById(R.id.share_celebrate_desc_text_input);
         share_celebrate_thoughtText.requestFocus();
         Button okBtn = dialogView.findViewById(R.id.share_celebrate_button);
+        TextView camera_button = dialogView.findViewById(R.id.camera_button);
+        ImageView share_celebrate_ImageView = dialogView.findViewById(R.id.share_celebrate_ImageView);
+        ImageView share_celebrate_edit_ImageView = dialogView.findViewById(R.id.share_celebrate_edit_ImageView);
+
+        if (imagePath == null) {
+
+        } else {
+
+
+            GlideApp.with(this).load(this.imagePath.getPath()).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).centerCrop().into(share_celebrate_ImageView);
+            camera_button.setVisibility(View.GONE);
+            share_celebrate_ImageView.setVisibility(View.VISIBLE);
+            share_celebrate_edit_ImageView.setVisibility(View.VISIBLE);
+        }
+
+        camera_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                ImagePicker.create(TaskActivity.this).returnMode(ReturnMode.ALL)
+                        .folderMode(true).includeVideo(false).limit(1).theme(R.style.AppTheme_NoActionBar).single().start();
+                Log.i(TAG, "onClick: dissmissIT");
+                builder.dismiss();
+                Log.i(TAG, "onClick: dissmissIT");
+            }
+        });
+
+        share_celebrate_edit_ImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                ImagePicker.create(TaskActivity.this).returnMode(ReturnMode.ALL)
+                        .folderMode(true).includeVideo(false).limit(1).theme(R.style.AppTheme_NoActionBar).single().start();
+                builder.dismiss();
+                Log.i(TAG, "onClick: dissmissIT");
+            }
+        });
 
         okBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -285,6 +336,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
                     share_celebrate_thoughtText.setError(null);
                     Date currentTime = Calendar.getInstance().getTime();
                     //  mFirebaseAnalytics.logEvent("kid_created", null);
+
                     builder.dismiss();
                 }
 
