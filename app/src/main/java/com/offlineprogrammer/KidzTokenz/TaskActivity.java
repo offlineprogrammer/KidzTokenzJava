@@ -2,10 +2,14 @@ package com.offlineprogrammer.KidzTokenz;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -21,6 +25,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.transition.TransitionManager;
@@ -52,6 +57,9 @@ import com.transitionseverywhere.ChangeText;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -104,6 +112,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
 
     ReviewInfo reviewInfo;
     ReviewManager manager;
+    private String shareImagePath;
 
 
     @Override
@@ -247,6 +256,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
 
     }
 
+
     public void onActivityResult(int i, int i2, Intent intent) {
         super.onActivityResult(i, i2, intent);
         if (ImagePicker.shouldHandle(i, i2, intent)) {
@@ -282,6 +292,71 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         Review();
     }
 
+    private void getBitmap(String path) {
+        Bitmap bitmap = null;
+        try {
+            File f = new File(path);
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            bitmap = BitmapFactory.decodeStream(new FileInputStream(f), null, options);
+
+
+            try {
+                // File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath(), "/KidzTokenz");
+                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath(), "/Kiddy");
+                file.mkdirs();
+                String path2 = file.getPath();
+                File file2 = new File(path2, selectedKid.getKidName() + " " + System.currentTimeMillis() + ".jpg");
+                FileOutputStream fileOutputStream = new FileOutputStream(file2);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
+                fileOutputStream.flush();
+                fileOutputStream.close();
+                this.shareImagePath = file2.toString();
+            } catch (IOException unused) {
+                //showSnackBar("Please grant storage permission to Kiddy app for sharing this with friends. You can set this from App info -> App permissions");
+                // return null;
+            }
+
+
+            //  image.setImageBitmap(bitmap);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        // return bitmap ;
+    }
+
+
+    private void showSharePopup(File photoFile) {
+        if (this.shareImagePath != null) {
+
+            Uri photoURI = FileProvider.getUriForFile(this,
+                    "com.offlineprogrammer.KidzTokenz.fileprovider",
+                    photoFile);
+
+            //   FileProvider.getUriForFile(getApplicationContext(), getPackageName()+".fileprovider", mediaFile);
+
+
+          /*  final Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("image/jpg");
+           // final File photoFile = new File(getFilesDir(), "foo.jpg");
+            shareIntent.putExtra(Intent.EXTRA_STREAM,
+                    this.shareImagePath);
+            startActivity(Intent.createChooser(shareIntent, "Share image using"));
+*/
+
+            Intent intent = new Intent("android.intent.action.SEND");
+            intent.setType("*/*");
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("_data", this.shareImagePath);
+            //      Uri insert = this.getContentResolver().insert(MediaStore.Images.Media.INTERNAL_CONTENT_URI, contentValues);
+            intent.putExtra("android.intent.extra.TEXT", "Download Kiddy https://play.google.com/store/apps/details?id=com.kiddy.kiddy");
+            intent.putExtra("android.intent.extra.STREAM", Uri.fromFile(photoFile));
+            // new Logger(this.context).logEvent(Logger.EVENT_SHARED_REDEEM, (Bundle) null);
+            startActivity(Intent.createChooser(intent, "Share Image"));
+        }
+
+    }
+
     private void shareCelebration(Uri imagePath) {
         final AlertDialog builder = new AlertDialog.Builder(TaskActivity.this).create();
         LayoutInflater inflater = getLayoutInflater();
@@ -293,10 +368,12 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         ImageView share_celebrate_ImageView = dialogView.findViewById(R.id.share_celebrate_ImageView);
         ImageView share_celebrate_edit_ImageView = dialogView.findViewById(R.id.share_celebrate_edit_ImageView);
 
+
         if (imagePath == null) {
 
         } else {
 
+            this.shareImagePath = this.imagePath.getPath();
 
             GlideApp.with(this).load(this.imagePath.getPath()).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).centerCrop().into(share_celebrate_ImageView);
             camera_button.setVisibility(View.GONE);
@@ -337,6 +414,13 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
                     Date currentTime = Calendar.getInstance().getTime();
                     //  mFirebaseAnalytics.logEvent("kid_created", null);
 
+                    View v1 = dialogView;
+
+                    File photoFile = null;
+                    photoFile = captureScreen(v1);
+
+                    showSharePopup(photoFile);
+
                     builder.dismiss();
                 }
 
@@ -359,6 +443,42 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         builder.show();
         builder.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 
+    }
+
+    private File captureScreen(View findViewById) {
+
+        findViewById.setDrawingCacheEnabled(true);
+        Bitmap createBitmap = Bitmap.createBitmap(findViewById.getDrawingCache(), 0, 0, findViewById.getWidth(), findViewById.getHeight());
+        findViewById.setDrawingCacheEnabled(false);
+        try {
+            //String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            String imageFileName = "JPEG_" +
+                    +System.currentTimeMillis() + "_";
+            File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+            File image = File.createTempFile(
+                    imageFileName,  /* prefix */
+                    ".jpg",         /* suffix */
+                    storageDir      /* directory */
+            );
+
+            // Save a file: path for use with ACTION_VIEW intents
+            //  currentPhotoPath = image.getAbsolutePath();
+
+
+            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath(), "/Kiddy");
+            file.mkdirs();
+            String path = file.getPath();
+            File file2 = new File(path, selectedKid.getKidName() + " " + System.currentTimeMillis() + ".jpg");
+            FileOutputStream fileOutputStream = new FileOutputStream(file2);
+            createBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
+            fileOutputStream.flush();
+            fileOutputStream.close();
+            //   this.shareImagePath =  image.toString();
+            return image;
+        } catch (IOException unused) {
+            //  showSnackBar("Please grant storage permission to Kiddy app for sharing this with friends. You can set this from App info -> App permissions");
+            return null;
+        }
     }
 
     private boolean isThoughtTXTValid(String thoughttxt) {
