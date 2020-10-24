@@ -2,8 +2,11 @@ package com.offlineprogrammer.KidzTokenz;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -20,6 +23,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -326,6 +330,32 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     }
 
 
+    public static Bitmap getScreenShot(View view) {
+        View screenView = view.getRootView();
+        screenView.setDrawingCacheEnabled(true);
+        Bitmap bitmap = Bitmap.createBitmap(screenView.getDrawingCache());
+        screenView.setDrawingCacheEnabled(false);
+        return bitmap;
+    }
+
+    public static File store(Bitmap bm, String fileName) {
+        final String dirPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Screenshots";
+        File dir = new File(dirPath);
+        if (!dir.exists())
+            dir.mkdirs();
+        File file = new File(dirPath, fileName);
+        try {
+            FileOutputStream fOut = new FileOutputStream(file);
+            bm.compress(Bitmap.CompressFormat.PNG, 85, fOut);
+            fOut.flush();
+            fOut.close();
+            return file;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     private void showSharePopup(File photoFile) {
         if (this.shareImagePath != null) {
 
@@ -350,8 +380,13 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
             contentValues.put("_data", this.shareImagePath);
             //      Uri insert = this.getContentResolver().insert(MediaStore.Images.Media.INTERNAL_CONTENT_URI, contentValues);
             intent.putExtra("android.intent.extra.TEXT", "Download Kiddy https://play.google.com/store/apps/details?id=com.kiddy.kiddy");
-            intent.putExtra("android.intent.extra.STREAM", Uri.fromFile(photoFile));
+            intent.putExtra("android.intent.extra.STREAM", photoURI);
             // new Logger(this.context).logEvent(Logger.EVENT_SHARED_REDEEM, (Bundle) null);
+            List<ResolveInfo> resInfoList = this.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+            for (ResolveInfo resolveInfo : resInfoList) {
+                String packageName = resolveInfo.activityInfo.packageName;
+                this.grantUriPermission(packageName, photoURI, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            }
             startActivity(Intent.createChooser(intent, "Share Image"));
         }
 
@@ -414,14 +449,21 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
                     Date currentTime = Calendar.getInstance().getTime();
                     //  mFirebaseAnalytics.logEvent("kid_created", null);
 
-                    View v1 = dialogView;
+                    View v1 = getWindow().getDecorView().findViewById(android.R.id.content);//dialogView;
+
+                    Bitmap viewImage = getScreenShot(v1);
+
 
                     File photoFile = null;
-                    photoFile = captureScreen(v1);
+                    photoFile = store(viewImage, selectedKid.getKidName());
 
-                    showSharePopup(photoFile);
+                    shareImage(photoFile);
 
-                    builder.dismiss();
+                    // photoFile = captureScreen(v1);
+
+                    //  showSharePopup(photoFile);
+
+                    // builder.dismiss();
                 }
 
 
@@ -445,7 +487,36 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
 
     }
 
+    private void shareImage(File file) {
+        Uri uri = Uri.fromFile(file);
+
+        Uri photoURI = FileProvider.getUriForFile(this,
+                "com.offlineprogrammer.KidzTokenz.fileprovider",
+                file);
+
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_SEND);
+        intent.setType("image/*");
+
+        intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "");
+        intent.putExtra(android.content.Intent.EXTRA_TEXT, "");
+        intent.putExtra(Intent.EXTRA_STREAM, photoURI);
+        List<ResolveInfo> resInfoList = this.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+        for (ResolveInfo resolveInfo : resInfoList) {
+            String packageName = resolveInfo.activityInfo.packageName;
+            this.grantUriPermission(packageName, photoURI, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        }
+
+        try {
+            startActivity(Intent.createChooser(intent, "Share Screenshot"));
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(this, "No App Available", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
     private File captureScreen(View findViewById) {
+
 
         findViewById.setDrawingCacheEnabled(true);
         Bitmap createBitmap = Bitmap.createBitmap(findViewById.getDrawingCache(), 0, 0, findViewById.getWidth(), findViewById.getHeight());
