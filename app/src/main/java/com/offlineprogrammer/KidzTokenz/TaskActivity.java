@@ -20,6 +20,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,7 +43,6 @@ import com.google.android.flexbox.FlexWrap;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.flexbox.JustifyContent;
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.material.textfield.TextInputLayout;
 import com.google.android.play.core.review.ReviewInfo;
 import com.google.android.play.core.review.ReviewManager;
 import com.google.android.play.core.review.ReviewManagerFactory;
@@ -326,12 +326,16 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         final AlertDialog builder = new AlertDialog.Builder(TaskActivity.this).create();
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.alert_dialog_celebrate, null);
-        final TextInputLayout share_celebrate_thoughtText = dialogView.findViewById(R.id.share_celebrate_desc_text_input);
+        TextView share_celebrate_thoughtText = dialogView.findViewById(R.id.share_celebrate_desc_text_input);
         share_celebrate_thoughtText.requestFocus();
         Button okBtn = dialogView.findViewById(R.id.share_celebrate_button);
         TextView camera_button = dialogView.findViewById(R.id.camera_button);
         ImageView share_celebrate_ImageView = dialogView.findViewById(R.id.share_celebrate_ImageView);
         ImageView share_celebrate_edit_ImageView = dialogView.findViewById(R.id.share_celebrate_edit_ImageView);
+        LinearLayout share_layout = dialogView.findViewById(R.id.share_layout);
+        LinearLayout gift_layout = dialogView.findViewById(R.id.gift_layout);
+        ImageView giftImage = dialogView.findViewById(R.id.giftImage);
+        TextView redeem_text = dialogView.findViewById(R.id.redeem_text);
 
 
         if (imagePath == null) {
@@ -341,9 +345,10 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
             this.shareImagePath = this.imagePath.getPath();
 
             GlideApp.with(this).load(this.imagePath.getPath()).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).centerCrop().into(share_celebrate_ImageView);
+            GlideApp.with(this).load(this.imagePath.getPath()).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).centerCrop().into(giftImage);
             camera_button.setVisibility(View.GONE);
             share_celebrate_ImageView.setVisibility(View.VISIBLE);
-            share_celebrate_edit_ImageView.setVisibility(View.VISIBLE);
+            //  share_celebrate_edit_ImageView.setVisibility(View.VISIBLE);
         }
 
         camera_button.setOnClickListener(new View.OnClickListener() {
@@ -371,31 +376,36 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
 
         okBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                String thoughttxt = String.valueOf(share_celebrate_thoughtText.getEditText().getText());
+                String thoughttxt = String.valueOf(share_celebrate_thoughtText.getText());
                 if (!isThoughtTXTValid(thoughttxt)) {
                     share_celebrate_thoughtText.setError(getString(R.string.kid_error_name));
                 } else {
                     share_celebrate_thoughtText.setError(null);
                     Date currentTime = Calendar.getInstance().getTime();
                     //  mFirebaseAnalytics.logEvent("kid_created", null);
-
                     //View v1 = getWindow().getDecorView().findViewById(android.R.id.content);//dialogView;
+                    //  share_celebrate_edit_ImageView.setVisibility(View.GONE);
+
+                    redeem_text.setText(thoughttxt);
+
+
+//                    giftImage.setImageDrawable(share_celebrate_ImageView.getDrawable());
+
+                    share_layout.setVisibility(View.GONE);
+                    gift_layout.setVisibility(View.VISIBLE);
+
+                    //SystemClock.sleep(2000);
+
+                    //   dialogView.refreshDrawableState().invalidate();
 
                     View v1 = dialogView;
 
+
                     Bitmap viewImage = getScreenShot(v1);
-
-
                     File photoFile = null;
                     photoFile = store(viewImage, selectedKid.getKidName());
-
                     shareImage(photoFile);
-
-                    // photoFile = captureScreen(v1);
-
-                    //  showSharePopup(photoFile);
-
-                    // builder.dismiss();
+                    //  builder.dismiss();
                 }
 
 
@@ -405,7 +415,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         share_celebrate_thoughtText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
-                String kidName = String.valueOf(share_celebrate_thoughtText.getEditText().getText());
+                String kidName = String.valueOf(share_celebrate_thoughtText.getText());
                 if (isThoughtTXTValid(kidName)) {
                     share_celebrate_thoughtText.setError(null); //Clear the error
                 }

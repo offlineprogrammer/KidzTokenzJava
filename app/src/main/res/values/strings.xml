@@ -31,4 +31,6 @@
     <string name="ktz_hint_shareyourthoughts">Share your thoughts</string>
     <string name="capture_this_moment">Capture this moment</string>
     <string name="ktz_button_share">Share</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
