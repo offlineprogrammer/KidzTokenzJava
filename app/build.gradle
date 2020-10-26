@@ -83,5 +83,7 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-perf:19.0.9'
 
+    implementation 'com.github.abdularis:circularimageview:1.5'
+
 
 }

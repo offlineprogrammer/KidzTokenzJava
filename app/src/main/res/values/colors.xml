@@ -15,4 +15,8 @@
     <color name="dark_grey">#acacac</color>
     <color name="black">#000000</color>
 
+    <color name="subtitle_black">#131415</color>
+    <color name="hint_black">#4a4a4a</color>
+    <color name="background">#f3f3f3</color>
+
 </resources>

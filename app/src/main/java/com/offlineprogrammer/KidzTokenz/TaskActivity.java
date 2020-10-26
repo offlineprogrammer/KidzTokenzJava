@@ -11,16 +11,13 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +26,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.transition.TransitionManager;
@@ -61,8 +60,6 @@ import com.yalantis.ucrop.UCrop;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import io.reactivex.SingleObserver;
@@ -78,6 +75,8 @@ import timber.log.Timber;
 public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListener {
 
     private static final int CAMERA_REQUEST = 2222;
+
+    private Fragment currentFragment;
 
 
     private com.google.android.gms.ads.AdView adView;
@@ -321,9 +320,36 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         }
     }
 
+    public void setOkAndFinish() {
+        // Kiddy.didManuallyPaused = true;
+        if (getCallingActivity() == null) {
+            startActivity(new Intent(this, KidActivity.class));
+            finish();
+            return;
+        }
+        setResult(-1, new Intent());
+        finish();
+    }
+
 
     private void shareCelebration(Uri imagePath) {
-        final AlertDialog builder = new AlertDialog.Builder(TaskActivity.this).create();
+
+        FragmentTransaction beginTransaction = getSupportFragmentManager().beginTransaction();
+        CelebrateFragment newInstance = CelebrateFragment.newInstance(selectedKid, selectedTask);
+
+        FrameLayout main_container = findViewById(R.id.main_container);
+        main_container.setVisibility(View.GONE);
+
+        this.currentFragment = newInstance;
+        beginTransaction.replace(R.id.container, newInstance, Constants.CELEBRATE);
+        beginTransaction.addToBackStack(Constants.CELEBRATE);
+        beginTransaction.commit();
+
+
+
+
+
+  /*      final AlertDialog builder = new AlertDialog.Builder(TaskActivity.this).create();
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.alert_dialog_celebrate, null);
         TextView share_celebrate_thoughtText = dialogView.findViewById(R.id.share_celebrate_desc_text_input);
@@ -425,7 +451,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
 
         builder.setView(dialogView);
         builder.show();
-        builder.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        builder.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);*/
 
     }
 
