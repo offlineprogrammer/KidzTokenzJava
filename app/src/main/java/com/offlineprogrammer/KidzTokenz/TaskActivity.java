@@ -27,6 +27,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.RecyclerView;
@@ -258,6 +259,18 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
 
     public void onActivityResult(int i, int i2, Intent intent) {
         super.onActivityResult(i, i2, intent);
+        CelebrateFragment celebrate;
+        if (i2 == -1 && i == 69) {
+            FragmentManager supportFragmentManager = getSupportFragmentManager();
+            String name = supportFragmentManager.getBackStackEntryAt(supportFragmentManager.getBackStackEntryCount() - 1).getName();
+            if (Constants.CELEBRATE.equals(name) && (celebrate = (CelebrateFragment) supportFragmentManager.findFragmentByTag(name)) != null && celebrate.isVisible()) {
+                celebrate.onCropFinish(intent);
+            } else {
+                onCropFinish(intent);
+            }
+        }
+
+
         if (ImagePicker.shouldHandle(i, i2, intent)) {
             Image firstImageOrNull = ImagePicker.getFirstImageOrNull(intent);
             if (firstImageOrNull != null) {
@@ -265,9 +278,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
             }
         }
 
-        if (i == UCrop.REQUEST_CROP) {
-            onCropFinish(intent);
-        }
+
     }
 
 

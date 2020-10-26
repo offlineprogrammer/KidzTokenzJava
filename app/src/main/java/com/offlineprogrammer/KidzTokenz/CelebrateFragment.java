@@ -1,7 +1,10 @@
 package com.offlineprogrammer.KidzTokenz;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,9 +16,15 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.esafirm.imagepicker.features.ImagePicker;
+import com.esafirm.imagepicker.features.ReturnMode;
+import com.esafirm.imagepicker.model.Image;
 import com.offlineprogrammer.KidzTokenz.kid.Kid;
 import com.offlineprogrammer.KidzTokenz.task.KidTask;
+import com.yalantis.ucrop.UCrop;
 
+import java.io.File;
 import java.util.List;
 
 import pub.devrel.easypermissions.EasyPermissions;
@@ -125,12 +134,12 @@ public class CelebrateFragment extends Fragment implements EasyPermissions.Permi
         });
         this.cameraIntentText.setOnClickListener(new View.OnClickListener() {
             public final void onClick(View view) {
-                //   Redeem.this.lambda$initViews$1$Redeem(view);
+                pickImage();
             }
         });
         this.editButton.setOnClickListener(new View.OnClickListener() {
             public final void onClick(View view) {
-                //   Redeem.this.lambda$initViews$2$Redeem(view);
+                pickImage();
             }
         });
 
@@ -150,6 +159,11 @@ public class CelebrateFragment extends Fragment implements EasyPermissions.Permi
         }
     }
 
+    private void pickImage() {
+        // ((DetailActivity) this.context).isManuallyPaused(true);
+        ImagePicker.create(this).returnMode(ReturnMode.ALL).folderMode(true).includeVideo(false).limit(1).theme(R.style.AppTheme_NoActionBar).single().start();
+    }
+
     @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
 
@@ -159,4 +173,25 @@ public class CelebrateFragment extends Fragment implements EasyPermissions.Permi
     public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
 
     }
+
+
+    public void onCropFinish(Intent intent) {
+        Uri output = UCrop.getOutput(intent);
+        this.imagePath = output.getPath();
+        GlideApp.with(this).load(output.getPath()).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).centerCrop().into(this.celebrate_image_view);
+        this.cameraIntentText.setVisibility(View.GONE);
+        this.editButton.setVisibility(View.VISIBLE);
+        this.celebrate_image_view.setVisibility(View.VISIBLE);
+        this.image = BitmapFactory.decodeFile(this.imagePath);
+    }
+
+    public void onActivityResult(int i, int i2, Intent intent) {
+        Image firstImageOrNull;
+        if (ImagePicker.shouldHandle(i, i2, intent) && (firstImageOrNull = ImagePicker.getFirstImageOrNull(intent)) != null) {
+            UCrop.of(Uri.fromFile(new File(firstImageOrNull.getPath())), Uri.fromFile(new File(this.context.getCacheDir(), "cropped"))).withAspectRatio(1.0f, 1.0f).start((TaskActivity) this.context);
+
+        }
+    }
+
+
 }
