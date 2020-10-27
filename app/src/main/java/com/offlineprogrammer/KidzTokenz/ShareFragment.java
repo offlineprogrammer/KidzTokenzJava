@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
@@ -54,15 +55,17 @@ public class ShareFragment extends Fragment {
     private TextView redeemText;
     private String shareImagePath;
 
+    private ProgressBar mLogInProgress;
+
+
     public ShareFragment() {
         // Required empty public constructor
     }
 
 
     public static ShareFragment newInstance() {
-        ShareFragment fragment = new ShareFragment();
 
-        return fragment;
+        return new ShareFragment();
     }
 
     public void onAttach(Context context2) {
@@ -102,10 +105,10 @@ public class ShareFragment extends Fragment {
     public void onViewCreated(View view, Bundle bundle) {
         super.onViewCreated(view, bundle);
         initViews(view);
-        new Handler().postDelayed(new Runnable() {
-            public void run() {
-                Share(view);
-            }
+        new Handler().postDelayed(() -> {
+
+            Share(view);
+            showSharePopup(view);
         }, 1000);
 
     }
@@ -128,16 +131,10 @@ public class ShareFragment extends Fragment {
         this.date.setText(DateFormat.format("MMM dd, hh:mm a", new Date()));
         TextView customTextView = this.redeemText;
         //   customTextView.setText(this.points + " Points redeemed by " + this.child.getName());
-        view.findViewById(R.id.share).setOnClickListener(new View.OnClickListener() {
-            public final void onClick(View view) {
-                showSharePopup(view);
-            }
-        });
-        view.findViewById(R.id.skip_share).setOnClickListener(new View.OnClickListener() {
-            public final void onClick(View view) {
-                skipShare(view);
-            }
-        });
+        view.findViewById(R.id.share).setOnClickListener(this::showSharePopup);
+
+        view.findViewById(R.id.log_in_progress).setVisibility(View.VISIBLE);
+
     }
 
     public void skipShare(View view) {
