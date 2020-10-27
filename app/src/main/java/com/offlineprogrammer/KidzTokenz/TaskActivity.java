@@ -283,6 +283,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         this.currentFragment = newInstance;
         beginTransaction.add(R.id.container, newInstance, Constants.SHARE);
         beginTransaction.addToBackStack(Constants.SHARE);
+        firebaseHelper.logEvent("show_share_page");
         beginTransaction.commit();
     }
 
@@ -298,6 +299,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         this.currentFragment = newInstance;
         beginTransaction.replace(R.id.container, newInstance, Constants.CELEBRATE);
         beginTransaction.addToBackStack(Constants.CELEBRATE);
+        firebaseHelper.logEvent("show_celebrate_page");
         beginTransaction.commit();
         resetTaskTokenzScore();
 

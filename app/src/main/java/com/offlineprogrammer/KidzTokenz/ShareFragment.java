@@ -51,6 +51,7 @@ public class ShareFragment extends Fragment {
     private TextView celebrate_note_text;
     private String shareImagePath;
     ImageView kidImageView;
+    private FirebaseHelper firebaseHelper;
 
     private ProgressBar mLogInProgress;
 
@@ -101,6 +102,7 @@ public class ShareFragment extends Fragment {
 
     public void onViewCreated(View view, Bundle bundle) {
         super.onViewCreated(view, bundle);
+        firebaseHelper = new FirebaseHelper(getActivity().getApplicationContext());
         initViews(view);
         new Handler().postDelayed(() -> {
 
@@ -145,6 +147,7 @@ public class ShareFragment extends Fragment {
 
     public void showSharePopup(View view) {
         if (this.shareImagePath != null) {
+            firebaseHelper.logEvent("share_celebration");
             Intent intent = new Intent("android.intent.action.SEND");
             intent.setType("*/*");
             ContentValues contentValues = new ContentValues();
