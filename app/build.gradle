@@ -19,14 +19,14 @@ android {
         release {
             minifyEnabled true  // shrink
             useProguard true    // obfuscate
-            shrinkResources true
+         //   shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
-       //     minifyEnabled true  // shrink
-       //     useProguard true    // obfuscate
-       //     shrinkResources true
-       //     proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            minifyEnabled true  // shrink
+            useProguard true    // obfuscate
+         //   shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
 
 
