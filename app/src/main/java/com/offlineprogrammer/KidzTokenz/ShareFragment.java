@@ -47,12 +47,8 @@ public class ShareFragment extends Fragment {
 
     private Context context;
     private TextView date;
-    private Bitmap image;
     private ImageView imageView;
-    private String note;
-    private String points;
-    private TextView redeemPointNoteText;
-    private TextView redeemText;
+    private TextView celebrate_note_text;
     private String shareImagePath;
     ImageView kidImageView;
 
@@ -120,18 +116,17 @@ public class ShareFragment extends Fragment {
 
 
     private void initViews(View view) {
-        this.redeemText = view.findViewById(R.id.redeem_text);
+        this.celebrate_note_text = view.findViewById(R.id.celebrate_note_text);
         this.imageView = view.findViewById(R.id.giftImage);
-        this.date = view.findViewById(R.id.redeem_point_created_at);
-        this.redeemPointNoteText = view.findViewById(R.id.redeem_point_note_text);
+        this.date = view.findViewById(R.id.celebrate_share_created_at);
+
         Bitmap bitmap = this.m_celebrate_image;
         if (bitmap != null) {
             this.imageView.setImageBitmap(bitmap);
         }
-        this.redeemPointNoteText.setText(this.m_celebrate_note);
+        this.celebrate_note_text.setText(this.m_celebrate_note);
         this.date.setText(DateFormat.format("MMM dd, hh:mm a", new Date()));
-        TextView customTextView = this.redeemText;
-        //   customTextView.setText(this.points + " Points redeemed by " + this.child.getName());
+
         view.findViewById(R.id.share).setOnClickListener(this::showSharePopup);
 
         view.findViewById(R.id.log_in_progress).setVisibility(View.VISIBLE);
@@ -155,7 +150,7 @@ public class ShareFragment extends Fragment {
             ContentValues contentValues = new ContentValues();
             contentValues.put("_data", this.shareImagePath);
             Uri insert = this.context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
-            intent.putExtra("android.intent.extra.TEXT", "Download Kiddy https://play.google.com/store/apps/details?id=com.kiddy.kiddy");
+            intent.putExtra("android.intent.extra.TEXT", "Download Kidz Tokenz – Reward Kids https://play.google.com/store/apps/details?id=com.offlineprogrammer.KidzTokenz&referrer=utm_source%3Dappshare");
             intent.putExtra("android.intent.extra.STREAM", insert);
             startActivity(Intent.createChooser(intent, "Share Image"));
         }
@@ -168,7 +163,7 @@ public class ShareFragment extends Fragment {
         Bitmap createBitmap = Bitmap.createBitmap(findViewById.getDrawingCache(), 0, 0, findViewById.getWidth(), findViewById.getHeight());
         findViewById.setDrawingCacheEnabled(false);
         try {
-            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath(), "/Kiddy");
+            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath(), "/KidzTokenz");
             file.mkdirs();
             String path = file.getPath();
             File file2 = new File(path, m_selectedKid.getKidName() + " " + System.currentTimeMillis() + ".jpg");
@@ -178,13 +173,8 @@ public class ShareFragment extends Fragment {
             fileOutputStream.close();
             return file2.toString();
         } catch (IOException unused) {
-            showSnackBar("Please grant storage permission to Kiddy app for sharing this with friends. You can set this from App info -> App permissions");
             return null;
         }
-    }
-
-    private void showSnackBar(String str) {
-        //   Snackbar.make(((DetailActivity) this.context).findViewById(16908290), (CharSequence) str, 0).setAction((CharSequence) "Action", (View.OnClickListener) null).show();
     }
 
 
