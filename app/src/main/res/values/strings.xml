@@ -34,4 +34,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="ktz_share_your_thoughts">Share your thoughts</string>
+    <string name="share">Share</string>
+    <string name="skip">Skip</string>
+    <string name="share_note_are_empty">Share your thoughts</string>
 </resources>

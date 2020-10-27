@@ -129,7 +129,7 @@ public class CelebrateFragment extends Fragment implements EasyPermissions.Permi
 
         view.findViewById(R.id.celebrate_share_button).setOnClickListener(new View.OnClickListener() {
             public final void onClick(View view) {
-                // Redeem.this.lambda$initViews$0$Redeem(view);
+                validate();
             }
         });
         this.cameraIntentText.setOnClickListener(new View.OnClickListener() {
@@ -191,6 +191,21 @@ public class CelebrateFragment extends Fragment implements EasyPermissions.Permi
             UCrop.of(Uri.fromFile(new File(firstImageOrNull.getPath())), Uri.fromFile(new File(this.context.getCacheDir(), "cropped"))).withAspectRatio(1.0f, 1.0f).start((TaskActivity) this.context);
 
         }
+    }
+
+
+    private void validate() {
+        String trim = this.celebrate_note_text.getText().toString().trim();
+
+        if (trim.isEmpty()) {
+            this.warnText.setText(R.string.share_note_are_empty);
+            this.warnText.setVisibility(View.VISIBLE);
+            return;
+        }
+        this.warnText.setVisibility(View.INVISIBLE);
+
+
+        ((TaskActivity) this.context).gotoSharePage(this.image, trim);
     }
 
 

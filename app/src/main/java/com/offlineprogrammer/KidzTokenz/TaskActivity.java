@@ -342,6 +342,18 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         finish();
     }
 
+    public void gotoSharePage(Bitmap bitmap, String str) {
+        FragmentTransaction beginTransaction = getSupportFragmentManager().beginTransaction();
+        this.setTitle(R.string.share);
+        ShareFragment newInstance = ShareFragment.newInstance();
+        newInstance.setData(bitmap, str, selectedKid);
+
+        this.currentFragment = newInstance;
+        beginTransaction.add(R.id.container, newInstance, Constants.SHARE);
+        beginTransaction.addToBackStack(Constants.SHARE);
+        beginTransaction.commit();
+    }
+
 
     private void shareCelebration(Uri imagePath) {
 
