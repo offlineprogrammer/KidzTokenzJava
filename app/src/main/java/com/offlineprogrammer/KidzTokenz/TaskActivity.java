@@ -2,15 +2,11 @@ package com.offlineprogrammer.KidzTokenz;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,13 +15,11 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -46,9 +40,6 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.play.core.review.ReviewInfo;
 import com.google.android.play.core.review.ReviewManager;
 import com.google.android.play.core.review.ReviewManagerFactory;
-import com.google.android.play.core.tasks.OnCompleteListener;
-import com.google.android.play.core.tasks.OnFailureListener;
-import com.google.android.play.core.tasks.Task;
 import com.offlineprogrammer.KidzTokenz.kid.Kid;
 import com.offlineprogrammer.KidzTokenz.task.KidTask;
 import com.offlineprogrammer.KidzTokenz.taskTokenz.OnTaskTokenzListener;
@@ -59,7 +50,6 @@ import com.transitionseverywhere.ChangeText;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -138,34 +128,13 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
 
     private void Review() {
         manager = ReviewManagerFactory.create(this);
-        manager.requestReviewFlow().addOnCompleteListener(new OnCompleteListener<ReviewInfo>() {
-            @Override
-            public void onComplete(@NonNull Task<ReviewInfo> task) {
-                if (task.isSuccessful()) {
-                    reviewInfo = task.getResult();
-                    manager.launchReviewFlow(TaskActivity.this, reviewInfo).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(Exception e) {
-                            firebaseHelper.logEvent("rating_failed");
-
-                        }
-                    }).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            firebaseHelper.logEvent("rating_completed");
-
-                        }
-                    });
-                }
-
+        manager.requestReviewFlow().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                reviewInfo = task.getResult();
+                manager.launchReviewFlow(TaskActivity.this, reviewInfo).addOnFailureListener(e -> firebaseHelper.logEvent("rating_failed")).addOnCompleteListener(task1 -> firebaseHelper.logEvent("rating_completed"));
             }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(Exception e) {
-                firebaseHelper.logEvent("rating_request_failed");
 
-            }
-        });
+        }).addOnFailureListener(e -> firebaseHelper.logEvent("rating_request_failed"));
     }
 
 
@@ -207,7 +176,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         }
         this.imagePath = UCrop.getOutput(intent);
 
-        if (taskTokenzScore.indexOf(0L) > -1) {
+        if (taskTokenzScore.contains(0L)) {
             GlideApp.with(this).load(this.imagePath.getPath()).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).centerCrop().into(this.taskImageView);
             uploadImage();
         } else {
@@ -303,34 +272,6 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     }
 
 
-
-    public static Bitmap getScreenShot(View view) {
-        View screenView = view.getRootView();
-        screenView.setDrawingCacheEnabled(true);
-        Bitmap bitmap = Bitmap.createBitmap(screenView.getDrawingCache());
-        screenView.setDrawingCacheEnabled(false);
-        return bitmap;
-    }
-
-    public static File store(Bitmap bm, String fileName) {
-        final String dirPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Screenshots";
-        File dir = new File(dirPath);
-        if (!dir.exists())
-            dir.mkdirs();
-        // File file2 = new File(path2, selectedKid.getKidName() + " " + System.currentTimeMillis() + ".jpg");
-        File file = new File(dirPath, fileName + System.currentTimeMillis() + ".jpg");
-        try {
-            FileOutputStream fOut = new FileOutputStream(file);
-            bm.compress(Bitmap.CompressFormat.PNG, 85, fOut);
-            fOut.flush();
-            fOut.close();
-            return file;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
     public void setOkAndFinish() {
         // Kiddy.didManuallyPaused = true;
         if (getCallingActivity() == null) {
@@ -369,164 +310,13 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         beginTransaction.commit();
 
 
-
-
-
-  /*      final AlertDialog builder = new AlertDialog.Builder(TaskActivity.this).create();
-        LayoutInflater inflater = getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.alert_dialog_celebrate, null);
-        TextView share_celebrate_thoughtText = dialogView.findViewById(R.id.share_celebrate_desc_text_input);
-        share_celebrate_thoughtText.requestFocus();
-        Button okBtn = dialogView.findViewById(R.id.share_celebrate_button);
-        TextView camera_button = dialogView.findViewById(R.id.camera_button);
-        ImageView share_celebrate_ImageView = dialogView.findViewById(R.id.share_celebrate_ImageView);
-        ImageView share_celebrate_edit_ImageView = dialogView.findViewById(R.id.share_celebrate_edit_ImageView);
-        LinearLayout share_layout = dialogView.findViewById(R.id.share_layout);
-        LinearLayout gift_layout = dialogView.findViewById(R.id.gift_layout);
-        ImageView giftImage = dialogView.findViewById(R.id.giftImage);
-        TextView redeem_text = dialogView.findViewById(R.id.redeem_text);
-
-
-        if (imagePath == null) {
-
-        } else {
-
-            this.shareImagePath = this.imagePath.getPath();
-
-            GlideApp.with(this).load(this.imagePath.getPath()).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).centerCrop().into(share_celebrate_ImageView);
-            GlideApp.with(this).load(this.imagePath.getPath()).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).centerCrop().into(giftImage);
-            camera_button.setVisibility(View.GONE);
-            share_celebrate_ImageView.setVisibility(View.VISIBLE);
-            //  share_celebrate_edit_ImageView.setVisibility(View.VISIBLE);
-        }
-
-        camera_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                ImagePicker.create(TaskActivity.this).returnMode(ReturnMode.ALL)
-                        .folderMode(true).includeVideo(false).limit(1).theme(R.style.AppTheme_NoActionBar).single().start();
-                Log.i(TAG, "onClick: dissmissIT");
-                builder.dismiss();
-                Log.i(TAG, "onClick: dissmissIT");
-            }
-        });
-
-        share_celebrate_edit_ImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                ImagePicker.create(TaskActivity.this).returnMode(ReturnMode.ALL)
-                        .folderMode(true).includeVideo(false).limit(1).theme(R.style.AppTheme_NoActionBar).single().start();
-                builder.dismiss();
-                Log.i(TAG, "onClick: dissmissIT");
-            }
-        });
-
-        okBtn.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                String thoughttxt = String.valueOf(share_celebrate_thoughtText.getText());
-                if (!isThoughtTXTValid(thoughttxt)) {
-                    share_celebrate_thoughtText.setError(getString(R.string.kid_error_name));
-                } else {
-                    share_celebrate_thoughtText.setError(null);
-                    Date currentTime = Calendar.getInstance().getTime();
-                    //  mFirebaseAnalytics.logEvent("kid_created", null);
-                    //View v1 = getWindow().getDecorView().findViewById(android.R.id.content);//dialogView;
-                    //  share_celebrate_edit_ImageView.setVisibility(View.GONE);
-
-                    redeem_text.setText(thoughttxt);
-
-
-//                    giftImage.setImageDrawable(share_celebrate_ImageView.getDrawable());
-
-                    share_layout.setVisibility(View.GONE);
-                    gift_layout.setVisibility(View.VISIBLE);
-
-                    //SystemClock.sleep(2000);
-
-                    //   dialogView.refreshDrawableState().invalidate();
-
-                    View v1 = dialogView;
-
-
-                    Bitmap viewImage = getScreenShot(v1);
-                    File photoFile = null;
-                    photoFile = store(viewImage, selectedKid.getKidName());
-                    shareImage(photoFile);
-                    //  builder.dismiss();
-                }
-
-
-            }
-        });
-
-        share_celebrate_thoughtText.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View view, int i, KeyEvent keyEvent) {
-                String kidName = String.valueOf(share_celebrate_thoughtText.getText());
-                if (isThoughtTXTValid(kidName)) {
-                    share_celebrate_thoughtText.setError(null); //Clear the error
-                }
-                return false;
-            }
-        });
-
-        builder.setView(dialogView);
-        builder.show();
-        builder.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);*/
-
     }
 
-    private void shareImage(File file) {
-
-
-        Uri photoURI = FileProvider.getUriForFile(this,
-                "com.offlineprogrammer.KidzTokenz.fileprovider",
-                file);
-
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_SEND);
-        intent.setType("image/*");
-
-        intent.setType("*/*");
-
-
-        intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Share Progress");
-        intent.putExtra(android.content.Intent.EXTRA_TEXT, "Download Kiddy https://play.google.com/store/apps/details?id=com.kiddy.kiddy");
-        intent.putExtra(Intent.EXTRA_STREAM, photoURI);
-        Intent chooser = Intent.createChooser(intent, "Share File");
-        List<ResolveInfo> resInfoList = this.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
-        for (ResolveInfo resolveInfo : resInfoList) {
-            String packageName = resolveInfo.activityInfo.packageName;
-            this.grantUriPermission(packageName, photoURI, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        }
-
-
-        try {
-
-
-            startActivity(chooser);
-
-            //  startActivity(Intent.createChooser(intent, "Share Screenshot"));
-        } catch (ActivityNotFoundException e) {
-            Toast.makeText(this, "No App Available", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-
-
-
-    private boolean isThoughtTXTValid(String thoughttxt) {
-        return true;
-    }
 
     private void configureAdView() {
         adView = findViewById(R.id.ad_view);
         com.google.android.gms.ads.AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
-
-
     }
 
 
@@ -659,7 +449,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
                 new ChangeText().setChangeBehavior(ChangeText.CHANGE_BEHAVIOR_OUT_IN));
         if (selectedTask.getNegativeReTask()) {
             // Is it inProgress
-            if (taskTokenzScore.indexOf(0L)>-1) {
+            if (taskTokenzScore.contains(0L)) {
 
 
                 taskmsg.setText(getResources().getString(R.string.ktz_negtask_inprogress_msg));
@@ -670,7 +460,7 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
             }
 
         } else {
-            if (taskTokenzScore.indexOf(0L)>-1) {
+            if (taskTokenzScore.contains(0L)) {
                 taskmsg.setText(getResources().getString(R.string.ktz_task_inprogress_msg));
             } else {
                 celebratCompletion();
