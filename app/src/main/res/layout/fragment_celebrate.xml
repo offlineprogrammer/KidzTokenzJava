@@ -121,7 +121,7 @@
             android:layout_marginStart="@dimen/margin_20"
             android:layout_marginTop="@dimen/margin_10"
             android:layout_marginEnd="@dimen/margin_20"
-            android:background="@drawable/point_enter_background"
+            android:background="@drawable/celebrate_text_background"
             android:gravity="top|start|center_vertical|center_horizontal|center|start"
             android:hint="@string/well_done"
             android:inputType="textShortMessage"
@@ -153,7 +153,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="@dimen/margin_35"
-            android:background="@drawable/yellow_button_background"
+            android:background="@drawable/dark_button_background"
             android:orientation="horizontal"
             android:padding="@dimen/margin_20">
 

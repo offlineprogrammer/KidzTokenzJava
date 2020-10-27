@@ -54,6 +54,7 @@ public class ShareFragment extends Fragment {
     private TextView redeemPointNoteText;
     private TextView redeemText;
     private String shareImagePath;
+    ImageView kidImageView;
 
     private ProgressBar mLogInProgress;
 
@@ -134,6 +135,11 @@ public class ShareFragment extends Fragment {
         view.findViewById(R.id.share).setOnClickListener(this::showSharePopup);
 
         view.findViewById(R.id.log_in_progress).setVisibility(View.VISIBLE);
+
+        kidImageView = view.findViewById(R.id.kidMonsterImage);
+
+        kidImageView.setImageResource(context.getResources().getIdentifier(m_selectedKid.getMonsterImageResourceName(), "drawable",
+                context.getPackageName()));
 
     }
 

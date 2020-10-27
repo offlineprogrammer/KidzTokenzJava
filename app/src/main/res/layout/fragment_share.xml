@@ -42,15 +42,21 @@
                     android:orientation="horizontal"
                     app:layout_constraintGuide_percent="0.66" />
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/share_drawable"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+
+                <com.github.abdularis.civ.CircleImageView
+                    android:id="@+id/kidMonsterImage"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
                     android:layout_marginStart="@dimen/margin_20"
-                    android:src="@drawable/share_logo"
                     app:layout_constraintBottom_toBottomOf="@+id/guideline"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/guideline" />
+                    android:layout_gravity="center"
+                    android:contentDescription="@null"
+                    app:highlightEnable="false"
+                    app:layout_constraintTop_toTopOf="@+id/guideline"
+                    app:strokeColor="@color/colorPrimary"
+                    app:strokeWidth="@dimen/margin_5" />
+
 
                 <TextView
                     android:id="@+id/redeem_text"
@@ -100,10 +106,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="@dimen/margin_35"
-            android:background="@drawable/yellow_button_background"
             android:orientation="horizontal"
             android:padding="@dimen/margin_20">
-
             <ProgressBar
                 android:id="@+id/log_in_progress"
                 style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Large.Inverse"
