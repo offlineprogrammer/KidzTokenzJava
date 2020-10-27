@@ -55,7 +55,8 @@
             android:layout_marginTop="@dimen/margin_20"
             android:text="@string/capture_this_moment"
             android:textColor="@color/hint_black"
-            android:textSize="@dimen/text_size_14" />
+            android:textSize="@dimen/text_size_14"
+            android:textStyle="bold" />
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -94,10 +95,10 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_margin="@dimen/margin_50"
-                    android:drawableTop="@drawable/ic_camera"
                     android:text="@string/capture_this_moment"
                     android:textColor="@color/colorAccent"
-                    android:textSize="@dimen/text_size_14" />
+                    android:textSize="@dimen/text_size_14"
+                    app:drawableTopCompat="@drawable/ic_camera" />
             </FrameLayout>
         </FrameLayout>
 
@@ -109,7 +110,8 @@
             android:layout_marginTop="@dimen/margin_20"
             android:text="@string/ktz_share_your_thoughts"
             android:textColor="@color/hint_black"
-            android:textSize="@dimen/text_size_14" />
+            android:textSize="@dimen/text_size_14"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/celebrate_note_text"
@@ -120,8 +122,8 @@
             android:layout_marginTop="@dimen/margin_10"
             android:layout_marginEnd="@dimen/margin_20"
             android:background="@drawable/point_enter_background"
-            android:gravity="top|left|center_vertical|center_horizontal|center|start"
-            android:hint="i_feel_glad"
+            android:gravity="top|start|center_vertical|center_horizontal|center|start"
+            android:hint="@string/well_done"
             android:inputType="textShortMessage"
             android:maxLength="100"
             android:maxLines="2"
@@ -131,7 +133,8 @@
             android:paddingBottom="@dimen/margin_10"
             android:textColor="@color/colorAccent"
             android:textColorHint="@color/light_grey"
-            android:textSize="@dimen/text_size_14" />
+            android:textSize="@dimen/text_size_18"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/warn_text"
@@ -143,22 +146,31 @@
             android:layout_marginBottom="@dimen/margin_10"
             android:visibility="gone" />
 
-        <Button
+
+        <LinearLayout
             android:id="@+id/celebrate_share_button"
-            android:layout_width="250dp"
-            android:layout_height="80dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="@dimen/margin_30"
-            android:layout_marginBottom="@dimen/margin_30"
+            android:layout_marginTop="@dimen/margin_35"
             android:background="@drawable/yellow_button_background"
-            android:contentDescription="@null"
-            android:elevation="10dp"
-            android:gravity="center"
-            android:paddingStart="@dimen/margin_20"
-            android:paddingEnd="@dimen/margin_20"
-            android:text="Share"
-            android:textAllCaps="false"
-            android:textColor="@color/colorAccent"
-            android:textSize="@dimen/text_size_30" />
+            android:orientation="horizontal"
+            android:padding="@dimen/margin_20">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/share_icon" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_10"
+                android:text="@string/share"
+                android:textAllCaps="false"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_25" />
+        </LinearLayout>
+
     </LinearLayout>
 </ScrollView>
