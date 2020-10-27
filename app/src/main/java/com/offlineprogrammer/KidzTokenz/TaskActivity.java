@@ -169,10 +169,10 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
             return;
         }
         this.imagePath = UCrop.getOutput(intent);
-        if (taskTokenzScore.contains(0L)) {
+
             GlideApp.with(this).load(this.imagePath.getPath()).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).centerCrop().into(this.taskImageView);
             uploadImage();
-        }
+
     }
 
     private void uploadImage() {
@@ -216,12 +216,18 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
         CelebrateFragment celebrate;
         if (i2 == -1 && i == 69) {
             FragmentManager supportFragmentManager = getSupportFragmentManager();
-            String name = supportFragmentManager.getBackStackEntryAt(supportFragmentManager.getBackStackEntryCount() - 1).getName();
-            if (Constants.CELEBRATE.equals(name) && (celebrate = (CelebrateFragment) supportFragmentManager.findFragmentByTag(name)) != null && celebrate.isVisible()) {
-                celebrate.onCropFinish(intent);
+            if (supportFragmentManager.getBackStackEntryCount() > 0) {
+                String name = supportFragmentManager.getBackStackEntryAt(supportFragmentManager.getBackStackEntryCount() - 1).getName();
+                if (Constants.CELEBRATE.equals(name) && (celebrate = (CelebrateFragment) supportFragmentManager.findFragmentByTag(name)) != null && celebrate.isVisible()) {
+                    celebrate.onCropFinish(intent);
+                } else {
+                    onCropFinish(intent);
+                }
             } else {
                 onCropFinish(intent);
+
             }
+
         }
 
 

@@ -33,7 +33,7 @@
                     android:scaleType="centerCrop"
                     app:layout_constraintBottom_toTopOf="@+id/guideline"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/ic_launcher_playstore" />
+                    app:srcCompat="@drawable/celebrate_image" />
 
                 <androidx.constraintlayout.widget.Guideline
                     android:id="@+id/guideline"
