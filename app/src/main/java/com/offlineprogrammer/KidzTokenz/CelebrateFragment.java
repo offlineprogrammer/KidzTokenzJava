@@ -27,6 +27,7 @@ import com.yalantis.ucrop.UCrop;
 import java.io.File;
 import java.util.List;
 
+import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
 /**
@@ -143,35 +144,32 @@ public class CelebrateFragment extends Fragment implements EasyPermissions.Permi
             }
         });
 
-        if (this.m_selectedKid != null) {
-            //  this.pointText.setText(String.valueOf(m_selectedKid.getTokenNumber()));
-            //  EditText customEditText = this.noteText;
-            //  customEditText.setText("Redeemed wish list item \"" + m_selectedTask.getTaskName() + "\"");
-            //  this.noteText.setVisibility(View.GONE);
-            //  this.pointText.setEnabled(false);
-            //  this.pointText.setBackgroundColor(0);
-            //  this.noteText.setBackgroundColor(0);
-            //  ((TextView) view.findViewById(C1616R.C1619id.wish_item_name)).setText(this.wish.getName());
-            //  view.findViewById(C1616R.C1619id.wish_item_1).setVisibility(0);
-            //  view.findViewById(C1616R.C1619id.wish_item_2).setVisibility(0);
-            //  ((TextView) view.findViewById(C1616R.C1619id.subtitle_redeem)).setText(C1616R.string.redeeming_wish_list_item);
-            //  view.findViewById(C1616R.C1619id.some_title).setVisibility(8);
-        }
+
     }
 
     private void pickImage() {
-        // ((DetailActivity) this.context).isManuallyPaused(true);
+
         ImagePicker.create(this).returnMode(ReturnMode.ALL).folderMode(true).includeVideo(false).limit(1).theme(R.style.AppTheme_NoActionBar).single().start();
     }
 
     @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
+        Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+        startActivityForResult(intent, CAMERA_REQUEST);
 
     }
 
     @Override
     public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
+        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
+            new AppSettingsDialog.Builder(this).setTitle("Permissions Required").setPositiveButton("Settings").setNegativeButton("Cancel").setRequestCode(5).build().show();
+        }
+    }
 
+    @Override
+    public void onRequestPermissionsResult(int i, String[] strArr, int[] iArr) {
+        super.onRequestPermissionsResult(i, strArr, iArr);
+        EasyPermissions.onRequestPermissionsResult(i, strArr, iArr, this);
     }
 
 

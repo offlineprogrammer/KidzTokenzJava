@@ -11,9 +11,9 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -140,13 +140,8 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
 
     private void configActionButtons() {
         deleteImageButton.setOnClickListener(view -> showDeleteTaskDialog(TaskActivity.this));
-
         restartImageButton.setOnClickListener(view -> resetTaskTokenzScore());
-
-
         capture_button.setOnClickListener(view -> {
-//                captureTaskImage();
-
             ImagePicker.create(TaskActivity.this).returnMode(ReturnMode.ALL)
                     .folderMode(true).includeVideo(false).limit(1).theme(R.style.AppTheme_NoActionBar).single().start();
         });
@@ -160,7 +155,6 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
 
     public void onPermissionsGranted(int i, @NonNull List<String> list) {
         Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-        //  ((ClaimStarzActivity) this.context).isManuallyPaused(true);
         startActivityForResult(intent, CAMERA_REQUEST);
     }
 
@@ -175,19 +169,10 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
             return;
         }
         this.imagePath = UCrop.getOutput(intent);
-
         if (taskTokenzScore.contains(0L)) {
             GlideApp.with(this).load(this.imagePath.getPath()).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).centerCrop().into(this.taskImageView);
             uploadImage();
-        } else {
-
-            shareCelebration(imagePath);
-
-
         }
-
-
-        // uploadImage();
     }
 
     private void uploadImage() {
@@ -266,14 +251,14 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
                 .burst(600);
         //.streamFor(300, 5000L);
 
-        shareCelebration(null);
+        shareCelebration();
 
         Review();
     }
 
 
     public void setOkAndFinish() {
-        // Kiddy.didManuallyPaused = true;
+
         if (getCallingActivity() == null) {
             startActivity(new Intent(this, KidActivity.class));
             finish();
@@ -296,18 +281,19 @@ public class TaskActivity extends AppCompatActivity implements OnTaskTokenzListe
     }
 
 
-    private void shareCelebration(Uri imagePath) {
+    private void shareCelebration() {
 
         FragmentTransaction beginTransaction = getSupportFragmentManager().beginTransaction();
         CelebrateFragment newInstance = CelebrateFragment.newInstance(selectedKid, selectedTask);
 
-        FrameLayout main_container = findViewById(R.id.main_container);
+        RelativeLayout main_container = findViewById(R.id.main_container);
         main_container.setVisibility(View.GONE);
 
         this.currentFragment = newInstance;
         beginTransaction.replace(R.id.container, newInstance, Constants.CELEBRATE);
         beginTransaction.addToBackStack(Constants.CELEBRATE);
         beginTransaction.commit();
+        resetTaskTokenzScore();
 
 
     }

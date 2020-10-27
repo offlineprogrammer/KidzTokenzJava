@@ -46,13 +46,29 @@
             </FrameLayout>
         </FrameLayout>
 
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/congratmsg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:text="@string/ktz_task_complete_msg"
+                android:textSize="18sp"
+                android:textStyle="italic|bold" />
+        </LinearLayout>
+
 
         <TextView
             android:id="@+id/photo_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_20"
-            android:layout_marginTop="@dimen/margin_20"
+            android:layout_marginTop="@dimen/margin_10"
             android:text="@string/capture_this_moment"
             android:textColor="@color/hint_black"
             android:textSize="@dimen/text_size_14"
@@ -61,7 +77,7 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_30"
+            android:layout_marginTop="@dimen/margin_20"
             android:paddingStart="@dimen/margin_20"
             android:paddingEnd="@dimen/margin_20">
 
