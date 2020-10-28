@@ -5,13 +5,10 @@ import android.content.Context;
 import android.net.Uri;
 
 import androidx.annotation.Keep;
-import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
-import com.google.firebase.BuildConfig;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -25,7 +22,6 @@ import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 import com.offlineprogrammer.KidzTokenz.kid.Kid;
 import com.offlineprogrammer.KidzTokenz.task.KidTask;
 
@@ -60,19 +56,14 @@ public class FirebaseHelper {
         m_db = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
         mContext = c;
-        if (BuildConfig.BUILD_TYPE.equalsIgnoreCase("release")) {
-            //  mFirebaseAnalytics = FirebaseAnalytics.getInstance(mContext);
-        }
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(mContext);
 
         kidzTokenz = (KidzTokenz) mContext;
-        //  Log.d("fcmtoken", FirebaseInstanceId.getInstance().getToken());
+
     }
 
     public void logEvent(String event_name) {
-        if (BuildConfig.BUILD_TYPE.equalsIgnoreCase("release")) {
-            //  mFirebaseAnalytics.logEvent(event_name, null);
-        }
-
+        mFirebaseAnalytics.logEvent(event_name, null);
     }
 
 
@@ -538,26 +529,20 @@ public class FirebaseHelper {
                             + Calendar.getInstance().getTime().toString() + "/"
                             + UUID.randomUUID().toString());
 
-            ref.putFile(imagePath).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                @Override
-                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                    if (!task.isSuccessful()) {
-                        throw task.getException();
-                    }
-                    // Continue with the task to get the download URL
-                    return ref.getDownloadUrl();
+            ref.putFile(imagePath).continueWithTask(task -> {
+                if (!task.isSuccessful()) {
+                    throw task.getException();
                 }
-            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                @Override
-                public void onComplete(@NonNull Task<Uri> task) {
-                    if (task.isSuccessful()) {
-                        Uri downloadUri = task.getResult();
-                        //String downloadURL = downloadUri.toString();
-                        emitter.onSuccess(downloadUri);
+                // Continue with the task to get the download URL
+                return ref.getDownloadUrl();
+            }).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Uri downloadUri = task.getResult();
+                    //String downloadURL = downloadUri.toString();
+                    emitter.onSuccess(downloadUri);
 
-                    } else {
-                        emitter.onError(task.getException());
-                    }
+                } else {
+                    emitter.onError(task.getException());
                 }
             });
         });
