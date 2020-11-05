@@ -5,8 +5,10 @@ import android.content.Context;
 import android.net.Uri;
 
 import androidx.annotation.Keep;
+import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -20,6 +22,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.offlineprogrammer.KidzTokenz.kid.Kid;
@@ -562,6 +565,39 @@ public class FirebaseHelper {
                         Timber.tag("Add Kid").w(e, "Error writing document");
                         emitter.onError(e);
                     });
+
+        });
+    }
+
+
+    public Completable setUserFcmInstanceId() {
+        return Completable.create(emitter -> {
+
+            FirebaseMessaging.getInstance().getToken()
+                    .addOnCompleteListener(new OnCompleteListener<String>() {
+                        @Override
+                        public void onComplete(@NonNull Task<String> task) {
+                            if (!task.isSuccessful()) {
+                                Timber.w(task.getException(), "Fetching FCM registration token failed");
+                                emitter.onError(task.getException());
+                            }
+                            // Get new FCM registration token
+                            String token = task.getResult();
+                            kidzTokenz.getUser().setFcmInstanceId(token);
+                            DocumentReference newKidRef = m_db.collection(USERS_COLLECTION).document(kidzTokenz.getUser().getUserId());//.collection("kidz").document();
+                            newKidRef.update("fcmInstanceId", kidzTokenz.getUser().getFcmInstanceId())
+                                    .addOnSuccessListener(aVoid -> {
+                                        Timber.d("fcmInstanceId successfully written!");
+                                        emitter.onComplete();
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Timber.tag("Add Kid").w(e, "Error writing document");
+                                        emitter.onError(e);
+                                    });
+
+                        }
+                    });
+
 
         });
     }

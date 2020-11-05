@@ -9,8 +9,8 @@ android {
         applicationId "com.offlineprogrammer.KidzTokenz"
         minSdkVersion 24
         targetSdkVersion 29
-        versionCode 400010
-        versionName "4.5"
+        versionCode 400011
+        versionName "4.51"
         resConfigs "en"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true

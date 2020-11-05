@@ -148,6 +148,13 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(User user) {
                             Timber.d("onNext: %s", user.getUserId());
+                            firebaseHelper.setUserFcmInstanceId()
+                                    .subscribe(() -> {
+                                        Timber.i("setUserFcmInstanceId: completed");
+
+                                    }, throwable -> {
+                                        // handle error
+                                    });
                             runOnUiThread(() -> launchMainActivity(user));
 
 
@@ -215,6 +222,14 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onNext(User user) {
                         Timber.d("onNext: %s", user.getUserId());
+                        firebaseHelper.setUserFcmInstanceId()
+                                .subscribe(() -> {
+                                    Timber.i("setUserFcmInstanceId: completed");
+
+                                }, throwable -> {
+                                    // handle error
+                                });
+
                         runOnUiThread(() -> launchMainActivity(user));
 
 
