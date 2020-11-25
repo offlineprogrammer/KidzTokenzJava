@@ -6,7 +6,6 @@ public class Constants {
 
 
     public static final String CELEBRATE = "celebrate";
-
-
     public static final String SHARE = "share";
+    public static final String EDITKID = "edit_kid";
 }

@@ -4,51 +4,55 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:ads="http://schemas.android.com/apk/res-auto"
     tools:context=".KidActivity">
 
-
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/kidCard"
+    <RelativeLayout
+        android:id="@+id/main_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        card_view:cardBackgroundColor="@android:color/white"
-        card_view:cardCornerRadius="8dp"
-        card_view:cardElevation="8dp"
-        card_view:cardPreventCornerOverlap="true"
-        card_view:cardUseCompatPadding="true"
-        card_view:contentPadding="10dp"
-        card_view:contentPaddingBottom="0dp"
-        tools:context=".KidActivity">
+        android:layout_height="match_parent">
 
-        <!-- Main Content View -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-            <ImageView
-                android:id="@+id/kidMonsterImage"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                app:layout_constraintDimensionRatio="H,2:1"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toTopOf="@+id/delete_button"
-                app:layout_constraintVertical_chainStyle="packed"
-                android:contentDescription="CardImageViewDesc"
-                android:background="?attr/colorPrimaryDark"
-                android:scaleType="fitCenter" />
-
-        <TextView
-            android:id="@+id/myAwesomeTextView"
-            android:layout_width="wrap_content"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/kidCard"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@+id/kidMonsterImage"
-            app:layout_constraintTop_toTopOf="@+id/delete_button"
-            app:layout_constraintStart_toStartOf="parent"
+            card_view:cardBackgroundColor="@android:color/white"
+            card_view:cardCornerRadius="8dp"
+            card_view:cardElevation="8dp"
+            card_view:cardPreventCornerOverlap="true"
+            card_view:cardUseCompatPadding="true"
+            card_view:contentPadding="10dp"
+            card_view:contentPaddingBottom="0dp"
+            tools:context=".KidActivity">
+
+            <!-- Main Content View -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/kidMonsterImage"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:contentDescription="CardImageViewDesc"
+                    app:layout_constraintBottom_toTopOf="@+id/delete_button"
+                    app:layout_constraintDimensionRatio="H,2:1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_chainStyle="packed"
+                    android:background="?attr/colorPrimaryDark"
+                    android:scaleType="fitCenter" />
+
+                <TextView
+                    android:id="@+id/myAwesomeTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@+id/kidMonsterImage"
+                    app:layout_constraintTop_toTopOf="@+id/delete_button"
+                    app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="8dp"
             android:padding="12dp"
             android:gravity="center"
@@ -67,13 +71,23 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
 
+                <ImageButton
+                    android:id="@+id/edit_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:background="#00FFFFFF"
+                    android:padding="12dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/delete_button"
+                    app:layout_constraintTop_toBottomOf="@+id/kidMonsterImage"
+                    app:srcCompat="@drawable/ic_baseline_edit_24" />
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_below="@id/kidCard"
         android:layout_width="match_parent"
         android:layout_marginStart="10dp"
@@ -81,8 +95,7 @@
         android:id="@+id/tokenNumberImageConstraintLayout"
         android:layout_height="wrap_content">
 
-        <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/tokenImageCard"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -125,8 +138,7 @@
 
         </com.google.android.material.card.MaterialCardView>
 
-        <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/tokenNumberCard"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -175,7 +187,6 @@
 
 
     <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/kidLinearLayout"
         android:layout_below="@+id/tokenNumberImageConstraintLayout"
         android:background="?attr/colorPrimaryDark"
@@ -224,7 +235,10 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="50dp"
         android:src="@drawable/ic_add_white_24dp"
-        android:backgroundTint="?attr/colorPrimary"/>
+        android:backgroundTint="?attr/colorPrimary" />
+
+    </RelativeLayout>
+
 
     <com.google.android.gms.ads.AdView
         android:id="@+id/ad_view"
@@ -233,8 +247,17 @@
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
         ads:adSize="BANNER"
-        ads:adUnitId="@string/kid_adMob_unit_id">
-    </com.google.android.gms.ads.AdView>
+        ads:adUnitId="@string/kid_adMob_unit_id" />
+
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin_50"
+        app:layout_constraintBottom_toTopOf="@id/ad_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="parent" />
 
 
 </RelativeLayout>

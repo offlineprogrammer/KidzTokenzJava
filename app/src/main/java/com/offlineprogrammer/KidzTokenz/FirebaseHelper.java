@@ -5,10 +5,8 @@ import android.content.Context;
 import android.net.Uri;
 
 import androidx.annotation.Keep;
-import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -500,6 +498,7 @@ public class FirebaseHelper {
             requiredKid.setTokenNumber(selectedKid.getTokenNumber());
             requiredKid.setBadTokenImageResourceName(selectedKid.getBadTokenImageResourceName());
             requiredKid.setTokenImageResourceName(selectedKid.getTokenImageResourceName());
+            requiredKid.setMonsterImageResourceName(selectedKid.getMonsterImageResourceName());
             kidzTokenz.getUser().getKidz().set(position, requiredKid);
             DocumentReference newKidRef = m_db.collection(USERS_COLLECTION).document(kidzTokenz.getUser().getUserId());//.collection("kidz").document();
             newKidRef.update("kidz", kidzTokenz.getUser().getKidz())
@@ -571,35 +570,27 @@ public class FirebaseHelper {
 
 
     public Completable setUserFcmInstanceId() {
-        return Completable.create(emitter -> {
+        return Completable.create(emitter -> FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        Timber.w(task.getException(), "Fetching FCM registration token failed");
+                        emitter.onError(task.getException());
+                    }
+                    // Get new FCM registration token
+                    String token = task.getResult();
+                    kidzTokenz.getUser().setFcmInstanceId(token);
+                    DocumentReference newKidRef = m_db.collection(USERS_COLLECTION).document(kidzTokenz.getUser().getUserId());//.collection("kidz").document();
+                    newKidRef.update("fcmInstanceId", kidzTokenz.getUser().getFcmInstanceId())
+                            .addOnSuccessListener(aVoid -> {
+                                Timber.d("fcmInstanceId successfully written!");
+                                emitter.onComplete();
+                            })
+                            .addOnFailureListener(e -> {
+                                Timber.tag("Add Kid").w(e, "Error writing document");
+                                emitter.onError(e);
+                            });
 
-            FirebaseMessaging.getInstance().getToken()
-                    .addOnCompleteListener(new OnCompleteListener<String>() {
-                        @Override
-                        public void onComplete(@NonNull Task<String> task) {
-                            if (!task.isSuccessful()) {
-                                Timber.w(task.getException(), "Fetching FCM registration token failed");
-                                emitter.onError(task.getException());
-                            }
-                            // Get new FCM registration token
-                            String token = task.getResult();
-                            kidzTokenz.getUser().setFcmInstanceId(token);
-                            DocumentReference newKidRef = m_db.collection(USERS_COLLECTION).document(kidzTokenz.getUser().getUserId());//.collection("kidz").document();
-                            newKidRef.update("fcmInstanceId", kidzTokenz.getUser().getFcmInstanceId())
-                                    .addOnSuccessListener(aVoid -> {
-                                        Timber.d("fcmInstanceId successfully written!");
-                                        emitter.onComplete();
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        Timber.tag("Add Kid").w(e, "Error writing document");
-                                        emitter.onError(e);
-                                    });
-
-                        }
-                    });
-
-
-        });
+                }));
     }
 
 

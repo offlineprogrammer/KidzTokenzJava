@@ -7,17 +7,21 @@ import android.content.ContextWrapper;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,10 +34,8 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.android.play.core.review.ReviewInfo;
 import com.google.android.play.core.review.ReviewManager;
 import com.google.android.play.core.review.ReviewManagerFactory;
-import com.google.android.play.core.tasks.OnCompleteListener;
-import com.google.android.play.core.tasks.OnFailureListener;
-import com.google.android.play.core.tasks.Task;
 import com.offlineprogrammer.KidzTokenz.kid.Kid;
+import com.offlineprogrammer.KidzTokenz.kid.editKid.EditKidFragment;
 import com.offlineprogrammer.KidzTokenz.task.KidTask;
 import com.offlineprogrammer.KidzTokenz.task.OnTaskListener;
 import com.offlineprogrammer.KidzTokenz.task.TaskAdapter;
@@ -51,6 +53,7 @@ import timber.log.Timber;
 public class KidActivity extends AppCompatActivity implements OnTaskListener {
 
     FirebaseHelper firebaseHelper;
+    ImageButton editImageButton;
 
 
     private static final String TAG = "KidActivity";
@@ -62,7 +65,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
     ImageView tokenNumberImageView;
     Kid selectedKid;
     ImageButton deleteImageButton;
-
+    private Fragment currentFragment;
     private ArrayList<KidTask> taskzList = new ArrayList<>();
     private Disposable disposable;
 
@@ -76,7 +79,6 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
     ReviewInfo reviewInfo;
     ReviewManager manager;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,6 +91,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
         tokenNumberCard = findViewById(R.id.tokenNumberCard);
         tokenNumberImageView = findViewById(R.id.tokenNumberImageView);
         deleteImageButton = findViewById(R.id.delete_button);
+        editImageButton = findViewById(R.id.edit_button);
         configActionButton();
         setupRecyclerView();
         getIntentData();
@@ -190,7 +193,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
                     Timber.i("updateRewardImage: completed");
                     firebaseHelper.logEvent("kid_deleted");
                     firebaseHelper.deleteKidTaskzCollection(selectedKid)
-                            .subscribe(() -> finish(), throwable -> {
+                            .subscribe(this::finish, throwable -> {
                                 // handle error
                             });
 
@@ -215,6 +218,69 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
         });
 
         deleteImageButton.setOnClickListener(view -> showDeleteKidDialog(KidActivity.this));
+
+        editImageButton.setOnClickListener(view -> goToEditKid());
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            goBack();
+        }
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        Timber.d("onBackPressed Called");
+        goBack();
+    }
+
+    private void goBack() {
+        FragmentManager supportFragmentManager = getSupportFragmentManager();
+        Fragment fragment = this.currentFragment;
+        if (fragment instanceof EditKidFragment) {
+            this.setTitle(selectedKid.getKidName());
+            RelativeLayout main_container = findViewById(R.id.main_container);
+            main_container.setVisibility(View.VISIBLE);
+
+            //  return;
+        }
+
+        if (supportFragmentManager.getBackStackEntryCount() <= 0) {
+
+            finish();
+        } else {
+            supportFragmentManager.popBackStack();
+        }
+    }
+
+
+    private void goToEditKid() {
+        FragmentTransaction beginTransaction = getSupportFragmentManager().beginTransaction();
+        this.setTitle(R.string.edit_kid);
+        EditKidFragment newInstance = EditKidFragment.newInstance(selectedKid);
+        RelativeLayout main_container = findViewById(R.id.main_container);
+        main_container.setVisibility(View.GONE);
+        this.currentFragment = newInstance;
+        beginTransaction.replace(R.id.container, newInstance, Constants.EDITKID);
+        beginTransaction.addToBackStack(Constants.EDITKID);
+        firebaseHelper.logEvent("show_edit_kid");
+        beginTransaction.commit();
+
+    }
+
+    public void setMonsterImage(String monsterImageResourceName) {
+
+        this.getFragmentManager().popBackStack();
+        setTitle(selectedKid.getKidName());
+        kidImageView.setImageDrawable(null);
+        kidImageView.setImageResource(getApplicationContext().getResources().getIdentifier(monsterImageResourceName, "drawable",
+                getApplicationContext().getPackageName()));
+        RelativeLayout main_container = findViewById(R.id.main_container);
+        main_container.setVisibility(View.VISIBLE);
+        updateKidMonsterImage(monsterImageResourceName);
+
     }
 
     private void setupRecyclerView() {
@@ -245,7 +311,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
 
                     @Override
                     public void onSuccess(ArrayList<KidTask> taskz) {
-                        Timber.d("onNext:  " + taskz.size());
+                        Timber.d("onNext:  %s", taskz.size());
                         taskzList = taskz;
 
                         runOnUiThread(() -> updateRecylerView(taskz));
@@ -253,7 +319,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
 
                     @Override
                     public void onError(Throwable e) {
-                        Timber.e("onError: " + e.getMessage());
+                        Timber.e("onError: %s", e.getMessage());
                     }
 
 
@@ -263,34 +329,13 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
 
     private void Review() {
         manager = ReviewManagerFactory.create(this);
-        manager.requestReviewFlow().addOnCompleteListener(new OnCompleteListener<ReviewInfo>() {
-            @Override
-            public void onComplete(@NonNull Task<ReviewInfo> task) {
-                if (task.isSuccessful()) {
-                    reviewInfo = task.getResult();
-                    manager.launchReviewFlow(KidActivity.this, reviewInfo).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(Exception e) {
-                            firebaseHelper.logEvent("rating_failed");
-
-                        }
-                    }).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            firebaseHelper.logEvent("rating_completed");
-
-                        }
-                    });
-                }
-
+        manager.requestReviewFlow().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                reviewInfo = task.getResult();
+                manager.launchReviewFlow(KidActivity.this, reviewInfo).addOnFailureListener(e -> firebaseHelper.logEvent("rating_failed")).addOnCompleteListener(task1 -> firebaseHelper.logEvent("rating_completed"));
             }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(Exception e) {
-                firebaseHelper.logEvent("rating_request_failed");
 
-            }
-        });
+        }).addOnFailureListener(e -> firebaseHelper.logEvent("rating_request_failed"));
     }
 
 
@@ -410,7 +455,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
                 String selectedImageResourceName = data.getStringExtra("ImageResource");
                 tokenNumberImageView.setImageResource(selectedImage);
                 int selectedTokenNumber = data.getIntExtra("TokenNumber", 0);
-                Timber.i("onActivityResult: " + selectedTokenNumber);
+                Timber.i("onActivityResult: %s", selectedTokenNumber);
                 tokenNumberImageView.setImageDrawable(null);
                 tokenNumberImageView.setImageResource(getApplicationContext().getResources().getIdentifier(selectedImageResourceName, "drawable",
                         getApplicationContext().getPackageName()));
@@ -451,7 +496,6 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
 
         selectedKid.setTokenNumberImageResourceName(selectedImageResourceName);
         selectedKid.setTokenNumber(selectedTokenNumber);
-
         firebaseHelper.updateKid(selectedKid)
                 .subscribe(() -> {
                     Timber.i("updateKidTokenNumberImage: completed");
@@ -461,11 +505,23 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
                 }, throwable -> {
                     // handle error
                 });
-
-
-
-
     }
+
+
+    private void updateKidMonsterImage(final String selectedImageResourceName) {
+
+        selectedKid.setMonsterImageResourceName(selectedImageResourceName);
+        firebaseHelper.updateKid(selectedKid)
+                .subscribe(() -> {
+                    Timber.i("updateKidMonsterImage: completed");
+                    firebaseHelper.logEvent("kidMonsterImage_updated");
+                    Review();
+
+                }, throwable -> {
+                    // handle error
+                });
+    }
+
 
     @Override
     public void onTaskClick(int position) {
