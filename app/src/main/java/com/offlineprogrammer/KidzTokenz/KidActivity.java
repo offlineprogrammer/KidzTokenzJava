@@ -290,7 +290,7 @@ public class KidActivity extends AppCompatActivity implements OnTaskListener {
         taskRecyclerView.setAdapter(taskAdapter);
         taskRecyclerView.setLayoutManager(new GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false));
         taskRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        int largePadding = getResources().getDimensionPixelSize(R.dimen.ktz_taskz_grid_spacing);
+        int largePadding = getResources().getDimensionPixelSize(R.dimen.ktz_taskz_grid_spacing_small);//getResources().getDimensionPixelSize(R.dimen.ktz_taskz_grid_spacing);
         int smallPadding = getResources().getDimensionPixelSize(R.dimen.ktz_taskz_grid_spacing_small);
         taskRecyclerView.addItemDecoration(new TaskGridItemDecoration(largePadding, smallPadding));
 

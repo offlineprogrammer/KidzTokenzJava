@@ -5,20 +5,28 @@
     android:layout_height="wrap_content"
     app:cardBackgroundColor="@android:color/white"
     app:cardElevation="2dp"
+    app:strokeColor="@color/colorPrimaryDark"
+    app:strokeWidth="1dp"
     app:cardPreventCornerOverlap="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="@dimen/margin_5"
         android:orientation="vertical">
 
-        <ImageView
+        <com.github.abdularis.civ.CircleImageView
             android:id="@+id/kid_monster_name"
+            android:layout_height="100dp"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/ktz_kidz_card_image_height"
-            android:background="?attr/colorPrimaryDark"
-            android:scaleType="fitCenter"
-            android:adjustViewBounds="true" />
+            android:contentDescription="CardImageViewDesc"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:strokeColor="@color/colorPrimary"
+            app:strokeWidth="@dimen/margin_5" />
+
 
         <TextView
             android:id="@+id/kid_name"

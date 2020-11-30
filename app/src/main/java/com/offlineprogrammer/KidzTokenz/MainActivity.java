@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
         recyclerView.setAdapter(kidAdapter);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        int largePadding = getResources().getDimensionPixelSize(R.dimen.ktz_kidz_grid_spacing);
+        int largePadding = getResources().getDimensionPixelSize(R.dimen.ktz_kidz_grid_spacing_small);// getResources().getDimensionPixelSize(R.dimen.ktz_kidz_grid_spacing);
         int smallPadding = getResources().getDimensionPixelSize(R.dimen.ktz_kidz_grid_spacing_small);
         recyclerView.addItemDecoration(new KidGridItemDecoration(largePadding, smallPadding));
         dismissProgressBar();
