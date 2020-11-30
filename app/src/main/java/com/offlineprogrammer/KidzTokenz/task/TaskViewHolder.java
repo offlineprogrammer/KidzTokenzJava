@@ -14,10 +14,11 @@ import com.offlineprogrammer.KidzTokenz.R;
 
 
 public class TaskViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-    private Context mContext;
-    private TextView taskNameTextView;
-    private ImageView taskImageView;
+    private final Context mContext;
+    private final TextView taskNameTextView;
+    private final ImageView taskImageView;
     OnTaskListener onTaskListener;
+
     public TaskViewHolder(@NonNull View itemView, OnTaskListener OnTaskListener) {
         super(itemView);
         mContext = itemView.getContext();
@@ -25,10 +26,12 @@ public class TaskViewHolder extends RecyclerView.ViewHolder implements View.OnCl
         taskImageView = itemView.findViewById(R.id.taskImage);
         this.onTaskListener = OnTaskListener;
         itemView.setOnClickListener(this);
+        taskImageView.setOnClickListener(this);
+
     }
 
     public void bindData(final KidTask viewModel) {
-        Uri taskTokenImageUri = null;
+        Uri taskTokenImageUri;
         taskNameTextView.setText(viewModel.getTaskName());
         if (viewModel.getFirestoreImageUri() == null) {
             taskImageView.setImageResource(viewModel.getTaskImage());

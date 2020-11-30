@@ -12,10 +12,11 @@ import com.offlineprogrammer.KidzTokenz.OnKidListener;
 import com.offlineprogrammer.KidzTokenz.R;
 
 public class KidViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-    private TextView kidNameTextView;
-    private ImageView kidMonsterImageView;
+    private final TextView kidNameTextView;
+    private final ImageView kidMonsterImageView;
     OnKidListener onKidListener;
-    private Context mContext;
+    private final Context mContext;
+
     public KidViewHolder(@NonNull View itemView, OnKidListener onKidListener) {
         super(itemView);
         mContext = itemView.getContext();
@@ -23,6 +24,7 @@ public class KidViewHolder extends RecyclerView.ViewHolder implements View.OnCli
         kidMonsterImageView = itemView.findViewById(R.id.kid_monster_name);
         this.onKidListener = onKidListener;
         itemView.setOnClickListener(this);
+        kidMonsterImageView.setOnClickListener(this);
     }
 
     public void bindData(final Kid viewModel) {
