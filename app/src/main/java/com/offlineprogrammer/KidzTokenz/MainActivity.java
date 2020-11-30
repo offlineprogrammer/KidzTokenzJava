@@ -21,7 +21,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputLayout;
 import com.offlineprogrammer.KidzTokenz.kid.Kid;
@@ -126,20 +128,53 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
 
 
     private void setupRecyclerView() {
-        kidAdapter = new KidAdapter(firebaseHelper.kidzTokenz.getUser().getKidz(), this);
-        recyclerView = findViewById(R.id.kidz_recyclerview);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setAdapter(kidAdapter);
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false));
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        int largePadding = getResources().getDimensionPixelSize(R.dimen.ktz_kidz_grid_spacing_small);// getResources().getDimensionPixelSize(R.dimen.ktz_kidz_grid_spacing);
-        int smallPadding = getResources().getDimensionPixelSize(R.dimen.ktz_kidz_grid_spacing_small);
-        recyclerView.addItemDecoration(new KidGridItemDecoration(largePadding, smallPadding));
-        dismissProgressBar();
+        try {
+
+            kidAdapter = new KidAdapter(firebaseHelper.kidzTokenz.getUser().getKidz(), this);
+            recyclerView = findViewById(R.id.kidz_recyclerview);
+            recyclerView.setHasFixedSize(true);
+            recyclerView.setAdapter(kidAdapter);
+            recyclerView.setLayoutManager(new GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false));
+            recyclerView.setItemAnimator(new DefaultItemAnimator());
+            int largePadding = getResources().getDimensionPixelSize(R.dimen.ktz_kidz_grid_spacing_small);// getResources().getDimensionPixelSize(R.dimen.ktz_kidz_grid_spacing);
+            int smallPadding = getResources().getDimensionPixelSize(R.dimen.ktz_kidz_grid_spacing_small);
+            recyclerView.addItemDecoration(new KidGridItemDecoration(largePadding, smallPadding));
+            dismissProgressBar();
+
+
+        } catch (Exception e) {
+            signOut();
+        }
 
     }
 
-    private int pickMonster(){
+    private void signOut() {
+        // Firebase sign out
+        firebaseHelper.firebaseAuth.signOut();
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                // for the requestIdToken, this is in the values.xml file that
+                // is generated from your google-services.json
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+        // Build a GoogleSignInClient with the options specified by gso.
+        googleSignInClient = GoogleSignIn.getClient(this, gso);
+        googleSignInClient.signOut().addOnCompleteListener(this,
+                task -> {
+                    // Google Sign In failed, update UI appropriately
+                    Timber.tag(TAG).w("Signed out of google");
+                    Intent intent = new Intent(this, LoginActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+
+                });
+
+    }
+
+
+    private int pickMonster() {
         final TypedArray imgs;
         imgs = getResources().obtainTypedArray(R.array.kidzMonsters);
         final Random rand = new Random();
@@ -208,9 +243,7 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
             }
             return false;
         });
-        cancelBtn.setOnClickListener(v -> {
-            builder.dismiss();
-        });
+        cancelBtn.setOnClickListener(v -> builder.dismiss());
         builder.setView(dialogView);
         builder.show();
         Objects.requireNonNull(builder.getWindow()).setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
@@ -296,10 +329,7 @@ public class MainActivity extends AppCompatActivity implements OnKidListener {
 
     private void updateKidSchema(int position) {
         firebaseHelper.updateKidSchema(position)
-                .subscribe(() -> {
-                    Timber.i("updateKidSchema: completed");
-
-                }, throwable -> {
+                .subscribe(() -> Timber.i("updateKidSchema: completed"), throwable -> {
                     // handle error
                 });
     }
