@@ -52,9 +52,9 @@
                     app:layout_constraintEnd_toStartOf="@id/guideline"
                     app:layout_constraintVertical_chainStyle="packed"
                     android:contentDescription="CardImageViewDesc"
-
                     app:strokeColor="@color/colorPrimary"
-                    app:strokeWidth="@dimen/margin_5" />/>
+                    app:strokeWidth="@dimen/margin_5" />
+
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="wrap_content"
@@ -73,6 +73,7 @@
                         android:padding="12dp"
                         android:textSize="18sp"
                         android:textStyle="italic|bold"
+                        card_view:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintBottom_toTopOf="@+id/delete_button"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
