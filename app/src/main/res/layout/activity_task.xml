@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             card_view:cardBackgroundColor="@android:color/white"
             card_view:cardCornerRadius="8dp"
-            card_view:cardElevation="8dp"
+
             card_view:cardPreventCornerOverlap="true"
             card_view:cardUseCompatPadding="true">
 
@@ -34,59 +34,76 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <ImageView
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.66" />
+
+                <com.github.abdularis.civ.CircleImageView
                     android:id="@+id/taskImage"
                     android:src="@drawable/bekind"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    app:layout_constraintDimensionRatio="H,2:1"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintBottom_toTopOf="@+id/delete_button"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/guideline"
                     app:layout_constraintVertical_chainStyle="packed"
                     android:contentDescription="CardImageViewDesc"
-                    android:background="?attr/colorPrimaryDark"
-                    android:scaleType="fitCenter" />
 
+                    app:strokeColor="@color/colorPrimary"
+                    app:strokeWidth="@dimen/margin_5" />/>
 
-                <TextView
-                    android:id="@+id/taskName"
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintTop_toBottomOf="@+id/taskImage"
-                    app:layout_constraintTop_toTopOf="@+id/delete_button"
-                    app:layout_constraintStart_toStartOf="parent"
-                    android:layout_marginStart="8dp"
-                    android:padding="12dp"
-                    android:gravity="center"
-                    android:textSize="18sp"
-                    android:textStyle="italic|bold" />
-
-                <ImageButton
-                    android:id="@+id/capture_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:background="#00FFFFFF"
-                    android:padding="12dp"
-                    app:srcCompat="@drawable/ic_camera_alt_black_24dp"
-                    app:layout_constraintTop_toBottomOf="@+id/taskImage"
-                    app:layout_constraintEnd_toStartOf="@+id/delete_button"
-                    app:layout_constraintBottom_toBottomOf="parent" />
-
-
-                <ImageButton
-                    android:id="@+id/delete_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:background="#00FFFFFF"
-                    android:padding="12dp"
-                    app:srcCompat="@drawable/ic_delete_black_24dp"
-                    app:layout_constraintTop_toBottomOf="@+id/taskImage"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/guideline"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <TextView
+                        android:id="@+id/taskName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:gravity="center"
+                        android:padding="12dp"
+                        android:textSize="18sp"
+                        android:textStyle="italic|bold"
+                        app:layout_constraintBottom_toTopOf="@+id/delete_button"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageButton
+                        android:id="@+id/capture_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:background="#00FFFFFF"
+                        android:padding="12dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/delete_button"
+                        app:layout_constraintTop_toBottomOf="@+id/taskName"
+                        app:srcCompat="@drawable/ic_camera_alt_black_24dp" />
+
+
+                    <ImageButton
+                        android:id="@+id/delete_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:background="#00FFFFFF"
+                        android:padding="12dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/taskName"
+                        app:srcCompat="@drawable/ic_delete_black_24dp" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
