@@ -13,18 +13,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/kidCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             card_view:cardBackgroundColor="@android:color/white"
-            card_view:cardCornerRadius="8dp"
-
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            app:strokeColor="@color/colorPrimaryDark"
+            app:strokeWidth="@dimen/margin_1"
             card_view:cardPreventCornerOverlap="true"
             card_view:cardUseCompatPadding="true"
-            card_view:contentPadding="10dp"
-            card_view:contentPaddingBottom="0dp"
-            tools:context=".KidActivity">
+            card_view:contentPadding="10dp">
 
             <!-- Main Content View -->
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -104,7 +104,7 @@
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_below="@id/kidCard"
@@ -122,12 +122,10 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/tokenNumberCard"
             app:cardBackgroundColor="@android:color/white"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginEnd="4dp"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="8dp"
+            android:layout_margin="@dimen/ktz_taskz_grid_spacing_small"
+            app:strokeColor="@color/colorPrimaryDark"
+            app:strokeWidth="1dp"
+            card_view:contentPadding="@dimen/margin_5"
             app:cardPreventCornerOverlap="true">
 
             <LinearLayout
@@ -139,7 +137,7 @@
                     android:id="@+id/tokenImageView"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/ktz_kidz_tokenNumberImage_image_height"
-                    android:background="?attr/colorPrimaryDark"
+
                     android:scaleType="fitCenter"
                     android:adjustViewBounds="true"
                     android:src="@drawable/bunny" />
@@ -166,12 +164,10 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:cardBackgroundColor="@android:color/white"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginEnd="4dp"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="8dp"
+            android:layout_margin="@dimen/ktz_taskz_grid_spacing_small"
+            app:strokeColor="@color/colorPrimaryDark"
+            app:strokeWidth="1dp"
+            card_view:contentPadding="@dimen/margin_5"
             app:cardPreventCornerOverlap="true">
 
             <LinearLayout
@@ -183,7 +179,7 @@
                     android:id="@+id/tokenNumberImageView"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/ktz_kidz_tokenNumberImage_image_height"
-                    android:background="?attr/colorPrimaryDark"
+
                     android:scaleType="fitCenter"
                     android:adjustViewBounds="true"
                     android:src="@drawable/bunny" />
@@ -230,7 +226,8 @@
         android:layout_below="@+id/kidLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="10dp"
+
+
         android:background="@color/taskGridBackgroundColor"
         android:paddingStart="@dimen/ktz_task_grid_spacing"
         android:paddingEnd="@dimen/ktz_task_grid_spacing">

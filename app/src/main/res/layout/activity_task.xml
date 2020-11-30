@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:ads="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".TaskActivity">
 
 
@@ -19,15 +20,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/taskCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             card_view:cardBackgroundColor="@android:color/white"
-            card_view:cardCornerRadius="8dp"
-
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            app:strokeColor="@color/colorPrimaryDark"
+            app:strokeWidth="@dimen/margin_1"
             card_view:cardPreventCornerOverlap="true"
-            card_view:cardUseCompatPadding="true">
+            card_view:cardUseCompatPadding="true"
+            card_view:contentPadding="10dp">
 
             <!-- Main Content View -->
             <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -107,7 +111,7 @@
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
         <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_below="@id/taskCard"
@@ -170,7 +174,7 @@
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
         ads:adSize="BANNER"
-        ads:adUnitId="@string/task_adMob_unit_id"></com.google.android.gms.ads.AdView>
+        ads:adUnitId="@string/task_adMob_unit_id" />
 
     <FrameLayout
         android:id="@+id/container"

@@ -1,10 +1,10 @@
 package com.offlineprogrammer.KidzTokenz;
 
+import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.os.Bundle;
 
 import com.offlineprogrammer.KidzTokenz.kid.KidGridItemDecoration;
 
@@ -26,7 +26,7 @@ public class TokenNumberActivity extends AppCompatActivity {
         mRecyclerView = findViewById(R.id.token_number_recyclerview);
         GridLayoutManager mGridLayoutManager = new GridLayoutManager(TokenNumberActivity.this, 2);
         mRecyclerView.setLayoutManager(mGridLayoutManager);
-        int largePadding = getResources().getDimensionPixelSize(R.dimen.ktz_kidz_grid_spacing);
+        int largePadding = getResources().getDimensionPixelSize(R.dimen.ktz_kidz_grid_spacing_small);
         int smallPadding = getResources().getDimensionPixelSize(R.dimen.ktz_kidz_grid_spacing_small);
         mRecyclerView.addItemDecoration(new KidGridItemDecoration(largePadding, smallPadding));
 
